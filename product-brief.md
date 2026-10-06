@@ -45,26 +45,26 @@ Honestly, summarising and quiz tools already exist (for example Quizlet, Noteboo
 
 ## Who This Serves
 
-**Primary user: the busy university student.** For example, a student taking three courses while working part-time. They attend lectures (or watch recordings) but have little time to process the material afterwards. They need a quick way to find out what they understood and what they didn't, without spending an evening making their own notes. Success for them means walking into an exam knowing which topics they have mastered, and spending less total time to get there.
+**Primary user: the university student studying in a second language. For example, an international student taking courses taught in Norwegian or English, neither of which is their first language. They follow the lectures but spend a long time decoding dense slides afterwards, and they are unsure whether they can explain the concepts in their own words. They need plain-language summaries, clear explanations of key terms, and a safe way to practise explaining what they have learned. Success for them means spending less time decoding and walking into an exam knowing which topics they can explain.
 
-**Primary user: students studying in a second language.** International students often understand the content but lose time decoding dense slide text. A plain-language summary lowers the barrier, and the questions help them practise explaining concepts in the course language.
+What this means for the design: plain language in summaries and feedback, key terms explained, short sentences, a clean and readable layout, and feedback on essay answers that focuses on content and understanding rather than penalising language mistakes.
 
-**Secondary user: lecturers and teaching assistants (later).** They could use the app to quickly generate practice questions for their own slides. This is not a focus for the first version.
+**Secondary user: the busy university student. A student combining studies with work or family who needs a fast way to find out what they understood from a lecture. The same flow serves them well, since it is short and focused.
 
 ## Success Criteria
 
 These criteria describe what the first version must do and can be checked with test cases during the course.
 
-Summary speed. A text-based PDF of up to 30 pages produces a summary in under 60 seconds.
-Source references. Every part of the summary shows which slide or page numbers it is based on, and every question links to the part of the summary it comes from.
-Multiple choice. Each multiple choice question has four options with exactly one correct answer, and the score after a quiz is calculated correctly.
-Fill-in-the-gaps. Answers that differ only in upper and lower case, extra spaces, or a single-letter typo are accepted as correct. Wrong words are marked as wrong.
-Essay feedback. For a fixed set of test answers, known good answers always receive a better assessment than known weak answers, and the feedback names at least one missing key point for every weak answer.
-Review list. After a quiz, every question answered wrongly leads to a topic in the review list, linked to the right part of the summary.
-Accounts and access. A user can register and log in, and only sees their own lectures and results. A logged-out user cannot access any saved lectures.
-Input limits and demo mode. PDFs over the size limit, or scanned PDFs without readable text, are rejected with a clear message. The app can be run in demo mode with a pre-processed example lecture, without an API key.
+**Summary speed. A text-based PDF of up to 30 pages produces a summary in under 60 seconds.
+**Source references. Every part of the summary shows which slide or page numbers it is based on, and every question links to the part of the summary it comes from.
+**Multiple choice. Each multiple choice question has four options with exactly one correct answer, and the score after a quiz is calculated correctly.
+**Fill-in-the-gaps. Answers that differ only in upper and lower case, extra spaces, or a single-letter typo are accepted as correct. Wrong words are marked as wrong.
+**Essay feedback. For a fixed set of test answers, known good answers always receive a better assessment than known weak answers, and the feedback names at least one missing key point for every weak answer.
+**Review list. After a quiz, every question answered wrongly leads to a topic in the review list, linked to the right part of the summary.
+**Accounts and access. A user can register and log in, and only sees their own lectures and results. A logged-out user cannot access any saved lectures.
+**Input limits and demo mode. PDFs over the size limit, or scanned PDFs without readable text, are rejected with a clear message. The app can be run in demo mode with a pre-processed example lecture, without an API key.
 
-How we check the quality of the AI's output
+## How we check the quality of the AI's output
 
 The AI produces the summaries, questions, and essay feedback, so its output must be checked, not trusted. We will build a small test set:
 
