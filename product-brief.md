@@ -12,6 +12,8 @@ The timing is right because AI models can now read a document and produce accura
 
 A typical student has several courses running at once, each with weekly lecture slides of 30 to 60 pages. After a lecture, the slides sit in a folder until the week before the exam. By then, the student faces hundreds of pages and no clear idea of which parts they understand and which they only recognise.
 
+For students studying in a second language, the problem is sharper. They often understand the subject but lose time on unfamiliar academic vocabulary and compressed slide text. They may recognise a term on a slide without being able to explain it in their own words, which is exactly what exams ask them to do.
+
 How students cope today:
 
 - **Rereading slides and highlighting.** Easy to do, but it creates a feeling of familiarity rather than real understanding. Students discover the gaps during the exam.
@@ -19,7 +21,7 @@ How students cope today:
 - **Using generic AI chatbots.** Students paste text into a chatbot and ask for a summary. This works, but it requires knowing what to ask, gives inconsistent results, and rarely turns into structured self-testing.
 - **Past exams and textbook questions.** Useful but limited, often not available for every topic, and not tied to what was actually covered in this year's lectures.
 
-The cost of the status quo is wasted study hours, exam stress, and lower grades. It hits hardest for students who are studying alongside work, studying in a second language, or retaking a course, the people who have the least time and the most to lose.
+The cost of the status quo is wasted study hours, exam stress, and lower grades.
 
 ## The Solution
 
