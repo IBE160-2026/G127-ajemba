@@ -64,6 +64,15 @@ Review list. After a quiz, every question answered wrongly leads to a topic in t
 Accounts and access. A user can register and log in, and only sees their own lectures and results. A logged-out user cannot access any saved lectures.
 Input limits and demo mode. PDFs over the size limit, or scanned PDFs without readable text, are rejected with a clear message. The app can be run in demo mode with a pre-processed example lecture, without an API key.
 
+How we check the quality of the AI's output
+
+The AI produces the summaries, questions, and essay feedback, so its output must be checked, not trusted. We will build a small test set:
+
+Fixed test lectures. Three to five lectures made from our own or freely licensed slides. For each one, we write down the key points in advance and check that the summary covers them and that the questions are based on them.
+Known essay answers. For each test lecture, a set of prepared essay answers: some good, some weak, and some with typical misunderstandings. We check that the feedback ranks them correctly and points out what is missing (success criterion 5).
+Versioned prompts. The prompts for summaries, questions, and essay feedback are stored as files in the repository, so changes can be tracked and the test set can be re-run after each change.
+User reporting. A "report this question" button lets users flag wrong or unclear questions, which gives a way to find errors the test set misses.
+
 ## Scope
 
 **In the first version**
