@@ -41,9 +41,10 @@ After each quiz, the student sees a score and a short list of topics to review, 
 Honestly, summarising and quiz tools already exist (for example Quizlet, NotebookLM, and various "chat with your PDF" apps), and there is no technical moat here. The same AI models are available to everyone. The difference lies in focus and design:
 
 - **Built around the lecture, not the textbook or chat.** The product is designed for one specific job: "I just had a lecture, help me learn it." No prompting skills needed, no blank chat window.
+- **Written for second-language students. Plain-language summaries and explained key terms lower the language barrier, and essay questions let the student practise explaining concepts in the course language.
 - **Three levels of testing in one flow.** Many tools stop at flashcards or multiple choice. Including fill-in-the-gaps and essay questions with feedback moves the student from recognition to recall to explanation, which is how real understanding is built and how university exams actually test.
 - **Feedback that points back to the source.** Every piece of feedback links to the part of the lecture it comes from, so the student can check the material rather than simply trusting the AI.
-- **Designed by someone in the target group.** The builder is a working student in a Norwegian university programme and understands the day-to-day reality of the users. The realistic advantage is closeness to users and speed of iteration, not proprietary technology.
+- **Designed by someone in the target group.** The builder studies in a second language at a Norwegian university and understands the day-to-day reality of these users. The realistic advantage is closeness to users and speed of iteration, not proprietary technology.
 
 ## Who This Serves
 
