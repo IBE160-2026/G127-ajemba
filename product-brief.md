@@ -71,42 +71,42 @@ These criteria describe what the first version must do and can be checked with t
 
 The AI produces the summaries, questions, and essay feedback, so its output must be checked, not trusted. We will build a small test set:
 
-Fixed test lectures. Three to five lectures made from our own or freely licensed slides. For each one, we write down the key points in advance and check that the summary covers them and that the questions are based on them.
-Known essay answers. For each test lecture, a set of prepared essay answers: some good, some weak, and some with typical misunderstandings. We check that the feedback ranks them correctly and points out what is missing (success criterion 5).
-Versioned prompts. The prompts for summaries, questions, and essay feedback are stored as files in the repository, so changes can be tracked and the test set can be re-run after each change.
-User reporting. A "report this question" button lets users flag wrong or unclear questions, which gives a way to find errors the test set misses.
+- Fixed test lectures. Three to five lectures made from our own or freely licensed slides. For each one, we write down the key points in advance and check that the summary covers them and that the questions are based on them.
+- Known essay answers. For each test lecture, a set of prepared essay answers: some good, some weak, and some with typical misunderstandings. We check that the feedback ranks them correctly and points out what is missing (success criterion 5).
+- Versioned prompts. The prompts for summaries, questions, and essay feedback are stored as files in the repository, so changes can be tracked and the test set can be re-run after each change.
+- User reporting. A "report this question" button lets users flag wrong or unclear questions, which gives a way to find errors the test set misses.
 
 ## Scope
 
 In the first version
 
-User registration and login. Each user's lectures and results are private to their account.
-Uploading a single text-based PDF, with a size limit (for example 50 pages or 10 MB).
-An AI-generated plain-language summary with source references and explained key terms.
-Quizzes in three formats: multiple choice, fill-in-the-gaps, and essay questions with written feedback.
-A score and a list of topics to review after each quiz.
-A simple way to report a wrong or unclear question.
-A list of the user's saved lectures and quiz results.
-A demo mode with a pre-processed example lecture, so the app can be tried without an API key.
+- User registration and login. Each user's lectures and results are private to their account.
+- Uploading a single text-based PDF, with a size limit (for example 50 pages or 10 MB).
+- An AI-generated plain-language summary with source references and explained key terms.
+- Quizzes in three formats: multiple choice, fill-in-the-gaps, and essay questions with written feedback.
+- A score and a list of topics to review after each quiz.
+- A simple way to report a wrong or unclear question.
+- A list of the user's saved lectures and quiz results.
+- A demo mode with a pre-processed example lecture, so the app can be tried without an API key.
 
 Build order: summary, then multiple choice, then fill-in-the-gaps, then essay feedback. This gives a working app early and leaves the most time for the hardest part.
 
 Explicitly out of the first version
 
-Scanned or handwritten PDFs (these need text recognition and are less reliable).
-Audio or video lecture recordings.
-Sharing quizzes with classmates or study groups.
-Integration with learning platforms such as Canvas.
-Mobile apps (the first version is a responsive web app).
-Payments and subscriptions.
+- Scanned or handwritten PDFs (these need text recognition and are less reliable).
+- Audio or video lecture recordings.
+- Sharing quizzes with classmates or study groups.
+- Integration with learning platforms such as Canvas.
+- Mobile apps (the first version is a responsive web app).
+- Payments and subscriptions.
 
-If time (in priority order)
+## If time (in priority order)
 
 Spaced repetition: suggesting when to review topics the student got wrong.
 An exam plan that combines all lectures in a course.
 Flashcards generated from key terms.
 
-Privacy and data
+## Privacy and data
 
 Lecture material and the student's answers are sent to an external AI service to be processed. This will be stated clearly in the app. Passwords will be handled with an established, well-documented authentication approach, never stored in plain text. API keys are kept out of Git (using a .env file, with a .env.example in the repository), and copyrighted course material is never added to the repository; test data uses our own or freely licensed slides.
 
