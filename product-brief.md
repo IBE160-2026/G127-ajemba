@@ -1,4 +1,4 @@
-# Product Brief: StudyLens
+# Product Brief: Recall
 
 ## Executive Summary
 
