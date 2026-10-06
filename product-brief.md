@@ -25,14 +25,14 @@ The cost of the status quo is wasted study hours, exam stress, and lower grades.
 
 Recall gives students a simple loop after every lecture: upload, understand, test.
 
-1. **Upload.** The student uploads a lecture PDF.
-2. **Understand.** The app produces a summary of the main highlights: the key concepts, definitions, and how they connect, in plain language and at a length that can be read in a few minutes.
-3. **Test.** The student chooses how to be tested:
-   - **Multiple choice** for quick checks of facts and concepts.
-   - **Fill-in-the-gaps** for key terms and definitions, which requires recall rather than recognition.
-   - **Essay questions** for deeper understanding. The student writes a short answer and receives feedback on what they got right, what is missing, and which part of the lecture to revisit.
+1. Upload. The student logs in and uploads a lecture PDF.
+2. Understand. The app produces a summary of the main highlights in plain language: the key concepts, definitions, and how they connect. Each part of the summary shows which slides it is based on, and key terms are listed with a short, simple explanation.
+3. Test. The student chooses how to be tested:
+- Multiple choice for quick checks of facts and concepts (recognition).
+- Fill-in-the-gaps for key terms and definitions (recall).
+- Essay questions for deeper understanding (explanation). The student writes a short answer and receives feedback on what they got right, what is missing, and which   part of the lecture to revisit.
 
-After each quiz, the student sees a score and a short list of topics to review, each linked back to the relevant part of the summary. The outcome is that the student knows, in about fifteen minutes, what they understood from a lecture and where to spend their study time.
+After each quiz, the student sees a score and a short list of topics to review, each linked back to the relevant part of the summary. The student's lectures and results are saved to their account, so they can come back to them later. The outcome is that the student knows, in about fifteen minutes, what they understood from a lecture and where to spend their study time.
 
 ## What Makes This Different
 
@@ -75,24 +75,37 @@ User reporting. A "report this question" button lets users flag wrong or unclear
 
 ## Scope
 
-**In the first version**
+In the first version
 
-- Uploading a single text-based PDF (for example lecture slides exported from PowerPoint).
-- An AI-generated summary of the main highlights.
-- Quizzes in three formats: multiple choice, fill-in-the-gaps, and essay questions with written feedback.
-- A score and a list of topics to review after each quiz.
-- A simple way to report a wrong or unclear question.
-- A basic list of the student's uploaded lectures so they can return to them.
+User registration and login. Each user's lectures and results are private to their account.
+Uploading a single text-based PDF, with a size limit (for example 50 pages or 10 MB).
+An AI-generated plain-language summary with source references and explained key terms.
+Quizzes in three formats: multiple choice, fill-in-the-gaps, and essay questions with written feedback.
+A score and a list of topics to review after each quiz.
+A simple way to report a wrong or unclear question.
+A list of the user's saved lectures and quiz results.
+A demo mode with a pre-processed example lecture, so the app can be tried without an API key.
 
-**Explicitly out of the first version**
+Build order: summary, then multiple choice, then fill-in-the-gaps, then essay feedback. This gives a working app early and leaves the most time for the hardest part.
 
-- Scanned or handwritten PDFs (these need text recognition and are less reliable).
-- Audio or video lecture recordings.
-- Flashcards and spaced-repetition scheduling.
-- Sharing quizzes with classmates or study groups.
-- Integration with learning platforms such as Canvas.
-- Mobile apps (the first version is a responsive web app).
-- Payments and subscriptions.
+Explicitly out of the first version
+
+Scanned or handwritten PDFs (these need text recognition and are less reliable).
+Audio or video lecture recordings.
+Sharing quizzes with classmates or study groups.
+Integration with learning platforms such as Canvas.
+Mobile apps (the first version is a responsive web app).
+Payments and subscriptions.
+
+If time (in priority order)
+
+Spaced repetition: suggesting when to review topics the student got wrong.
+An exam plan that combines all lectures in a course.
+Flashcards generated from key terms.
+
+Privacy and data
+
+Lecture material and the student's answers are sent to an external AI service to be processed. This will be stated clearly in the app. Passwords will be handled with an established, well-documented authentication approach, never stored in plain text. API keys are kept out of Git (using a .env file, with a .env.example in the repository), and copyrighted course material is never added to the repository; test data uses our own or freely licensed slides.
 
 ## Vision
 
