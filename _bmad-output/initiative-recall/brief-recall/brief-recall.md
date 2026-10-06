@@ -1,3 +1,10 @@
+---
+title: "Product Brief: Recall"
+status: draft
+created: 2026-10-06
+updated: 2026-10-06
+---
+
 # Product Brief: Recall
 
 ## Executive Summary
@@ -41,31 +48,31 @@ After each quiz, the student sees a score and a short list of topics to review, 
 Honestly, summarising and quiz tools already exist (for example Quizlet, NotebookLM, and various "chat with your PDF" apps), and there is no technical moat here. The same AI models are available to everyone. The difference lies in focus and design:
 
 - **Built around the lecture, not the textbook or chat.** The product is designed for one specific job: "I just had a lecture, help me learn it." No prompting skills needed, no blank chat window.
-- **Written for second-language students. Plain-language summaries and explained key terms lower the language barrier, and essay questions let the student practise explaining concepts in the course language.
+- **Written for second-language students.** Plain-language summaries and explained key terms lower the language barrier, and essay questions let the student practise explaining concepts in the course language.
 - **Three levels of testing in one flow.** Many tools stop at flashcards or multiple choice. Including fill-in-the-gaps and essay questions with feedback moves the student from recognition to recall to explanation, which is how real understanding is built and how university exams actually test.
 - **Feedback that points back to the source.** Every piece of feedback links to the part of the lecture it comes from, so the student can check the material rather than simply trusting the AI.
 - **Designed by someone in the target group.** The builder studies in a second language at a Norwegian university and understands the day-to-day reality of these users. The realistic advantage is closeness to users and speed of iteration, not proprietary technology.
 
 ## Who This Serves
 
-**Primary user: the university student studying in a second language. For example, an international student taking courses taught in Norwegian or English, neither of which is their first language. They follow the lectures but spend a long time decoding dense slides afterwards, and they are unsure whether they can explain the concepts in their own words. They need plain-language summaries, clear explanations of key terms, and a safe way to practise explaining what they have learned. Success for them means spending less time decoding and walking into an exam knowing which topics they can explain.
+**Primary user: the university student studying in a second language.** For example, an international student taking courses taught in Norwegian or English, neither of which is their first language. They follow the lectures but spend a long time decoding dense slides afterwards, and they are unsure whether they can explain the concepts in their own words. They need plain-language summaries, clear explanations of key terms, and a safe way to practise explaining what they have learned. Success for them means spending less time decoding and walking into an exam knowing which topics they can explain.
 
 What this means for the design: plain language in summaries and feedback, key terms explained, short sentences, a clean and readable layout, and feedback on essay answers that focuses on content and understanding rather than penalising language mistakes.
 
-**Secondary user: the busy university student. A student combining studies with work or family who needs a fast way to find out what they understood from a lecture. The same flow serves them well, since it is short and focused.
+**Secondary user: the busy university student.** A student combining studies with work or family who needs a fast way to find out what they understood from a lecture. The same flow serves them well, since it is short and focused.
 
 ## Success Criteria
 
 These criteria describe what the first version must do and can be checked with test cases during the course.
 
-**Summary speed. A text-based PDF of up to 30 pages produces a summary in under 60 seconds.
-**Source references. Every part of the summary shows which slide or page numbers it is based on, and every question links to the part of the summary it comes from.
-**Multiple choice. Each multiple choice question has four options with exactly one correct answer, and the score after a quiz is calculated correctly.
-**Fill-in-the-gaps. Answers that differ only in upper and lower case, extra spaces, or a single-letter typo are accepted as correct. Wrong words are marked as wrong.
-**Essay feedback. For a fixed set of test answers, known good answers always receive a better assessment than known weak answers, and the feedback names at least one missing key point for every weak answer.
-**Review list. After a quiz, every question answered wrongly leads to a topic in the review list, linked to the right part of the summary.
-**Accounts and access. A user can register and log in, and only sees their own lectures and results. A logged-out user cannot access any saved lectures.
-**Input limits and demo mode. PDFs over the size limit, or scanned PDFs without readable text, are rejected with a clear message. The app can be run in demo mode with a pre-processed example lecture, without an API key.
+- **Summary speed.** A text-based PDF of up to 30 pages produces a summary in under 60 seconds.
+- **Source references.** Every part of the summary shows which slide or page numbers it is based on, and every question links to the part of the summary it comes from.
+- **Multiple choice.** Each multiple choice question has four options with exactly one correct answer, and the score after a quiz is calculated correctly.
+- **Fill-in-the-gaps.** Case and extra spaces are always ignored. One wrong letter is accepted only for words of 5 letters or more; shorter words must match exactly. Other wrong words are marked as wrong.
+- **Essay feedback.** With a fixed set of prepared test answers, in every test lecture every known good answer is rated above every known weak answer, and the feedback names at least one missing key point for every weak answer.
+- **Review list.** After a quiz, every question answered wrongly leads to a topic in the review list, linked to the right part of the summary.
+- **Accounts and access.** A user can register and log in, and only sees their own lectures and results. A logged-out user cannot access any saved lectures.
+- **Input limits and demo mode.** PDFs over 50 pages or 10 MB, or scanned PDFs without readable text, are rejected with a clear message. The app can be run in demo mode with a pre-processed example lecture, without an API key.
 
 ## How we check the quality of the AI's output
 
@@ -81,7 +88,7 @@ The AI produces the summaries, questions, and essay feedback, so its output must
 In the first version
 
 - User registration and login. Each user's lectures and results are private to their account.
-- Uploading a single text-based PDF, with a size limit (for example 50 pages or 10 MB).
+- Uploading a single text-based PDF, with a size limit of 50 pages and 10 MB.
 - An AI-generated plain-language summary with source references and explained key terms.
 - Quizzes in three formats: multiple choice, fill-in-the-gaps, and essay questions with written feedback.
 - A score and a list of topics to review after each quiz.
