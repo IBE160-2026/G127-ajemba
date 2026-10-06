@@ -53,19 +53,16 @@ Honestly, summarising and quiz tools already exist (for example Quizlet, Noteboo
 
 ## Success Criteria
 
-**User success signals**
+These criteria describe what the first version must do and can be checked with test cases during the course.
 
-- At least 60% of users who upload a PDF complete at least one quiz.
-- At least 40% of users return and upload a second lecture within two weeks.
-- In a short in-app survey, at least 70% of users rate the summaries as accurate and useful (4 or 5 out of 5).
-- Users report fewer than 1 in 20 questions as wrong or confusing, using a "report this question" button.
-- Average time from upload to finished summary is under 60 seconds.
-
-**Business and project objectives**
-
-- 50 active student users during a first test period of one semester.
-- Qualitative feedback from at least 10 students through short interviews, used to decide what to build next.
-- Cost of AI usage per user per month stays low enough that a small student subscription (or free tier with limits) would be sustainable.
+Summary speed. A text-based PDF of up to 30 pages produces a summary in under 60 seconds.
+Source references. Every part of the summary shows which slide or page numbers it is based on, and every question links to the part of the summary it comes from.
+Multiple choice. Each multiple choice question has four options with exactly one correct answer, and the score after a quiz is calculated correctly.
+Fill-in-the-gaps. Answers that differ only in upper and lower case, extra spaces, or a single-letter typo are accepted as correct. Wrong words are marked as wrong.
+Essay feedback. For a fixed set of test answers, known good answers always receive a better assessment than known weak answers, and the feedback names at least one missing key point for every weak answer.
+Review list. After a quiz, every question answered wrongly leads to a topic in the review list, linked to the right part of the summary.
+Accounts and access. A user can register and log in, and only sees their own lectures and results. A logged-out user cannot access any saved lectures.
+Input limits and demo mode. PDFs over the size limit, or scanned PDFs without readable text, are rejected with a clear message. The app can be run in demo mode with a pre-processed example lecture, without an API key.
 
 ## Scope
 
@@ -91,5 +88,7 @@ Honestly, summarising and quiz tools already exist (for example Quizlet, Noteboo
 ## Vision
 
 If Recall works, it becomes the place a student goes after every lecture, a personal study companion that knows everything they have covered in a course and what they still struggle with. In two to three years it could combine all the lectures in a course into an exam preparation plan, schedule reviews of weak topics at the right time, support audio and video recordings, and let study groups share and challenge each other with questions.
+
+Signs of success after a real launch would include: a large share of users completing at least one quiz after uploading a lecture, users returning with new lectures over the semester, high ratings for summary accuracy, few reported question errors, and AI costs per user low enough for a sustainable student subscription.
 
 Longer term, the same approach could serve professional learning, for example health workers or engineers who must keep up with new guidelines and prove they understand them. The core idea stays the same: turn learning material into understanding, and make it easy for people to find out what they actually know.
