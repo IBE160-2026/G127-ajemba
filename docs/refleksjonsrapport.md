@@ -40,6 +40,7 @@ Recall er for studenter som studerer på et annet språk enn morsmålet sitt. Ap
 **Fase 2: Utvikling**
 - [Hva gjorde dere i denne fasen?]
 - [Hvordan brukte dere KI her? Husk å lagre promptene deres! Inkluder ALLE stegene dere gjorde.]
+Added a demo button on the login page so the examiner can test the app, and required 3 key points per essay question, which would make the essay test sharper.
 
 ---
 
