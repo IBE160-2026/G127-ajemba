@@ -48,7 +48,7 @@ Reached from: Processing, My lectures, any source chip, review list. Leads to: q
 | Recall  [☰ Menu]  [A][A+][A++] |
 +--------------------------------+
 | Databases: Normalisation       |
-| Summary│Choice│Gaps│Essay│Res…► |  <- scrolls sideways, edge fade
+| Summary│Multiple choice│Fill i…► |  <- scrolls sideways, full labels
 | ═══════                        |
 | (i) Made by AI. Can contain    |
 |     mistakes. Check it against |
@@ -75,3 +75,5 @@ Reached from: Processing, My lectures, any source chip, review list. Leads to: q
 - The key terms panel is always open. Panel only lists terms from its own part.
 - In Demo Mode a banner sits above the tabs.
 - Inline tap-or-hover explanations of terms are on the "if time" list.
+- Source chips are links with a minimum height of 44px. Their accessible name includes the target: "Slides 12 to 15, Why we normalise".
+- Each tab has its own page address and page title.

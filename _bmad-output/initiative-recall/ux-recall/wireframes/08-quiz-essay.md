@@ -40,7 +40,7 @@ Reached from: the "Essay" tab. Leads to: next essay question, then Results.
 |  |  [ Get feedback again ]        Attempt 2 of 3                      |  |
 |  +--------------------------------------------------------------------+  |
 |                                                                          |
-|  Feedback on attempt 1: 1 of 2 key points                                |
+|  Feedback on attempt 1: 1 of 3 key points                                |
 |  +--------------------------------------------------------------------+  |
 |  |  ✓ What you explained well                                         |  |
 |  |    You explained that repeated data is a problem.                  |  |
@@ -50,7 +50,7 @@ Reached from: the "Essay" tab. Leads to: next essay question, then Results.
 |  |    Update anomalies: a fact is changed in one place only.          |  |
 |  +--------------------------------------------------------------------+  |
 |  +--------------------------------------------------------------------+  |
-|  |  📖 Read this part again                                           |  |
+|  |  📖 Read this part again                                            |  |
 |  |    <Slides 12 to 15>  →  2. Why we normalise                       |  |
 |  +--------------------------------------------------------------------+  |
 |                                                                          |
@@ -61,10 +61,10 @@ Reached from: the "Essay" tab. Leads to: next essay question, then Results.
 ## Earlier attempts (after attempt 2)
 
 ```
-|  ▾ Attempt 1 — 1 of 2 key points            [Hide]                       |
+|  ▾ Attempt 1 — 1 of 3 key points            [Hide]                       |
 |     Answer: "We normalise so data is not repeated."                      |
 |     Feedback: well explained … / missing … / read again …                |
-|  ▸ Attempt 2 — 2 of 2 key points            [Show]  <- newest first,     |
+|  ▸ Attempt 2 — 3 of 3 key points            [Show]  <- newest first,     |
 |                                                         shown above      |
 ```
 
@@ -94,3 +94,6 @@ One column. Text box and buttons are full width. Feedback blocks stack.
 - Maximum 3 attempts per question. The last attempt counts for the score and review list.
 - Feedback never comments on spelling or grammar (FR-17).
 - Every attempt and its feedback stay visible.
+- The draft is saved while the student types, so a lost connection or an ended login session does not lose the answer.
+- The hint is linked to the box (`aria-describedby`). The button name includes the count: "Get feedback again, attempt 2 of 3".
+- Each earlier attempt is a button with `aria-expanded` ("Show" / "Hide").

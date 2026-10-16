@@ -1,7 +1,7 @@
 ---
 name: Recall
 description: Calm, high-contrast, readable study app for students who study in a second language. Light mode only in v1.
-status: draft
+status: final
 created: 2026-10-16
 updated: 2026-10-16
 colors:
@@ -13,6 +13,7 @@ colors:
   on-primary: '#FFFFFF'
   primary-soft: '#E2E6F7'
   border: '#A9B0D6'
+  border-control: '#6B739E'
   success: '#1B6B3A'
   attention: '#A32D2D'
   focus: '#B36B00'
@@ -44,7 +45,7 @@ typography:
     lineHeight: 1.4
   meta:
     fontFamily: "Verdana, 'Segoe UI', system-ui, sans-serif"
-    fontSize: 15px
+    fontSize: 16px
     fontWeight: 400
     lineHeight: 1.5
 rounded:
@@ -67,12 +68,13 @@ components:
     textColor: '{colors.on-primary}'
     typography: '{typography.body}'
     rounded: '{rounded.sm}'
-    height: 48px
+    minHeight: 48px
   button-secondary:
     backgroundColor: '{colors.surface-raised}'
     textColor: '{colors.primary}'
+    borderColor: '{colors.primary}'
     rounded: '{rounded.sm}'
-    height: 48px
+    minHeight: 48px
   card:
     backgroundColor: '{colors.surface-raised}'
     rounded: '{rounded.md}'
@@ -82,15 +84,18 @@ components:
     textColor: '{colors.ink-primary}'
     typography: '{typography.meta}'
     rounded: '{rounded.full}'
+    minHeight: 44px
   answer-option:
     backgroundColor: '{colors.surface-raised}'
+    borderColor: '{colors.border-control}'
     rounded: '{rounded.sm}'
     minHeight: 48px
   text-input:
     backgroundColor: '{colors.surface-raised}'
     textColor: '{colors.ink-primary}'
+    borderColor: '{colors.border-control}'
     rounded: '{rounded.sm}'
-    height: 48px
+    minHeight: 48px
 ---
 
 ## Brand & Style
@@ -107,7 +112,8 @@ Readability comes before style. Every visual decision is checked against one que
 - **Ink secondary (`{colors.ink-secondary}`)** is for labels and small notes. Contrast on both surfaces is above 7:1. Never lighter.
 - **Primary (`{colors.primary}`)** is the only brand colour: main buttons, links, selected tabs, selected answer. White text on it is above 7:1.
 - **Primary soft (`{colors.primary-soft}`)** is for selected backgrounds, source chips and the key terms panel.
-- **Border (`{colors.border}`)** outlines cards and inputs. Input borders use 2px so they meet the 3:1 non-text contrast rule.
+- **Border (`{colors.border}`)** is a light outline for cards and dividers only. It is decorative and is never the only edge of a control (its contrast is about 2:1).
+- **Border control (`{colors.border-control}`)** is the outline of every control: text inputs, the essay box, answer options and radio buttons. It has at least 3:1 contrast on all surfaces (4.6:1 on white, 4.3:1 on the page background, 3.7:1 on soft indigo), which meets the WCAG non-text contrast rule. Use 2px.
 - **Success (`{colors.success}`)** and **Attention (`{colors.attention}`)** mark answer results. Both always come with an icon and a word. Attention is a deep red-brown used for "Not quite yet", never as a fill behind large areas, and never for the student's score.
 - **Focus (`{colors.focus}`)** is a warm amber ring, 3px with a 2px offset, on every interactive element. It stands out from indigo.
 
@@ -117,8 +123,9 @@ Colour is never the only carrier of meaning. Dark mode is not in v1 (on the "if 
 
 One family: Verdana, then Segoe UI, then the system sans. Verdana is wide, with open letter shapes and clear differences between similar characters (I, l, 1), which helps readers who are decoding a second language. No web fonts are loaded, so there is no flash and no network cost.
 
-- Body is 18px with line height 1.6. This is the minimum anywhere that carries content.
-- The student can switch to large (22px) or extra large (26px). All sizes scale together; headings scale with body.
+- Body is 18px with line height 1.6. All reading text (summary, questions, answers, feedback, interface messages) uses body or larger.
+- `meta` is 16px and is the smallest size allowed. It is used only for short supporting text: "Question 3 of 10", dates, status labels and source chips. Nothing smaller is used anywhere.
+- The student can switch to large (22px) or extra large (26px). Every type token scales together, including `meta` and headings, keeping the same proportions.
 - Lines are limited to about 70 characters (`{spacing.content-max}`).
 - Left-aligned only. No justified text, no italics for content, no all-caps, no light weights.
 - Bold is used for headings and key terms. Underline is used only for links.
@@ -129,7 +136,9 @@ Single column, centred, maximum width `{spacing.content-max}`. The Summary scree
 
 Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48. Space between cards and sections is `{spacing.6}` or more. Inside cards the padding is `{spacing.5}`. On a phone the page margin is `{spacing.margin-mobile}`, the layout is one column, and nothing scrolls sideways except the tab row.
 
-Touch and click targets are at least 48 by 48px with 8px between them.
+Touch and click targets are at least 48 by 48px with 8px between them. Source chips are links and are at least 44px tall.
+
+The top bar wraps to a second row instead of overflowing, so nothing is cut off at 320px width or at the largest text size. Buttons and inputs grow in height when their label wraps; no control has a fixed height.
 
 ## Elevation & Depth
 
@@ -143,23 +152,25 @@ Flat. Cards are separated by a 1px `{colors.border}` outline and tone, not by sh
 
 - **Button primary:** `{colors.primary}` fill, white text, label in `{typography.body}` bold, min height 48px. Always has a text label; an icon may sit before it. Disabled state uses `{colors.border}` outline and `{colors.ink-secondary}` text (not a faded fill) and explains why in a note.
 - **Button secondary:** white fill, 2px `{colors.primary}` border, primary text.
-- **Icon:** simple outline icon, 24px, always placed next to a visible text label. Never used alone. Icons carry no meaning that the label does not also carry.
+- **Icon:** simple outline icon drawn as SVG (never emoji), 24px, always placed next to a visible text label. Never used alone. Icons carry no meaning that the label does not also carry.
 - **Card:** white, 1px border, `{rounded.md}`, padding `{spacing.5}`. One idea per card.
-- **Source chip:** pill with `{colors.primary-soft}` fill, 1px border, text such as "Slides 12 to 15". It is a link to the summary part and looks like one (underlined text, arrow icon).
+- **Source chip:** pill with `{colors.primary-soft}` fill, 1px `{colors.border-control}` border, `{typography.meta}` text such as "Slides 12 to 15", minimum height 44px. It is a link to the summary part and looks like one (underlined text, arrow icon).
 - **Key terms panel:** `{colors.primary-soft}` background card. Each term is bold, followed by one plain sentence.
-- **Answer option (multiple choice):** full-width, min 48px tall, radio control plus text. Selected: 2px `{colors.primary}` border and `{colors.primary-soft}` fill. After checking, the chosen and the correct options get a label ("Your answer", "Correct answer") and an icon.
-- **Text input:** 48px tall, 2px border, label always visible above it (never placeholder-only). Error text sits under the field with an icon and starts with what to do.
+- **Answer option (multiple choice):** full-width, min 48px tall, 2px `{colors.border-control}` border, radio control plus text. Selected: 2px `{colors.primary}` border, `{colors.primary-soft}` fill and a filled radio dot. After checking, the chosen and the correct options get a label ("Your answer", "Correct answer") and an icon.
+- **Text input:** at least 48px tall, 2px `{colors.border-control}` border, label always visible above it (never placeholder-only). Error text sits under the field with an icon and starts with what to do.
 - **Essay box:** multi-line input, at least 8 lines tall, same border and label rules.
 - **Feedback block:** card with a heading and an icon (for example check mark for "What you explained well", dash for "What is missing", book for "Read this part again").
-- **Tabs:** underlined text tabs on wide screens. On a phone they become a horizontally scrollable row with short labels. The selected tab has a 3px `{colors.primary}` underline and bold text. An edge fade shows that the row scrolls.
+- **Tabs:** underlined text tabs on wide screens. On a phone they become a horizontally scrollable row with the same full labels (no short labels). The selected tab has a 3px `{colors.primary}` underline and bold text. An edge fade shows that the row scrolls.
 - **Step list (processing):** vertical list of three steps; done = check icon, current = spinner-free "In progress" label, waiting = empty circle.
-- **Notice banner:** `{colors.primary-soft}` fill, 2px border, icon plus text. Used for the AI notice and the demo banner. Not dismissible for the demo banner.
-- **Text size control:** three buttons labelled "A", "A+" and "A++" with the visible words "Text size", shown in the top bar.
+- **Notice banner:** `{colors.primary-soft}` fill, 2px `{colors.border-control}` border, icon plus text. Used for the AI notice and the demo banner. The demo banner is one short sentence plus a link, and is not dismissible.
+- **Text size control:** three buttons labelled "A", "A+" and "A++" with the visible words "Text size" and the current level in text, shown in the top bar (or in the first row of the wrapped bar on a phone).
 
 ## Do's and Don'ts
 
 **Do**
-- Keep body text at 18px or larger, with line height 1.6.
+- Keep reading text at 18px or larger and supporting text at 16px or larger, with line height 1.6.
+- Use `{colors.border-control}` for the edge of every control.
+- Let controls grow in height; use minimum heights, never fixed heights.
 - Use icon plus word, every time.
 - Keep at least `{spacing.6}` between sections.
 - Show a clear focus ring on everything that can be activated.
@@ -172,4 +183,6 @@ Flat. Cards are separated by a 1px `{colors.border}` outline and tone, not by sh
 - Don't use progress bars that imply a percentage the app does not know.
 - Don't use timers, countdowns, streaks or badges.
 - Don't use placeholder text as a label.
+- Don't use emoji as icons.
+- Don't use `{colors.border}` as the only edge of a control.
 - Don't use all-caps, italics, justified text or text on images.

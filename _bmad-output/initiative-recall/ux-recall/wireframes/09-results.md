@@ -16,16 +16,15 @@ Reached from: end of a quiz, or the "Results" tab. Leads to: Summary parts (revi
 |  +--------------------------------------------------------------------+  |
 |  |  Multiple choice        7 of 10 correct          [ Start again ]   |  |
 |  |  Fill in the gaps       6 of 8 correct           [ Start again ]   |  |
-|  |  Essay                  2 of 2 key points                          |  |
-|  |     Question 1: Attempt 1: 1 of 2 points, Attempt 2: 2 of 2 points |  |
-|  |     Question 2: Attempt 1: 1 of 2 points                           |  |
-|  |     (The last attempt counts.)                                     |  |
+|  |  Essay                  Key points covered                         |  |
+|  |     Question 1: Attempt 1: 1 of 3 points, Attempt 2: 3 of 3 points |  |
+|  |     Question 2: Attempt 1: 2 of 3 points                           |  |
 |  +--------------------------------------------------------------------+  |
 |                                                                          |
 |  Review list: read these parts again                                     |
 |  +--------------------------------------------------------------------+  |
 |  |  1. Update anomalies                                               |  |
-|  |     You missed this in: multiple choice, essay question 2          |  |
+|  |     You missed this in: multiple choice (skipped), essay question 2          |  |
 |  |     <Slides 12 to 15>   [ Read this part → ]                       |  |
 |  +--------------------------------------------------------------------+  |
 |  |  2. Third normal form                                              |  |
@@ -62,3 +61,5 @@ Cards stack in one column. "Start again" and "Read this part" are full width. Pa
 - "Read this part" opens the Summary tab at that part and moves focus to its heading.
 - The last essay attempt counts; all attempts are listed.
 - Demo Mode: the banner shows at the top; results work the same.
+- Skipped questions appear in the review list in the same way as wrong answers.
+- Buttons have unique names: "Start multiple choice again", "Start fill in the gaps again", "Read this part again: Update anomalies".

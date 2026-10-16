@@ -1,6 +1,6 @@
 # 06 Quiz: multiple choice
 
-Reached from: the "Multiple choice" tab. Leads to: next question, then Results.
+Reached from: the "Multiple choice" tab. Phone: the tab row scrolls with the full labels. Leads to: next question, then Results.
 
 ## Before checking
 
@@ -42,14 +42,14 @@ Reached from: the "Multiple choice" tab. Leads to: next question, then Results.
 |  |  ( ) C. A key is missing from a table                              |  |
 |  |  ( ) D. A table has no name                                        |  |
 |  |                                                                    |  |
-|  |  (i) Not quite yet. The correct answer is B.                       |  |
+|  |  (i) Not correct yet. The correct answer is B.                     |  |
 |  |      Read why: <Slides 12 to 15>                                   |  |
 |  |                                                                    |  |
 |  |  [ Next question → ]                                               |  |
 |  +--------------------------------------------------------------------+  |
 ```
 
-When correct: "✓ Correct. Well done." with the same layout and the source chip.
+When correct: "✓ Correct." with the same layout and the source chip.
 
 ## Last question
 
@@ -65,3 +65,5 @@ Same card, options full width, buttons full width and stacked. Tab row scrolls s
 - Result is shown with icon and words, not colour alone. No red fill.
 - A "Back" link shows earlier questions read-only.
 - Progress is saved when the student changes tab or leaves.
+- "Skip question" counts as not answered, adds the question to the review list, and moves to the next question.
+- Focus moves to the result line after "Check answer". The options are in a `fieldset` with the question as `legend`.

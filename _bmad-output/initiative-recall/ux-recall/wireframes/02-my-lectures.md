@@ -53,3 +53,7 @@ Focus starts on "Keep lecture".
 ## Phone
 
 Top bar: `Recall   [ ☰ Menu ]   Text size [A] [A+] [A++]`. Cards are full width. Buttons stack, full width.
+
+## Notes
+- Buttons have unique accessible names that start with the visible text: "Open Databases: Normalisation", "Delete Databases: Normalisation", "Try again, Systems: Requirements".
+- The status text ("Processing…", "Ready", "Failed") changes in place and is announced politely.

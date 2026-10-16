@@ -12,7 +12,7 @@ Reached from: top bar, My lectures. Leads to: Processing (04).
 |                                                                          |
 |  +--------------------------------------------------------------------+  |
 |  | (i) Recall sends your slides and your essay answers to an AI       |  |
-|  |     service. Do not upload files you are not allowed to share.     |  |
+|  |     service. Only upload files you are allowed to share.           |  |
 |  |     [ ] I understand                                               |  |
 |  +--------------------------------------------------------------------+  |
 |                                                                          |

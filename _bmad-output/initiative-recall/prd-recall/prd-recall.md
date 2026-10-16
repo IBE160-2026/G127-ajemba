@@ -2,7 +2,7 @@
 title: Recall
 status: final
 created: 2026-10-06
-updated: 2026-10-06
+updated: 2026-10-16
 ---
 
 # PRD: Recall
@@ -65,8 +65,10 @@ Features that are not part of this journey (reporting a question, deleting a lec
 - **Fill-in-the-Gaps** — A **Question** with a sentence missing a **Key Term** the student types.
 - **Essay** — A **Question** the student answers in free text and receives **Essay Feedback** for. It has **Reference Key Points**.
 - **Essay Feedback** — The written assessment of an **Essay** answer: what is correct, which key points are missing, and which **Summary Part** to revisit, plus an **Essay Rating**.
-- **Essay Rating** — The number of the **Essay**'s **Reference Key Points** that the answer covers. A higher number means a better answer, which makes "good rated above weak" directly checkable.
+- **Essay Rating** — The number of the **Essay**'s **Reference Key Points** that the answer covers (at least three per **Essay**, so ratings run from 0 to at least 3). A higher number means a better answer, which makes "good rated above weak" directly checkable. For an **Attempt**, the **Essay Rating** of the last **Essay Submission** counts.
 - **Attempt** — One run through a **Quiz** for a **Lecture**, with the student's answers, score and **Review List**.
+- **Essay Submission** — One written answer to one **Essay**, sent for **Essay Feedback**. A student can make up to 3 **Essay Submissions** per **Essay** within one **Attempt**; the last one counts. The interface calls them "attempts" for the student ("Attempt 2 of 3"); this PRD uses "Essay Submission" so it is not confused with a quiz **Attempt**.
+- **Example Lecture** — The pre-processed **Lecture** used in **Demo Mode**. It is public and read-only, and belongs to no **User**.
 - **Review List** — The topics the student should revisit after an **Attempt**, each linked to a **Summary Part**.
 - **Demo Mode** — A run mode with no API key that serves a pre-processed example **Lecture**, with the limits stated in FR-23.
 - **Test Set** — The fixed test **Lectures**, their **Reference Key Points**, their frozen **Essay** questions and the prepared essay answers (§5).
@@ -90,11 +92,12 @@ A visitor can register with an email address and password, log in, and log out.
 
 #### FR-2: Lectures are private
 
-A User can only see and open their own Lectures and Attempts.
+A User can only see and open their own Lectures and Attempts. The one exception is the Example Lecture of Demo Mode (FR-23), which is public and read-only.
 
 **Consequences (testable):**
-- A logged-out request for any Lecture, Summary or Attempt is redirected to login and returns no lecture data.
+- A logged-out request for any Lecture, Summary or Attempt is redirected to login and returns no lecture data. The Example Lecture is the only exception.
 - A logged-in User requesting another User's Lecture or Attempt by ID receives a not-found or forbidden response and no data.
+- Anyone, logged in or not, can open the Example Lecture. Attempts made on it are not saved to any account (the student's progress is kept only in that browser session).
 
 ### 4.2 Upload and Validation
 
@@ -121,10 +124,12 @@ The app rejects a PDF whose extracted text is too small to be a text-based lectu
 
 #### FR-5: Processing status and failure
 
-While a Lecture is processed, the User sees that work is in progress. If processing fails, the User sees a clear message and can retry. No partial or half-finished Summary is ever shown.
+While a Lecture is processed, the User sees that work is in progress. If processing fails, the User sees a clear message and can retry. No partial or half-finished Summary is ever shown. Processing continues if the User leaves the page, and the Lecture shows "Processing…" in the list of saved Lectures until it is ready.
 
 **Consequences (testable):**
 - When the AI service is unreachable or returns unusable output after the retries in FR-27, the User sees an error message and a retry button, not an empty or partial Summary.
+- A User who closes the page during processing finds the Lecture in the list with the status "Processing…", and later "Ready" or "Failed". Processing is not tied to the open page.
+- While processing, the page shows real steps (for example "Reading your PDF", "Finding the key points", "Writing the summary"), not a made-up percentage, and no timer.
 
 **Out of Scope:** Uploading several PDFs at once; merging lectures.
 
@@ -202,7 +207,7 @@ The app calculates the score of a Multiple Choice Attempt.
 
 **Consequences (testable):**
 - For a known set of answers, the displayed score equals the number of correct answers (for example 7 of 10).
-- A question left unanswered counts as wrong.
+- A question left unanswered counts as wrong. The student can skip a question with a "Skip question" button; a skipped question counts as not answered and leads to a Review List entry (FR-19).
 
 ### 4.5 Fill-in-the-Gaps
 
@@ -226,6 +231,7 @@ The app checks a typed answer against the expected answer by fixed, deterministi
 - For an expected answer of 5 letters or more, an answer with one wrong letter is accepted. "One wrong letter" means an edit distance of one: one letter replaced, added or removed.
 - For an expected answer shorter than 5 letters, only an exact match (after the rules above) is accepted.
 - Any other answer is marked wrong.
+- The student can skip a question with a "Skip question" button. A skipped question counts as not answered (wrong in the score) and leads to a Review List entry (FR-19).
 - Example tests: "Normalisation" expected, "normalisaton" accepted; "key" expected, "kay" rejected; "third normal form" expected, " Third  Normal Form " accepted.
 
 ### 4.6 Essay Questions with Feedback
@@ -237,7 +243,7 @@ The app checks a typed answer against the expected answer by fixed, deterministi
 The app generates Essay questions from the Lecture, each with Reference Key Points and a link to a Summary Part.
 
 **Consequences (testable):**
-- Each Essay question has at least two Reference Key Points, each with a Source Reference.
+- Each Essay question has at least three Reference Key Points, each with a Source Reference.
 - Each Essay question links to a Summary Part.
 - Essay questions are generated in under 60 seconds.
 
@@ -250,6 +256,9 @@ The app assesses a written answer and returns Essay Feedback and an Essay Rating
 - Language errors (spelling, grammar) do not lower the Essay Rating and are not criticised in the feedback.
 - For the prepared answers of the Test Set, the acceptance rules in FR-29 hold.
 - An empty or one-word answer receives the lowest rating and feedback listing all key points as missing, and the User sees this feedback rather than an error page.
+- The student can edit the answer and ask for feedback again, up to 3 Essay Submissions per Essay question in one Attempt. A 4th is not possible, and the interface says that all 3 have been used.
+- All Essay Submissions of an Essay, with their feedback, stay visible to the student. The last Essay Submission counts for the Essay Rating shown in the results (FR-18) and for the Review List (FR-19).
+- The Essay Feedback request is made once per Essay Submission (up to 3 AI calls per Essay question), which is counted in the cost estimate (§6.2).
 
 ### 4.7 Results and Review List
 
@@ -260,7 +269,7 @@ The app assesses a written answer and returns Essay Feedback and an Essay Rating
 After an Attempt, the app shows the score, and for each question whether it was correct and the correct answer (for Essay, the Essay Feedback).
 
 **Consequences (testable):**
-- The score shown equals the number of correct answers (Multiple Choice, Fill-in-the-Gaps). For Essay, the Essay Rating is shown as key points covered out of key points expected.
+- The score shown equals the number of correct answers (Multiple Choice, Fill-in-the-Gaps). For Essay, the Essay Rating of the last Essay Submission is shown as key points covered out of key points expected, and the rating of every earlier Essay Submission is listed too (for example "Attempt 1: 1 of 3 points, Attempt 2: 3 of 3 points").
 
 #### FR-19: Review List
 
@@ -268,7 +277,8 @@ After an Attempt, the app shows a Review List of topics to revisit.
 
 **Consequences (testable):**
 - Every Multiple Choice or Fill-in-the-Gaps question answered wrongly leads to a Review List entry for the Summary Part it comes from. Several wrong answers on the same Summary Part give one entry.
-- Every Essay answer with at least one missing Reference Key Point leads to an entry for its Summary Part.
+- Every Multiple Choice or Fill-in-the-Gaps question that was skipped leads to an entry in the same way as a wrong answer.
+- Every Essay whose last Essay Submission has at least one missing Reference Key Point leads to an entry for its Summary Part. Earlier Essay Submissions do not count.
 - Each entry links to its Summary Part and shows its Source Reference.
 - An Attempt with no wrong answers shows a message instead of an empty list.
 
@@ -311,10 +321,11 @@ A User can report any Question with a short reason.
 
 #### FR-23: Demo Mode
 
-When no AI API key is configured, the app runs in Demo Mode with a pre-processed example Lecture (Summary, Questions and Essay Feedback already stored). The limits of Demo Mode are stated openly in the app and in the README.
+The app has a Demo Mode with a pre-processed Example Lecture (Summary, Questions and Essay Feedback already stored). Demo Mode always starts when no AI API key is configured, and it can also be opened at any time from a "Try the demo" button on the login page, with or without a key. The limits of Demo Mode are stated openly in the app and in the README.
 
 **Consequences (testable):**
-- With no API key, the app starts, and a visitor can open the example Lecture, read its Summary, and take all three Quizzes.
+- With no API key, the app starts, and a visitor can open the Example Lecture, read its Summary, and take all three Quizzes.
+- The login page always shows a clearly visible "Try the demo" button, with or without an API key. It opens the Example Lecture without registration or login (see FR-2).
 - A visible banner on every page in Demo Mode says that only the example Lecture is available, that essay feedback is prepared in advance, and that uploading and free-text essay assessment need an API key.
 - In Demo Mode, uploading a new PDF shows a message that processing needs an API key.
 - In Demo Mode, Essay Feedback is shown for prepared example answers that the student can select and submit. Free-text essay answers cannot be assessed without an AI key.
@@ -356,7 +367,7 @@ The Prompts for Summary, Questions and Essay Feedback are stored as files in the
 The Test Set contains three to five Lectures made from the builder's own or freely licensed slides, chosen to include at least one real PowerPoint export with messy text. For each Test Set Lecture, the builder writes the Reference Key Points and the Essay questions with their Reference Key Points, and freezes them in the repository.
 
 **Consequences (testable):**
-- Before any AI output is evaluated for a Test Set Lecture, its Reference Key Points (at least five per Lecture) and its Essay questions with their Reference Key Points are written down and committed, so they cannot be shaped to fit the output.
+- Before any AI output is evaluated for a Test Set Lecture, its Reference Key Points (at least five per Lecture) and its Essay questions with their Reference Key Points (at least three per Essay question, as in FR-16) are written down and committed, so they cannot be shaped to fit the output.
 - The prepared essay answers (FR-29) are answers to these frozen Essay questions. The evaluation (FR-28) sends the frozen Essay questions and prepared answers to the Essay Feedback step only. The AI-generated Essay questions of FR-16, which real uploads use, are also generated for each Test Set Lecture and checked for grounding, but are not used for the answer ranking.
 - No copyrighted course material is in the repository.
 
@@ -393,7 +404,7 @@ The checks and their acceptance targets follow. The percentages are the builder'
 
 #### FR-29: Essay feedback calibration
 
-For each frozen Essay question of each Test Set Lecture, the Test Set holds prepared answers: at least two good, two weak, and two containing a typical misunderstanding, each marked in advance by the builder with the Reference Key Points it covers. This makes six prepared answers per Essay question.
+For each frozen Essay question of each Test Set Lecture, the Test Set holds prepared answers: at least two good, two weak, and two containing a typical misunderstanding, each marked in advance by the builder with the Reference Key Points it covers. Each frozen Essay question has at least three Reference Key Points, and the prepared answers are written so that the good answers cover all or most of them, the weak answers cover at most one, and the misunderstanding answers cover fewer than the good ones. This makes six prepared answers per Essay question.
 
 **Consequences (testable):**
 - In every Test Set Lecture, every known good answer gets a higher Essay Rating than every known weak answer.
@@ -439,7 +450,7 @@ The Test Set covers a handful of lectures chosen by the builder, so it shows tha
 ### 6.2 Cost
 
 - The page and size limits (FR-3) and the daily upload limit (FR-7) bound the AI cost per User.
-- Each processed Lecture makes several AI calls (Summary, three Quiz types, and one assessment per submitted essay answer). The evaluation run (FR-28, FR-29) costs more: every prepared essay answer is assessed three times, and the evaluation is re-run after each Prompt change (FR-30).
+- Each processed Lecture makes several AI calls (Summary, three Quiz types, and one assessment per Essay Submission, up to 3 per Essay question). The evaluation run (FR-28, FR-29) costs more: every prepared essay answer is assessed three times, and the evaluation is re-run after each Prompt change (FR-30).
 - To keep cost low: automated tests use stored sample responses (§5.5), the evaluation is run on demand and not automatically, Demo Mode needs no key, and the builder chooses a small, inexpensive model if the quality checks pass with it. A cost estimate is made once the AI service is chosen (§10).
 
 ### 6.3 Accessibility and Readability
@@ -448,6 +459,7 @@ The Test Set covers a handful of lectures chosen by the builder, so it shows tha
 - The layout is clean and readable: clear headings, short Summary Parts, generous spacing, no dense walls of text.
 - The app targets WCAG 2.1 AA for contrast, keyboard navigation and form labels. There is no formal audit in v1; an automated accessibility check (for example Lighthouse) is run on the main pages and the result is recorded, with a target score of 90 or higher.
 - The layout works on a phone-width screen (responsive) in the current versions of Chrome, Firefox, Edge and Safari.
+- The student can change the text size (normal, large, extra large) and the choice is kept on that device. Icons always come with a text label. There are no timers or countdowns, and animation respects the system "reduce motion" setting. Details are in `ux-recall/EXPERIENCE.md`.
 
 ### 6.4 Performance
 
@@ -471,7 +483,9 @@ The key screens and flows are listed here and sketched in the UX step (`bmad-ux`
 - Quiz (one screen per type: Multiple Choice, Fill-in-the-Gaps, Essay with the answer field).
 - Results with Essay Feedback and the Review List.
 - Saved lectures and past Attempts.
-- Demo Mode banner and the example Lecture.
+- Demo Mode banner and the Example Lecture.
+
+Quiz progress (current question, answers given, essay text) is kept when the student switches tab, reloads or leaves, and is stored with the User's account. For the Example Lecture it is kept only in the browser session. The sketches are in `ux-recall/wireframes/`.
 
 ## 7. Non-Goals (Explicit)
 
@@ -517,7 +531,7 @@ The lecturer asked for criteria that can be tested during the course, so every m
 - **SM-2**: Source references — every Summary Part shows valid slide numbers and every Question links to a Summary Part (100 %, automatic). Validates FR-8, FR-12, FR-14, FR-16, FR-27.
 - **SM-3**: Multiple choice — every question has four options with exactly one correct, and the score for a known set of answers is exactly right. Validates FR-12, FR-13.
 - **SM-4**: Fill-in-the-gaps — the matching rules produce the expected result in all example tests in FR-15. Validates FR-15.
-- **SM-5**: Essay feedback — on the Test Set, every good answer is rated above every weak answer; every weak answer's feedback names at least one missing key point; every misunderstanding answer is rated below every good answer and its feedback names the missing or wrong point; and the ranking holds in all three runs of each answer. Validates FR-17, FR-29.
+- **SM-5**: Essay feedback — on the Test Set, with at least three Reference Key Points per frozen Essay question, every good answer is rated above every weak answer; every weak answer's feedback names at least one missing key point; every misunderstanding answer is rated below every good answer and its feedback names the missing or wrong point; and the ranking holds in all three runs of each answer. Validates FR-17, FR-29.
 - **SM-6**: Review list — every wrongly answered question leads to a Review List entry linked to the right Summary Part. Validates FR-19.
 - **SM-7**: Accounts and access — a logged-out visitor, and one User asking for another's data, get no lecture data. Validates FR-1, FR-2.
 - **SM-8**: Input limits — PDFs over 50 pages or 10 MB, non-PDF files and scanned PDFs are rejected with a clear message and make no AI call; a sixth upload on one day is rejected. Validates FR-3, FR-4, FR-7.
@@ -542,7 +556,7 @@ None of these blocks the UX or architecture steps. Each has an owner (the builde
 4. The extracted-text threshold in FR-4 (100 characters per page) is a confirmed starting value, tuned with real slides early. *Revisit: after the first extraction check on real slides.*
 5. The question counts in FR-12, FR-14 and FR-16 (10, 8 and 2) are confirmed starting values. *Revisit: after the first evaluation runs.*
 6. The faithfulness target ("no unsupported statement in any Summary in the Test Set", FR-28, SM-10) is binary, "unsupported" is not defined (paraphrase? inference? omission?), and one reader judges it. A strict target may be hard to meet and may block Prompt changes (FR-30). Define "unsupported" and decide what happens if the target cannot be met. *Revisit: before the first evaluation run.*
-7. The Essay Rating is a count of key points, and an Essay question needs only two (FR-16), so ratings take the values 0, 1 or 2 and good and weak answers may tie. Consider requiring three or more key points, and comparing the AI's reported covered points with the builder's pre-marked points exactly. *Revisit: when the Test Set essay questions are frozen (FR-26).*
+7. ~~The Essay Rating is a count of key points, and an Essay question needs only two.~~ **Closed 2026-10-16:** each Essay question now has at least three Reference Key Points (FR-16). Still open: comparing the AI's reported covered points with the builder's pre-marked points exactly. *Revisit: when the Test Set essay questions are frozen (FR-26).*
 8. Language-error insensitivity (FR-17) is not tested: the prepared answers are good, weak and misunderstanding, and none isolates spelling and grammar errors. Norwegian-language slides are supported (§4.3) but no Test Set Lecture is required to be in Norwegian. *Revisit: when the prepared answers are written (FR-29).*
 9. No metric tests the thesis, that second-language students find the Summary easier to use, or the fifteen-minute claim (§5.7). Consider a timed walkthrough of UJ-1 by one or two second-language students. *Revisit: when the app can run the whole flow.*
 10. All quality judgements in §5.4 are made by a single builder. This is a known limit of a solo project and is accepted in v1 (§5.7). *No revisit planned.*
@@ -605,3 +619,18 @@ These details were added while applying the review findings. The builder asked f
 The FR numbers were renumbered into reading order after the reviewer pass. Old to new: FR-6 to FR-8, FR-7 to FR-9, FR-8 to FR-10, FR-9 to FR-12, FR-10 to FR-13, FR-11 to FR-14, FR-12 to FR-15, FR-13 to FR-16, FR-14 to FR-17, FR-15 to FR-18, FR-16 to FR-19, FR-17 to FR-20, FR-18 to FR-21, FR-19 to FR-22, FR-20 to FR-23, FR-21 to FR-24, FR-22 to FR-25, FR-24 to FR-26, FR-23 to FR-27, FR-29 to FR-11, FR-25 to FR-28, FR-26 to FR-29, FR-27 to FR-30, FR-28 to FR-31. FR-1 to FR-5 are unchanged. FR-6 (notice) and FR-7 (upload limit) are new FRs promoted from §6.1 and §6.2. SM-8 was split into SM-8 and SM-9; the later metrics moved up by one.
 
 The review files in this folder (`review-rubric.md`, `reconcile-brief.md`, `reconcile-tilbakemelding.md`) were written before the renumbering and use the old FR numbers.
+
+## 13. Changes from the UX step (2026-10-16)
+
+Decisions made in `ux-recall` (see its `.memlog.md`) that changed this PRD. The builder approved every change on 2026-10-16.
+
+- **Essay resubmit (FR-17, FR-18, FR-19, glossary, §6.2):** up to 3 Essay Submissions per Essay question; the last counts; all are shown on the results page; cost counted per Essay Submission.
+- **Example Lecture access (FR-2, FR-23):** the Example Lecture is public and read-only, exempt from the privacy rule.
+- **"Try the demo" button (FR-23):** always visible on the login page, with or without an API key.
+- **Background processing (FR-5):** processing continues if the User leaves the page; the list shows "Processing…". Real steps, no percentage, no timer.
+- **Progress storage (§6.6, §6.3):** quiz progress is stored with the account; text size is kept on the device.
+- **Essay key points (FR-16, open question 7):** at least three Reference Key Points per Essay question.
+- **Skip question (FR-13, FR-15, FR-19):** in Multiple Choice and Fill-in-the-Gaps, a skipped question counts as not answered and goes into the Review List.
+
+- **Test Set essays (FR-26, FR-29, SM-5):** the frozen Essay questions and the prepared answers have at least three Reference Key Points each. Good answers cover all or most of them; weak answers cover at most one; misunderstanding answers cover fewer than the good ones. The ranking check in SM-5 is unchanged.
+- **Consequences of the 3 Essay Submissions rule for the evaluation:** the evaluation (FR-28, FR-29) assesses each prepared answer three times to check repeatability. This is separate from the student's 3 Essay Submissions per question.

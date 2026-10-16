@@ -3,7 +3,7 @@
 Simple sketches of the key screens. They show layout, order and wording, not final visuals.
 Colours, type and spacing are in `../DESIGN.md`. Behaviour is in `../EXPERIENCE.md`. **Those two files win if a sketch disagrees.**
 
-Legend: `[ Button ]` button · `( ) / (•)` radio · `[x]` checkbox · `[ ______ ]` input · `<Slides 12 to 15>` source chip (a link) · `(i)` `(!)` `✓` icons, always next to a word.
+Legend: `[ Button ]` button · `( ) / (•)` radio · `[x]` checkbox · `[ ______ ]` input · `<Slides 12 to 15>` source chip (a link) · `(i)` `(!)` `✓` icons, always next to a word. In the real app all icons are SVG, never emoji; the emoji in these sketches only mark where an icon goes.
 
 | # | Screen | PRD |
 |---|---|---|
