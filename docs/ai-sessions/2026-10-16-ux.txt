@@ -1,0 +1,1542 @@
+ ▐▛███▛█   Claude Code v2.1.302
+▝▜██████▀  Sonnet 5.5 · Claude Pro
+ ▝▝   ▝▝   ~\OneDrive\Desktop\Himolde\IBE160\IBE160\productbrief.md\G127-aj…
+
+▎ [✻] [✻] [✻] · Share Claude Code and earn $10 in usage credits · /passes
+
+❯ Run bmad-ux for the Recall initiative, using the PRD in                       
+  _bmad-output/initiative-recall/prd-recall/prd-recall.md and the brief in      
+  _bmad-output/initiative-recall/brief-recall/brief-recall.md as input. Cover   
+  the key screens the lecturer asked for: upload, summary, quiz (all three      
+  types) and results, plus login. The primary user studies in a second          
+  language, so plain language, readability and accessibility must be part of    
+  the design. Make simple sketches (wireframes) of each key screen that can     
+  live in the repo as Markdown. Ask me questions one at a time, and wait for my 
+  answer before moving on. Do not commit anything.                              
+
+● Skill(bmad-ux)
+  ⎿  Successfully loaded skill
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Hi, I'm running the BMad UX workflow for Recall. It will produce two
+  documents: DESIGN.md (how it looks) and EXPERIENCE.md (how it behaves), plus
+  Markdown wireframes of the key screens. bmad-party-mode and
+  bmad-advanced-elicitation are available at any point if you want other
+  perspectives or a deeper critique.
+
+  There are no earlier UX runs for this initiative, so we start fresh. I found
+  these inputs:
+
+  - _bmad-output/initiative-recall/brief-recall/brief-recall.md
+  - _bmad-output/initiative-recall/prd-recall/prd-recall.md
+
+  Question 1: Should I use only these two as sources, or is there anything else
+  I should read too? Examples are the lecturer's feedback, notes on your target
+  user, or a sketch you already have.
+
+✻ Brewed for 19s · done 10:18 PM
+
+❯ Also read tilbakemelding-product-brief.md, since the lecturer asked for       
+  sketches of upload, summary, quiz and results, and mentioned accessibility    
+  for second-language students. I have no existing sketches. Nothing else.      
+
+  Searched for 1 pattern, read 3 files, ran 1 shell command (ctrl+o to expand)
+
+● I've read all three sources and set up the workspace at
+  _bmad-output/initiative-recall/ux-recall/. Nothing is committed.
+
+  The PRD already gives me the screen list (§6.6), the persona Amara, the
+  journey UJ-1, and WCAG 2.1 AA as the accessibility target. I won't ask you to
+  repeat any of that. I'll only ask about things the documents don't settle.
+
+  Question 2: Is this a coursework project that needs to look clear and
+  professional, or do you want a distinct brand look (for example a specific
+  colour or mood)? Please also tell me about any colour, mood or font you
+  already like or dislike. If you have no preference, say so and I'll show you a
+  few options to choose from.
+
+✻ Worked for 14s · done 10:19 PM
+
+❯ It's a coursework project, so clear and professional is most important. The   
+  mood should be calm and supportive, not stressful like an exam. Readability   
+  comes first: high contrast, a very readable font, generous spacing. I have no 
+  strong colour preference, so show me two or three options to choose from.     
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● I opened a page with three colour options in your browser. If it didn't open,
+  the file is
+  _bmad-output/initiative-recall/ux-recall/.working/color-themes-1.html.
+
+  Each option shows the same two sample cards, a summary part and a multiple
+  choice question. All three use 18px text, a generous line height, dark text on
+  a light background, and a visible focus outline. Correct and wrong answers
+  are shown with an icon and a word, never colour alone.
+
+  - A · Calm teal: quiet and clear, like a well-lit library.
+  - B · Soft indigo: focused and trustworthy, like a study desk at dusk.
+  - C · Warm sage: gentle and encouraging, on a warm off-white background.
+
+  Question 3: Which one do you pick: A, B or C? You can also combine them, for
+  example "A, but warmer background".
+
+✻ Brewed for 22s · done 10:21 PM
+
+❯ B                                                                             
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded Soft indigo (B) as the colour theme.
+
+  Question 4: The PRD says the app's interface is in English, but the summary
+  follows the language of the slides, which can be English or Norwegian. Which
+  help features should the design include for a second-language reader? Pick any
+  that apply, or add your own:
+
+  1. Key terms shown right next to the summary text, for example a "Key terms"
+     panel beside each part.
+  2. Tap or hover on a key term to see its simple explanation, without leaving
+     the page.
+  3. A text size control (normal, large, extra large).
+  4. A "plain words" glossary page for the interface words (for example "Review
+     list", "Source").
+  5. Icons next to every main action, so the meaning doesn't depend on the
+     English word.
+
+✻ Worked for 6s · done 10:22 PM
+
+❯ Include 1 (key terms panel beside each part of the summary), 3 (text size     
+  control) and 5 (icons, always together with a text label, never alone). Put 2 
+  on the "if time" list. Skip 4: instead, keep the interface words short and    
+  simple so no glossary is needed.                                              
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded those choices. The key terms panel, text size control and
+  labelled icons are in. Inline tap-or-hover explanations go on the "if time"
+  list. There is no glossary page.
+
+  Question 5: What should the quiz screens do after the student answers a
+  question?
+
+  - Option A, check each answer straight away: The student gets instant feedback
+    after each question (right or wrong, with a link to the source slides).
+    This is better for learning, but it can feel like being tested.
+  - Option B, check everything at the end: The student answers all questions
+    first and sees all feedback on the results page. This feels more like an
+    exam.
+
+  This applies to multiple choice and fill-in-the-gaps. Essays always give
+  feedback after submission, because the AI assesses them.
+
+  I'd suggest A because you want a calm mood, but it's your call. Which do you
+  want?
+
+✻ Baked for 7s · done 10:23 PM
+
+❯ Option A: check each answer straight away, with a link to the source slides.  
+  Use calm, encouraging feedback wording rather than harsh "wrong" signals, and 
+  let the student move on at their own pace. The results page should still      
+  show the total score and the review list at the end.                          
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. Answers are checked immediately, with a source link and
+  calm wording. The student moves on with a Next button, and there are no
+  timers. The results page still shows the total score and the review list.
+
+  Question 6: On the summary screen, how should the student move between the
+  summary parts?
+
+  - Option A, one long page: All parts are stacked on one page, with a "Jump to"
+    list at the top. The student scrolls, and the key terms panel sits beside
+    each part. It's easy to scan, and it works well with the browser's search.
+  - Option B, one part at a time: The student sees one part with its key terms,
+    then taps "Next part". Each screen is shorter, but it is harder to scan back
+    and forth.
+
+  On a phone, the key terms panel would move below each part in either option.
+  I'd suggest A, because the review list links back to a specific part and a
+  long page makes that easy to do. Which do you want?
+
+✻ Sautéed for 7s · done 10:24 PM
+
+❯ Option A: one long page with a "Jump to" list at the top and a clear heading  
+  for each part. Links from the review list and essay feedback should jump      
+  straight to the right part.                                                   
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. The summary is one long page with a "Jump to" list, a
+  clear heading per part, and deep links from the review list, quiz source links
+  and essay feedback.
+
+  Question 7: How should the app be laid out around the screens?
+
+  - Option A, simple top bar: A top bar with the logo, "My lectures", "Upload",
+    the text size control and "Log out". Quizzes and results are reached from
+    inside a lecture. On a phone it collapses to a menu button with a text
+    label.
+  - Option B, lecture page as the hub: The same top bar, but each lecture opens
+    a page with tabs: Summary, Multiple choice, Fill in the gaps, Essay,
+    Results. The student can switch between them at any time.
+
+  With B the student always sees where they are and can return to the summary
+  mid-quiz, which fits the "check the source" idea. I'd suggest B. Which do you
+  want?
+
+✻ Cooked for 6s · done 10:25 PM
+
+❯ Option B: the lecture page as the hub with tabs. Two requirements: quiz       
+  progress is kept when the student switches tabs mid-quiz, and on a phone the  
+  tabs must still fit, for example as a scrollable tab row with short labels.   
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. The lecture page is the hub with tabs, quiz progress is
+  kept when switching tabs, and on a phone the tabs become a scrollable row with
+  short labels.
+
+  Question 8: While a lecture is being processed (up to 60 to 120 seconds), what
+  should the student see?
+
+  - Option A, a calm waiting screen: A progress bar with plain steps ("Reading
+    your PDF", "Finding the key points", "Writing the summary"). The student
+    stays on the page and is taken to the summary when it's ready.
+  - Option B, wait in the background: The student is sent to "My lectures",
+    where the new lecture shows "Processing…". They can leave and come back, and
+    the lecture opens when it's ready.
+
+  With either option, a failure shows a clear message and a Retry button, as the
+  PRD requires. I'd suggest A, because the wait is short and the student has
+  just uploaded. Which do you want?
+
+✻ Sautéed for 7s · done 10:26 PM
+
+❯ Option A: a calm waiting screen with plain step names. Show real steps rather 
+  than a fake percentage. If the student leaves the page, processing should     
+  continue, and the lecture shows "Processing…" in My lectures until it's       
+  ready.                                                                        
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. The waiting screen shows real steps with no fake
+  percentage, processing continues if the student leaves, and the lecture shows
+  "Processing…" in My lectures. I also noted that the architecture step needs to
+  run processing as a background job.
+
+  Question 9: For the essay question, how should the answer box and feedback
+  work?
+
+  - Option A, one question at a time: The student sees one essay question and
+    writes in a large text box. There is a gentle hint ("Write 2 to 5 sentences.
+    Spelling and grammar are not marked."). After "Get feedback" the feedback
+    appears below the answer, in three blocks: "What you explained well", "What
+    is missing", and "Read this part again" with a link to the summary part.
+  - Option B, feedback beside the answer: The same content, but the feedback
+    appears in a side panel next to the student's answer, so both can be
+    compared at once. On a phone it falls below the answer.
+
+  Both keep the student's answer visible. I'd suggest A, because it keeps one
+  clear column and it works the same on a phone. Which do you want, and should
+  the student be allowed to edit and resubmit their answer to see new feedback?
+
+✻ Cogitated for 7s · done 10:27 PM
+❯ Option A, one question at a time, with feedback below the answer in the three 
+  blocks, and keep the hint about spelling and grammar. Allow editing and       
+  resubmitting, up to 3 attempts per question, to limit AI cost and encourage   
+  rereading. Earlier attempts and their feedback stay visible.                  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. One thing to flag: the PRD doesn't have the 3-attempt
+  resubmit rule yet. I'll list it as a PRD follow-up, and I'm not editing the
+  PRD now.
+
+  Question 10: On the results page, which essay attempt should count toward the
+  review list and the score: the first, the last, or the best of the three?
+
+  - Option A, last attempt: It reflects what the student understands after
+    rereading. The review list shows only what is still missing.
+  - Option B, first attempt: It shows what the student knew before rereading,
+    and the review list stays honest about gaps.
+  - Option C, best attempt: It is encouraging, but it can hide a gap that was
+    only fixed by luck.
+
+  I'd suggest A, because it fits the calm, supportive mood and the review list
+  stays useful. The results page could also show "Attempt 1: 1 of 3 points,
+  Attempt 2: 3 of 3 points" so progress is visible. Which do you want?
+
+✻ Worked for 8s · done 10:28 PM
+
+❯ Option A: the last attempt counts for the score and the review list. Also     
+  show every attempt on the results page, for example "Attempt 1: 1 of 3        
+  points, Attempt 2: 3 of 3 points", so progress is visible.                    
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. The last essay attempt counts, and every attempt is listed
+  on the results page.
+
+  Question 11: What should the login and register screens look like?
+
+  - Option A, one page with two tabs: "Log in" and "Register" share one centred
+    card. It has a short line about what Recall does, email and password fields
+    with visible labels, and a "Show password" checkbox. Error messages appear
+    next to the field in plain words.
+  - Option B, two separate pages: Log in is one page and Register is another,
+    with a link between them. Each page is simpler, but there are more page
+    loads.
+
+  PRD §4.1 has no password reset or email verification, so the login page won't
+  have a "Forgot password" link. I'd suggest A, with a short note on the
+  register tab: "We can't reset passwords yet. Please remember yours." That
+  matches the PRD and avoids a nasty surprise. Which do you want, and do you
+  agree with the note?
+
+✻ Crunched for 6s · done 10:28 PM
+
+❯ Option A, with the note on the register tab. Also add a clearly visible "Try  
+  the demo" button on the login page that opens Demo Mode, so the examiner and  
+  new users can try the app without registering or an API key.                  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. The login screen is one card with Log in and Register
+  tabs, the register note, and a visible "Try the demo" button. I also logged a
+  PRD clarification: FR-2 says logged-out users get no lecture data, and FR-23
+  says a visitor can open the example lecture. The PRD should state that the
+  example lecture is public and read-only.
+
+  Question 12: Should the "Try the demo" button show only when there is no API
+  key, or always?
+
+  - Option A, always visible: The examiner and new users can always try the
+    example lecture, even when real uploads work. The demo banner (FR-23) shows
+    on every demo page.
+  - Option B, only without an API key: The login page is cleaner in a "real"
+    setup, but the examiner would not see the button when your key is
+    configured.
+
+  I'd suggest A, because it also lets a new user preview the app before
+  registering. Which do you want?
+
+✻ Crunched for 8s · done 10:29 PM
+
+❯ Option A: always visible, with the demo banner on every demo page.            
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've recorded that. The demo button is always visible, and the banner shows on
+  every demo page.
+
+  Question 13: This is the last discovery question. Is there anything else the
+  design must cover or avoid? Examples are dark mode, animations, specific words
+  you want or don't want in the interface, or anything from your own experience
+  as a second-language student. If not, say "no" and I'll draft DESIGN.md,
+  EXPERIENCE.md and the Markdown wireframes.
+
+✻ Churned for 5s · done 10:30 PM
+
+❯ A few more things:                                                            
+  - No timers or countdowns anywhere.                                           
+  - Interface text uses short, literal sentences, with no idioms, slang or      
+  jokes.                                                                        
+  - Keep animations minimal and respect the system "reduce motion" setting.     
+  - Dark mode is not in v1; put it on the "if time" list.                       
+    Then draft DESIGN.md, EXPERIENCE.md and the wireframes. Do not commit.      
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\DESIGN.md)
+  ⎿  Added 170 lines, removed 1 line
+        1  ---
+        2 -title: Recall DESIGN                                          
+        2 +name: Recall                                                  
+        3 +description: Calm, high-contrast, readable study app for stude
+          +nts who study in a second language. Light mode only in v1.    
+        4  status: draft
+        5  created: 2026-10-16
+        6  updated: 2026-10-16
+        7 +colors:                                                       
+        8 +  surface-base: '#F5F6FB'                                     
+        9 +  surface-raised: '#FFFFFF'                                   
+       10 +  ink-primary: '#1B2033'                                      
+       11 +  ink-secondary: '#444B66'                                    
+       12 +  primary: '#3B4BA8'                                          
+       13 +  on-primary: '#FFFFFF'                                       
+       14 +  primary-soft: '#E2E6F7'                                     
+       15 +  border: '#A9B0D6'                                           
+       16 +  success: '#1B6B3A'                                          
+       17 +  attention: '#A32D2D'                                        
+       18 +  focus: '#B36B00'                                            
+       19 +typography:                                                   
+       20 +  body:                                                       
+       21 +    fontFamily: "Verdana, 'Segoe UI', system-ui, sans-serif"  
+       22 +    fontSize: 18px                                            
+       23 +    fontWeight: 400                                           
+       24 +    lineHeight: 1.6                                           
+       25 +  body-large:                                                 
+       26 +    fontFamily: "Verdana, 'Segoe UI', system-ui, sans-serif"  
+       27 +    fontSize: 22px                                            
+       28 +    fontWeight: 400                                           
+       29 +    lineHeight: 1.6                                           
+       30 +  body-xlarge:                                                
+       31 +    fontFamily: "Verdana, 'Segoe UI', system-ui, sans-serif"  
+       32 +    fontSize: 26px                                            
+       33 +    fontWeight: 400                                           
+       34 +    lineHeight: 1.6                                           
+       35 +  heading-1:                                                  
+       36 +    fontFamily: "Verdana, 'Segoe UI', system-ui, sans-serif"  
+       37 +    fontSize: 28px                                            
+       38 +    fontWeight: 700                                           
+       39 +    lineHeight: 1.3                                           
+       40 +  heading-2:                                                  
+       41 +    fontFamily: "Verdana, 'Segoe UI', system-ui, sans-serif"  
+       42 +    fontSize: 22px                                            
+       43 +    fontWeight: 700                                           
+       44 +    lineHeight: 1.4                                           
+       45 +  meta:                                                       
+       46 +    fontFamily: "Verdana, 'Segoe UI', system-ui, sans-serif"  
+       47 +    fontSize: 15px                                            
+       48 +    fontWeight: 400                                           
+       49 +    lineHeight: 1.5                                           
+       50 +rounded:                                                      
+       51 +  sm: 8px                                                     
+       52 +  md: 12px                                                    
+       53 +  full: 9999px                                                
+       54 +spacing:                                                      
+       55 +  '1': 4px                                                    
+       56 +  '2': 8px                                                    
+       57 +  '3': 12px                                                   
+       58 +  '4': 16px                                                   
+       59 +  '5': 24px                                                   
+       60 +  '6': 32px                                                   
+       61 +  '7': 48px                                                   
+       62 +  content-max: 720px                                          
+       63 +  margin-mobile: 16px                                         
+       64 +components:                                                   
+       65 +  button-primary:                                             
+       66 +    backgroundColor: '{colors.primary}'                       
+       67 +    textColor: '{colors.on-primary}'                          
+       68 +    typography: '{typography.body}'                           
+       69 +    rounded: '{rounded.sm}'                                   
+       70 +    height: 48px                                              
+       71 +  button-secondary:                                           
+       72 +    backgroundColor: '{colors.surface-raised}'                
+       73 +    textColor: '{colors.primary}'                             
+       74 +    rounded: '{rounded.sm}'                                   
+       75 +    height: 48px                                              
+       76 +  card:                                                       
+       77 +    backgroundColor: '{colors.surface-raised}'                
+       78 +    rounded: '{rounded.md}'                                   
+       79 +    padding: '{spacing.5}'                                    
+       80 +  source-chip:                                                
+       81 +    backgroundColor: '{colors.primary-soft}'                  
+       82 +    textColor: '{colors.ink-primary}'                         
+       83 +    typography: '{typography.meta}'                           
+       84 +    rounded: '{rounded.full}'                                 
+       85 +  answer-option:                                              
+       86 +    backgroundColor: '{colors.surface-raised}'                
+       87 +    rounded: '{rounded.sm}'                                   
+       88 +    minHeight: 48px                                           
+       89 +  text-input:                                                 
+       90 +    backgroundColor: '{colors.surface-raised}'                
+       91 +    textColor: '{colors.ink-primary}'                         
+       92 +    rounded: '{rounded.sm}'                                   
+       93 +    height: 48px                                              
+       94  ---
+       95 +                                                              
+       96 +## Brand & Style                                              
+       97 +                                                              
+       98 +Recall is a quiet study room, not an exam hall. The student ha
+          +s just left a lecture in a language that is not their own; the
+          + interface must lower effort, not add to it. The mood is calm 
+          +and supportive: soft indigo on a pale surface, plenty of space
+          +, no pressure devices (no timers, no countdowns, no streaks, n
+          +o red alarm signals).                                         
+       99 +                                                              
+      100 +Readability comes before style. Every visual decision is check
+          +ed against one question: can a tired second-language reader re
+          +ad this without effort? Decoration is kept to a minimum. Clear
+          + and professional is the target, since this is a coursework pr
+          +oject.                                                        
+      101 +                                                              
+      102 +## Colors                                                     
+      103 +                                                              
+      104 +- **Surface base (`{colors.surface-base}`)** is the page backg
+          +round, a very light indigo-tinted white that softens glare.   
+      105 +- **Surface raised (`{colors.surface-raised}`)** is white, for
+          + cards, inputs and answer options.                            
+      106 +- **Ink primary (`{colors.ink-primary}`)** is all main text. C
+          +ontrast on both surfaces is above 14:1.                       
+      107 +- **Ink secondary (`{colors.ink-secondary}`)** is for labels a
+          +nd small notes. Contrast on both surfaces is above 7:1. Never 
+          +lighter.                                                      
+      108 +- **Primary (`{colors.primary}`)** is the only brand colour: m
+          +ain buttons, links, selected tabs, selected answer. White text
+          + on it is above 7:1.                                          
+      109 +- **Primary soft (`{colors.primary-soft}`)** is for selected b
+          +ackgrounds, source chips and the key terms panel.             
+      110 +- **Border (`{colors.border}`)** outlines cards and inputs. In
+          +put borders use 2px so they meet the 3:1 non-text contrast rul
+          +e.                                                            
+      111 +- **Success (`{colors.success}`)** and **Attention (`{colors.a
+          +ttention}`)** mark answer results. Both always come with an ic
+          +on and a word. Attention is a deep red-brown used for "Not qui
+          +te yet", never as a fill behind large areas, and never for the
+          + student's score.                                             
+      112 +- **Focus (`{colors.focus}`)** is a warm amber ring, 3px with 
+          +a 2px offset, on every interactive element. It stands out from
+          + indigo.                                                      
+      113 +                                                              
+      114 +Colour is never the only carrier of meaning. Dark mode is not 
+          +in v1 (on the "if time" list in EXPERIENCE.md).               
+      115 +                                                              
+      116 +## Typography                                                 
+      117 +                                                              
+      118 +One family: Verdana, then Segoe UI, then the system sans. Verd
+          +ana is wide, with open letter shapes and clear differences bet
+          +ween similar characters (I, l, 1), which helps readers who are
+          + decoding a second language. No web fonts are loaded, so there
+          + is no flash and no network cost.                             
+      119 +                                                              
+      120 +- Body is 18px with line height 1.6. This is the minimum anywh
+          +ere that carries content.                                     
+      121 +- The student can switch to large (22px) or extra large (26px)
+          +. All sizes scale together; headings scale with body.         
+      122 +- Lines are limited to about 70 characters (`{spacing.content-
+          +max}`).                                                       
+      123 +- Left-aligned only. No justified text, no italics for content
+          +, no all-caps, no light weights.                              
+      124 +- Bold is used for headings and key terms. Underline is used o
+          +nly for links.                                                
+      125 +                                                              
+      126 +## Layout & Spacing                                           
+      127 +                                                              
+      128 +Single column, centred, maximum width `{spacing.content-max}`.
+          + The Summary screen adds a key terms panel beside each part on
+          + wide screens (see EXPERIENCE.md); the whole layout is then up
+          + to 1040px.                                                   
+      129 +                                                              
+      130 +Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48. Space between c
+          +ards and sections is `{spacing.6}` or more. Inside cards the p
+          +adding is `{spacing.5}`. On a phone the page margin is `{spaci
+          +ng.margin-mobile}`, the layout is one column, and nothing scro
+          +lls sideways except the tab row.                              
+      131 +                                                              
+      132 +Touch and click targets are at least 48 by 48px with 8px betwe
+          +en them.                                                      
+      133 +                                                              
+      134 +## Elevation & Depth                                          
+      135 +                                                              
+      136 +Flat. Cards are separated by a 1px `{colors.border}` outline a
+          +nd tone, not by shadows. Overlays are avoided; where one is ne
+          +eded (text size menu on phone) it has a 2px border.           
+      137 +                                                              
+      138 +## Shapes                                                     
+      139 +                                                              
+      140 +`{rounded.sm}` (8px) for inputs, buttons and answer options. `
+          +{rounded.md}` (12px) for cards. `{rounded.full}` only for sour
+          +ce chips and tabs. Corners are soft but not playful.          
+      141 +                                                              
+      142 +## Components                                                 
+      143 +                                                              
+      144 +- **Button primary:** `{colors.primary}` fill, white text, lab
+          +el in `{typography.body}` bold, min height 48px. Always has a 
+          +text label; an icon may sit before it. Disabled state uses `{c
+          +olors.border}` outline and `{colors.ink-secondary}` text (not 
+          +a faded fill) and explains why in a note.                     
+      145 +- **Button secondary:** white fill, 2px `{colors.primary}` bor
+          +der, primary text.                                            
+      146 +- **Icon:** simple outline icon, 24px, always placed next to a
+          + visible text label. Never used alone. Icons carry no meaning 
+          +that the label does not also carry.                           
+      147 +- **Card:** white, 1px border, `{rounded.md}`, padding `{spaci
+          +ng.5}`. One idea per card.                                    
+      148 +- **Source chip:** pill with `{colors.primary-soft}` fill, 1px
+          + border, text such as "Slides 12 to 15". It is a link to the s
+          +ummary part and looks like one (underlined text, arrow icon). 
+      149 +- **Key terms panel:** `{colors.primary-soft}` background card
+          +. Each term is bold, followed by one plain sentence.          
+      150 +- **Answer option (multiple choice):** full-width, min 48px ta
+          +ll, radio control plus text. Selected: 2px `{colors.primary}` 
+          +border and `{colors.primary-soft}` fill. After checking, the c
+          +hosen and the correct options get a label ("Your answer", "Cor
+          +rect answer") and an icon.                                    
+      151 +- **Text input:** 48px tall, 2px border, label always visible 
+          +above it (never placeholder-only). Error text sits under the f
+          +ield with an icon and starts with what to do.                 
+      152 +- **Essay box:** multi-line input, at least 8 lines tall, same
+          + border and label rules.                                      
+      153 +- **Feedback block:** card with a heading and an icon (for exa
+          +mple check mark for "What you explained well", dash for "What 
+          +is missing", book for "Read this part again").                
+      154 +- **Tabs:** underlined text tabs on wide screens. On a phone t
+          +hey become a horizontally scrollable row with short labels. Th
+          +e selected tab has a 3px `{colors.primary}` underline and bold
+          + text. An edge fade shows that the row scrolls.               
+      155 +- **Step list (processing):** vertical list of three steps; do
+          +ne = check icon, current = spinner-free "In progress" label, w
+          +aiting = empty circle.                                        
+      156 +- **Notice banner:** `{colors.primary-soft}` fill, 2px border,
+          + icon plus text. Used for the AI notice and the demo banner. N
+          +ot dismissible for the demo banner.                           
+      157 +- **Text size control:** three buttons labelled "A", "A+" and 
+          +"A++" with the visible words "Text size", shown in the top bar
+          +.                                                             
+      158 +                                                              
+      159 +## Do's and Don'ts                                            
+      160 +                                                              
+      161 +**Do**                                                        
+      162 +- Keep body text at 18px or larger, with line height 1.6.     
+      163 +- Use icon plus word, every time.                             
+      164 +- Keep at least `{spacing.6}` between sections.               
+      165 +- Show a clear focus ring on everything that can be activated.
+      166 +- Keep one primary button per screen area.                    
+      167 +                                                              
+      168 +**Don't**                                                     
+      169 +- Don't use colour alone to show correct, wrong, selected or c
+          +urrent.                                                       
+      170 +- Don't use red or large attention fills for answers or scores
+          +.                                                             
+      171 +- Don't use animation other than a short fade (150ms). With "r
+          +educe motion" on, there are no animations at all.             
+      172 +- Don't use progress bars that imply a percentage the app does
+          + not know.                                                    
+      173 +- Don't use timers, countdowns, streaks or badges.            
+      174 +- Don't use placeholder text as a label.                      
+      175 +- Don't use all-caps, italics, justified text or text on image
+          +s.                                                            
+
+● Write(_bmad-output\initiative-recall\ux-recall\EXPERIENCE.md)
+  ⎿  Added 238 lines, removed 1 line
+        1  ---
+        2 -title: Recall EXPERIENCE                                      
+        2 +name: Recall                                                  
+        3  status: draft
+        4 +sources:                                                      
+        5 +  - ../brief-recall/brief-recall.md                           
+        6 +  - ../prd-recall/prd-recall.md                               
+        7 +  - ../../../tilbakemelding-product-brief.md                  
+        8  created: 2026-10-16
+        9  updated: 2026-10-16
+       10  ---
+       11 +                                                              
+       12 +# Recall — Experience Spine                                   
+       13 +                                                              
+       14 +> Paired with `DESIGN.md` (visual identity; tokens referenced 
+          +as `{path.token}`). Wireframes in `wireframes/`. **The spines 
+          +win over the wireframes on any conflict.** FR numbers refer to
+          + `prd-recall.md`.                                             
+       15 +                                                              
+       16 +## Foundation                                                 
+       17 +                                                              
+       18 +Responsive web app (desktop and phone width). English interfac
+          +e. The summary and questions are in the language of the slides
+          + (English or Norwegian, PRD §4.3). No UI library is named; bui
+          +ld with plain accessible HTML patterns. Light mode only in v1.
+          + Posture: coursework project, calm and supportive, never exam-
+          +like.                                                         
+       19 +                                                              
+       20 +Design driver: the second-language student (PRD §2.1). The bus
+          +y student gets the same flow.                                 
+       21 +                                                              
+       22 +## Information Architecture                                   
+       23 +                                                              
+       24 +| Surface | Reached from | Purpose | PRD |                    
+       25 +|---|---|---|---|                                             
+       26 +| Log in / Register | App start when logged out | Account acce
+          +ss; "Try the demo" button | FR-1, FR-23 |                     
+       27 +| My lectures | Top bar, after login | List of saved lectures,
+          + status, delete | FR-20, FR-21 |                              
+       28 +| Upload | Top bar "Upload" | Choose a PDF, see limits, accept
+          + AI notice | FR-3 to FR-7 |                                   
+       29 +| Processing | After upload | Real steps while the summary is 
+          +made; failure and retry | FR-5, FR-8 |                        
+       30 +| Lecture page (hub) | My lectures, after processing | Tabs: S
+          +ummary, Multiple choice, Fill in the gaps, Essay, Results | FR
+          +-8 to FR-22 |                                                 
+       31 +| — Summary tab | Lecture page | Parts, source chips, key term
+          +s panel, AI notice | FR-8, FR-9, FR-11 |                      
+       32 +| — Quiz tabs (3) | Lecture page | One question at a time, ins
+          +tant check | FR-12 to FR-17 |                                 
+       33 +| — Results tab | Lecture page, end of a quiz | Score, essay a
+          +ttempts, review list | FR-18, FR-19 |                         
+       34 +| Report a question | From any question | Short reason form | 
+          +FR-22 |                                                       
+       35 +| Demo | "Try the demo" | Same screens with the example lectur
+          +e and a banner | FR-23 |                                      
+       36 +                                                              
+       37 +Top bar on every logged-in screen: logo "Recall", "My lectures
+          +", "Upload", "Text size" control (A, A+, A++), "Log out". On a
+          + phone: a "Menu" button with a text label opens the same items
+          +; the Text size control stays visible next to it.             
+       38 +                                                              
+       39 +The lecture page is the hub. The tab row is always visible. Th
+          +e student can switch tabs at any time and come back to where t
+          +hey were. Deep links open the Summary tab at the right part (a
+          +nchor to the part heading).                                   
+       40 +                                                              
+       41 +→ Wireframes: `wireframes/01-login.md`, `02-my-lectures.md`, `
+          +03-upload.md`, `04-processing.md`, `05-summary.md`, `06-quiz-m
+          +ultiple-choice.md`, `07-quiz-fill-in-the-gaps.md`, `08-quiz-es
+          +say.md`, `09-results.md`.                                     
+       42 +                                                              
+       43 +## Voice and Tone                                             
+       44 +                                                              
+       45 +Rules for all interface text (microcopy). Brand posture is in 
+          +`DESIGN.md`.                                                  
+       46 +                                                              
+       47 +- Short, literal sentences. Aim for 12 words or fewer.        
+       48 +- One idea per sentence. Active voice. Present tense.         
+       49 +- Common words. No idioms, slang, jokes, metaphors or phrasal 
+          +verbs ("sign up", "give it a go").                            
+       50 +- Say what to do, then why. Name the object ("Choose a PDF"), 
+          +not "it".                                                     
+       51 +- No exclamation marks. No timers or countdown wording ("hurry
+          +", "only 2 minutes left").                                    
+       52 +- Calm words for wrong answers: "Not quite yet", never "Wrong"
+          +, "Incorrect" or "Failed".                                    
+       53 +- Use the same word for the same thing everywhere (see table).
+       54 +                                                              
+       55 +| Use | Not |                                                 
+       56 +|---|---|                                                     
+       57 +| Log in / Log out | Sign in, Sign off |                      
+       58 +| Register | Sign up |                                        
+       59 +| Lecture | Class, Session |                                  
+       60 +| Summary | Recap, Overview |                                 
+       61 +| Key terms | Vocabulary, Glossary |                          
+       62 +| Slides 12 to 15 | Pp. 12–15 |                               
+       63 +| Check answer | Submit, Grade |                              
+       64 +| Not quite yet | Wrong, Incorrect |                          
+       65 +| Read this part again | Revisit, Review the material |       
+       66 +| Review list | Weak topics |                                 
+       67 +                                                              
+       68 +Example messages:                                             
+       69 +                                                              
+       70 +| Moment | Text |                                             
+       71 +|---|---|                                                     
+       72 +| Correct | "Correct. Well done." |                           
+       73 +| Not correct | "Not quite yet. The correct answer is shown be
+          +low." |                                                       
+       74 +| Scanned PDF | "This file has no text we can read. Choose a P
+          +DF with text, not a scan." |                                  
+       75 +| Too long | "This PDF has more than 50 pages. Choose a shorte
+          +r file." |                                                    
+       76 +| Too large | "This file is larger than 10 MB. Choose a smalle
+          +r file." |                                                    
+       77 +| Daily limit | "You have used your 5 uploads for today. You c
+          +an upload again tomorrow." |                                  
+       78 +| Processing failed | "We could not make the summary. Please t
+          +ry again." |                                                  
+       79 +| AI notice (summary/quiz) | "This text was made by AI. It can
+          + contain mistakes. Check it against your slides." |           
+       80 +| AI notice (upload, first time) | "Recall sends your slides a
+          +nd your essay answers to an AI service. Do not upload files yo
+          +u are not allowed to share." |                                
+       81 +| Register note | "We can't reset passwords yet. Please rememb
+          +er yours." |                                                  
+       82 +| Essay hint | "Write 2 to 5 sentences. Spelling and grammar a
+          +re not marked." |                                             
+       83 +| No wrong answers | "You answered everything correctly. There
+          + is nothing to review." |                                     
+       84 +                                                              
+       85 +## Component Patterns                                         
+       86 +                                                              
+       87 +Behavioural rules. Visual specs are in `DESIGN.md.Components`.
+       88 +                                                              
+       89 +| Component | Use | Behavioural rules |                       
+       90 +|---|---|---|                                                 
+       91 +| Top bar | All logged-in screens | Fixed order. Active item h
+          +as text style, not colour only. |                             
+       92 +| Text size control | Top bar | Three levels: normal 18px, lar
+          +ge 22px, extra large 26px. Applies at once to the whole app, i
+          +ncluding quiz screens, and is remembered on this device. The b
+          +utton states its current level in text ("Text size: Large"). |
+       93 +| Tabs | Lecture page | Selected tab has `aria-selected` and u
+          +nderline. Keyboard: arrow keys move, Enter or Space selects. Q
+          +uiz progress is kept when switching tabs (see Interaction Prim
+          +itives). Tab labels: Summary, Multiple choice, Fill in the gap
+          +s, Essay, Results. Phone short labels: Summary, Choice, Gaps, 
+          +Essay, Results. |                                             
+       94 +| Jump to list | Top of Summary tab | Lists all part headings 
+          +as links. Links move focus to the part heading. |             
+       95 +| Summary part | Summary tab | Heading, 2 to 5 short paragraph
+          +s, source chip, then the key terms panel for that part. |     
+       96 +| Key terms panel | Beside each part (wide screen), below the 
+          +part (phone) | Lists only the terms from that part. Each term:
+          + bold word + one plain sentence. Always visible, not collapsed
+          +. |                                                           
+       97 +| Source chip | Summary parts, questions, feedback, review lis
+          +t | Text such as "Slides 12 to 15". Is a link to the matching 
+          +summary part. Opens in the Summary tab and does not leave the 
+          +lecture. |                                                    
+       98 +| Question card | Quiz tabs | One question at a time. Shows "Q
+          +uestion 3 of 10" in text. "Check answer" button, then "Next qu
+          +estion". |                                                    
+       99 +| Answer option | Multiple choice | Radio group with a visible
+          + group label (the question). Choose one, then "Check answer". 
+          +|                                                             
+      100 +| Gap input | Fill in the gaps | One visible label ("Type the 
+          +missing word"). Matching rules (FR-15) are applied after "Chec
+          +k answer". The hint "Capital letters and extra spaces do not m
+          +atter." is shown under the field. |                           
+      101 +| Essay box | Essay tab | See Essay behaviour below. |        
+      102 +| Feedback card | After checking | Result line (icon + words),
+          + correct answer, one-sentence reason, source chip, then "Next 
+          +question". |                                                  
+      103 +| Report link | On every question | Text link "Report this que
+          +stion" opens a short form (reason, up to 300 characters) and s
+          +hows "Thank you. We will look at it." |                       
+      104 +| Lecture row | My lectures | Title, date, status ("Ready" or 
+          +"Processing…"), buttons "Open" and "Delete". |                
+      105 +| Delete confirmation | My lectures | Dialog: "Delete this lec
+          +ture? This removes the summary and all your results. You canno
+          +t undo this." Buttons "Delete lecture" and "Keep lecture". Foc
+          +us starts on "Keep lecture". |                                
+      106 +| Notice banner | Upload, Summary, Quiz, Demo | Icon and text.
+          + AI notice is shown on Summary and Quiz tabs. Demo banner is s
+          +hown on every page in Demo Mode and cannot be closed. |       
+      107 +                                                              
+      108 +### Essay behaviour                                           
+      109 +                                                              
+      110 +- One essay question at a time (2 per lecture). Large text box
+          + (at least 8 lines), hint always visible.                     
+      111 +- "Get feedback" is enabled when the box is not empty. An empt
+          +y or one-word answer is still allowed and gets the lowest rati
+          +ng with all key points listed (FR-17).                        
+      112 +- While waiting: "Reading your answer…" with the label "In pro
+          +gress". No timer.                                             
+      113 +- Feedback appears below the answer in three blocks, in this o
+          +rder: **What you explained well**, **What is missing**, **Read
+          + this part again** (source chip link). Language errors are nev
+          +er mentioned (FR-17).                                         
+      114 +- The student can edit the answer and press "Get feedback agai
+          +n". **Maximum 3 attempts per question.** The button shows "Att
+          +empt 2 of 3". After attempt 3 the box becomes read-only and th
+          +e text says "You used all 3 attempts for this question."      
+      115 +- Earlier attempts stay visible below, newest first, each with
+          + its answer text and its feedback, folded under a heading "Att
+          +empt 1" etc. that can be opened. Folding is by button, with th
+          +e state stated in text.                                       
+      116 +- Demo Mode: the student selects one of the prepared example a
+          +nswers and presses "Get feedback". Free typing is off, with th
+          +e note "In demo mode you can only choose prepared answers." Th
+          +e 3-attempt rule is the same.                                 
+      117 +                                                              
+      118 +## State Patterns                                             
+      119 +                                                              
+      120 +| State | Surface | Treatment |                               
+      121 +|---|---|---|                                                 
+      122 +| Empty list | My lectures | "You have no lectures yet." and a
+          + primary button "Upload a lecture". Also a link "Try the demo"
+          +. |                                                           
+      123 +| Processing | Processing; My lectures row | Steps: "Reading y
+          +our PDF", "Finding the key points", "Writing the summary". Don
+          +e steps show a check icon. The current step shows "In progress
+          +". No percentage. The page says "You can leave this page. We k
+          +eep working." The row in My lectures shows "Processing…". On r
+          +eady, the processing page moves to the Summary; in the list th
+          +e row changes to "Ready". |                                   
+      124 +| Processing failed | Processing; row | Message, button "Try a
+          +gain", link "Choose another file". No partial summary (FR-5). 
+          +Row shows "Failed" with the same buttons. |                   
+      125 +| Upload rejected | Upload | Message under the file field, wit
+          +h icon, plain reason (examples in Voice and Tone). The file fi
+          +eld stays. Nothing is created. |                              
+      126 +| Not accepted notice | Upload | "Upload a lecture" is disable
+          +d until the checkbox "I understand that my slides are sent to 
+          +an AI service" is checked. The disabled button is explained in
+          + text next to it. |                                           
+      127 +| Daily limit | Upload | Message in place of the form. |      
+      128 +| Quiz not made yet | Quiz tab, first open | "We are making yo
+          +ur questions." with "In progress". Then the first question. Qu
+          +estions are stored for later (PRD §4.4). |                    
+      129 +| Quiz failed | Quiz tab | "We could not make the questions. P
+          +lease try again." + "Try again". |                            
+      130 +| Answer correct | Feedback card | Icon check + "Correct. Well
+          + done." Source chip. |                                        
+      131 +| Answer not correct | Feedback card | Icon + "Not quite yet."
+          + Shows the correct answer and a source chip. Same card layout 
+          +as correct; nothing flashes or shakes. |                      
+      132 +| Unanswered | Multiple choice | "Check answer" is disabled un
+          +til an option is chosen, with the text "Choose one answer firs
+          +t." Skipping with "Skip question" counts as not answered (FR-1
+          +3). |                                                         
+      133 +| Quiz finished | End of quiz | Message "You finished this qui
+          +z." and button "See your results". |                          
+      134 +| Results, nothing wrong | Results tab | "You answered everyth
+          +ing correctly. There is nothing to review." (FR-19) |         
+      135 +| No attempt yet | Results tab | "You have not taken a quiz ye
+          +t. Choose a quiz tab to start." |                             
+      136 +| Logged out | Any protected page | Move to Log in; no lecture
+          + data is shown (FR-2). |                                      
+      137 +| Not found | Other user's lecture | "We can't find this lectu
+          +re." (no hint that it exists) |                               
+      138 +| Demo Mode | Every page | Banner: "Demo mode. Only the exampl
+          +e lecture is available. Essay feedback is prepared in advance.
+          + Uploading and typing your own essay answers need an API key."
+          + |                                                            
+      139 +| Offline / server error | Any | "We could not reach the serve
+          +r. Check your internet and try again." + "Try again". Answers 
+          +already typed stay in the page. |                             
+      140 +                                                              
+      141 +## Interaction Primitives                                     
+      142 +                                                              
+      143 +- **Pace belongs to the student.** There are no timers, countd
+          +owns, time limits or auto-advance anywhere. The student moves 
+          +on only by pressing "Next question" (or the next tab).        
+      144 +- **Instant check (multiple choice, fill in the gaps).** "Chec
+          +k answer" shows the feedback card at once. The answer cannot b
+          +e changed after checking. Focus moves to the feedback card; sc
+          +reen readers announce the result line through a polite live re
+          +gion.                                                         
+      145 +- **Progress is kept.** Quiz state (current question, answers 
+          +given, essay text) is saved when the student switches tabs, re
+          +loads, or leaves and returns. An unfinished quiz is resumed at
+          + the same question. Retake: button "Start again" on the Result
+          +s tab starts a new attempt with the same stored questions.    
+      146 +- **Navigation inside a quiz.** "Back" returns to a previous q
+          +uestion and shows its result read-only. A progress text "Quest
+          +ion 3 of 10" is shown; no bar.                                
+      147 +- **Source links.** Every source chip and the "Read this part 
+          +again" link opens the Summary tab, scrolls to the part and mov
+          +es keyboard focus to its heading. A link "Back to your questio
+          +n" returns to the quiz at the same question (a plain link, no 
+          +history tricks).                                              
+      148 +- **Keyboard.** Everything works with Tab, Shift+Tab, Enter, S
+          +pace and arrow keys (radio groups, tabs). Visible focus ring a
+          +lways (`{colors.focus}`, 3px).                                
+      149 +- **Motion.** The only animation is a 150ms fade when feedback
+          + appears. With `prefers-reduced-motion`, there is no animation
+          + and no smooth scrolling. No spinners that spin forever; waiti
+          +ng states use text plus a static icon.                        
+      150 +- **Text size.** Changing it never moves the student away from
+          + the current question.                                        
+      151 +- **Reporting.** "Report this question" opens inline under the
+          + question, not a new page, and keeps the quiz state.          
+      152 +                                                              
+      153 +## Accessibility Floor                                        
+      154 +                                                              
+      155 +Behavioural floor. Visual contrast is specified in `DESIGN.md.
+          +Colors`. Target is WCAG 2.1 AA (PRD §6.3), checked with Lighth
+          +ouse (score 90 or higher) on the main pages, with a manual key
+          +board pass.                                                   
+      156 +                                                              
+      157 +- Every page has one `h1`, ordered headings, a "Skip to main c
+          +ontent" link, and landmarks (header, nav, main).              
+      158 +- All form fields have a visible text label that is programmat
+          +ically linked. Errors are linked with `aria-describedby` and u
+          +se icon plus words. Focus moves to the first error after a fai
+          +led submit.                                                   
+      159 +- Language: the interface is `lang="en"`. The summary and ques
+          +tions carry the lecture language (`lang="en"` or `lang="nb"`) 
+          +so screen readers pronounce them correctly.                   
+      160 +- Status messages (processing steps, feedback result, report s
+          +ent) use a polite live region.                                
+      161 +- Icons are decorative (`aria-hidden`) because the label alway
+          +s sits next to them.                                          
+      162 +- Touch targets are at least 48px.                            
+      163 +- Zoom to 200% and the text size control to "Extra large" caus
+          +e no loss of content or function and no sideways scrolling (ex
+          +cept the tab row on a phone).                                 
+      164 +- No content depends on colour, hover, or timing.             
+      165 +- Reading load: short sentences, one idea per card, no idioms 
+          +(see Voice and Tone). Summary and feedback text come from the 
+          +AI prompts that require plain language (FR-10).               
+      166 +- Passwords: paste is allowed, "Show password" checkbox is pro
+          +vided, autocomplete attributes are set.                       
+      167 +                                                              
+      168 +## Responsive & Platform                                      
+      169 +                                                              
+      170 +| Width | Layout |                                            
+      171 +|---|---|                                                     
+      172 +| Phone (under 600px) | One column. Top bar collapses to a "Me
+          +nu" button plus the Text size control. Tab row scrolls horizon
+          +tally, short labels, with an edge fade. Key terms panel sits b
+          +elow its summary part. Buttons are full width. |              
+      173 +| Tablet and desktop (600px and wider) | Centred column (max 7
+          +20px) for quiz, login, upload and results. Summary uses up to 
+          +1040px: part text on the left, key terms panel on the right of
+          + each part. |                                                 
+      174 +                                                              
+      175 +Browsers: current Chrome, Firefox, Edge and Safari (PRD §6.3).
+      176 +                                                              
+      177 +## Reading Support for Second-Language Students               
+      178 +                                                              
+      179 +Product-specific section.                                     
+      180 +                                                              
+      181 +- Key terms panel beside every summary part (not hidden behind
+          + taps).                                                       
+      182 +- Text size control with three levels.                        
+      183 +- Icons always with a text label.                             
+      184 +- Interface wording is short and literal; there is no interfac
+          +e glossary.                                                   
+      185 +- Essay feedback is about content, never language errors.     
+      186 +- Every claim shows its source slides, so the student can chec
+          +k the AI against the material.                                
+      187 +- Quiz question wording avoids double negatives and idioms (FR
+          +-10).                                                         
+      188 +                                                              
+      189 +## Key Flows                                                  
+      190 +                                                              
+      191 +### Flow 1 — Amara checks what she understood (UJ-1)          
+      192 +                                                              
+      193 +Protagonist: Amara, an international student at Høgskolen i Mo
+          +lde, studying in English, her second language.                
+      194 +                                                              
+      195 +1. Amara opens Recall in the evening. She chooses **Log in**, 
+          +types her email and password, and presses "Log in".           
+      196 +2. She lands on **My lectures** and presses "Upload a lecture"
+          +. On first upload she reads the AI notice, ticks the box, and 
+          +chooses the databases PDF (30 slides).                        
+      197 +3. The **Processing** page shows three steps. She reads "You c
+          +an leave this page. We keep working." and stays. After about 4
+          +0 seconds the Summary opens.                                  
+      198 +4. On the **Summary** tab she uses "Jump to" and reads five pa
+          +rts. Each part has a key terms panel next to it. She reads "fu
+          +nctional dependency" in the panel instead of looking it up.   
+      199 +5. She opens **Multiple choice**. For question 3 she picks an 
+          +answer and presses "Check answer". She sees "Not quite yet", t
+          +he correct answer, and a chip "Slides 12 to 15". She presses "
+          +Next question". She finishes with 7 of 10.                    
+      200 +6. She opens **Fill in the gaps** and types "normalisaton"; it
+          + is accepted as correct (one wrong letter, FR-15). She finishe
+          +s the 8 questions.                                            
+      201 +7. On the **Essay** tab she reads "Explain why we normalise a 
+          +database", writes four sentences, and presses "Get feedback". 
+      202 +8. **Climax:** under her answer she reads "What you explained 
+          +well: you explained repeated data." and "What is missing: upda
+          +te anomalies." and "Read this part again: Slides 12 to 15". Sh
+          +e follows the link, rereads the part, returns, edits her answe
+          +r, and presses "Get feedback again" (attempt 2 of 3). Now the 
+          +missing block is empty.                                       
+      203 +9. On the **Results** tab she sees her scores, "Attempt 1: 1 o
+          +f 2 points, Attempt 2: 2 of 2 points", and a review list with 
+          +"Third normal form — Slides 16 to 18". She opens it and is tak
+          +en to that part.                                              
+      204 +10. **Resolution:** the lecture and results are saved in My le
+          +ctures. She logs out.                                         
+      205 +                                                              
+      206 +Edge: at step 2 she chooses a scanned PDF by mistake and sees 
+          +"This file has no text we can read. Choose a PDF with text, no
+          +t a scan." She chooses the right file.                        
+      207 +                                                              
+      208 +### Flow 2 — Examiner tries the demo                          
+      209 +                                                              
+      210 +Protagonist: Thomas, the examiner, with no account and no API 
+          +key.                                                          
+      211 +                                                              
+      212 +1. He opens the app and sees **Log in** with a clear "Try the 
+          +demo" button.                                                 
+      213 +2. He presses it. The example lecture opens on the **Summary**
+          + tab. The demo banner is at the top of every page.            
+      214 +3. He takes a multiple choice and a fill in the gaps quiz and 
+          +sees the instant checks.                                      
+      215 +4. **Climax:** on the Essay tab, he selects a prepared example
+          + answer and presses "Get feedback". The three feedback blocks 
+          +appear. He tries "Upload", and sees "Processing needs an API k
+          +ey" with a link to the README.                                
+      216 +5. **Resolution:** he opens Results, sees the score and review
+          + list, and knows what the app does without any setup.         
+      217 +                                                              
+      218 +### Flow 3 — Recovering from a failed summary                 
+      219 +                                                              
+      220 +Protagonist: Amara, on a weak campus connection.              
+      221 +                                                              
+      222 +1. She uploads a 45-page PDF. The Processing page shows the st
+          +eps.                                                          
+      223 +2. The AI service returns unusable output twice (FR-27).      
+      224 +3. **Climax:** the page shows "We could not make the summary. 
+          +Please try again." with the buttons "Try again" and "Choose an
+          +other file". No partial summary appears.                      
+      225 +4. She presses "Try again" and the steps start again; the summ
+          +ary opens.                                                    
+      226 +                                                              
+      227 +## If Time (UX items, in order)                               
+      228 +                                                              
+      229 +1. Tap or hover on a key term inside the summary text to show 
+          +its simple explanation (the key terms panel remains the main s
+          +upport).                                                      
+      230 +2. Dark mode.                                                 
+      231 +3. (From PRD) spaced repetition, exam plan, flashcards from ke
+          +y terms.                                                      
+      232 +                                                              
+      233 +## Open Items and PRD Follow-ups                              
+      234 +                                                              
+      235 +These come from decisions in this UX run. They are not yet in 
+          +the PRD; update `prd-recall.md` (not done here).              
+      236 +                                                              
+      237 +1. **Essay resubmit rule.** Up to 3 attempts per essay questio
+          +n; the last attempt counts for the score and review list; all 
+          +attempts are shown on Results. PRD FR-17, FR-18, FR-19, the At
+          +tempt definition and the cost notes (§6.2) need this. Also che
+          +ck the FR-29 evaluation: the evaluation assesses each prepared
+          + answer three times; that is unrelated to the 3 student attemp
+          +ts, but the wording should be kept clearly separate.          
+      238 +2. **Demo access vs FR-2.** FR-2 says a logged-out request ret
+          +urns no lecture data; FR-23 says a visitor opens the example l
+          +ecture. State that the example lecture is public, read-only an
+          +d exempt from FR-2.                                           
+      239 +3. **"Try the demo" with an API key.** The button is always vi
+          +sible (decision). The PRD says Demo Mode is used when no key i
+          +s configured; clarify that the button opens the demo in every 
+          +setup.                                                        
+      240 +4. **Background processing.** Processing continues if the stud
+          +ent leaves the page, and the lecture shows "Processing…" in My
+          + lectures. This is a requirement for the architecture step (jo
+          +b runs outside the page request).                             
+      241 +5. **Text size and quiz progress storage.** Text size is kept 
+          +on the device. Quiz progress must survive tab switches and rel
+          +oads, so it is stored with the account, not only in the page. 
+      242 +6. **Essay points.** Open question 7 in the PRD (ratings of on
+          +ly 0 to 2 points with 2 key points) affects the results displa
+          +y "x of y points". Resolve when the Test Set essays are frozen
+          +.                                                             
+      243 +7. **Skip question.** Multiple choice has a "Skip question" bu
+          +tton (counts as wrong, FR-13). Confirm this is wanted.        
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● DESIGN.md and EXPERIENCE.md are written. I'm now writing the nine wireframe
+  files. My first attempt, using a shell heredoc, failed and created nothing, so
+  I'm switching to writing each file directly.
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\README.md)
+  ⎿  Wrote 20 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\README.md
+       1 # Recall wireframes
+       3 Simple sketches of the key screens. They show layout, order and 
+         wording, not final visuals.
+          `../EXPERIENCE.md`. **Those two files win if a sketch disagrees
+         .**
+       6 Legend: `[ Button ]` button · `( ) / (•)` radio · `[x]` checkbox
+          · `[ ______ ]` input · `<Slides 12 to 15>` source chip (a link)
+       7 
+       8 | # | Screen | PRD |
+      10 | 01 | Log in and Register (with Try the demo) | FR-1, FR-23 |
+     … +14 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\01-login.md)
+  ⎿  Wrote 62 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\01-login.md
+       1 # 01 Log in and Register
+       2 
+       3 Reached from: app start when logged out. Leads to: My lectures (
+         02), or the demo lecture (05).
+       4 
+       6 
+       7 ```
+       8 +--------------------------------------------------------------+
+       9 |  Recall                                                      |
+      10 +--------------------------------------------------------------+
+     … +55 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\02-my-lectures.md)
+  ⎿  Wrote 55 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\02-my-lectures.md
+       1 # 02 My lectures
+       3 Reached from: login, top bar. Leads to: lecture page (05), Uploa
+         d (03).
+       4 
+       6 
+       7 ```
+         -----------+
+       9 | Recall   My lectures   Upload      Text size: [A] [A+] [A++]  
+          Log out    |
+         -----------+
+     … +72 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\03-upload.md)
+  ⎿  Wrote 55 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\03-upload.md
+       1 # 03 Upload
+       2 
+       4 
+       5 ## Wide screen
+       6 
+       8 +---------------------------------------------------------------
+         -----------+
+       9 | Recall   My lectures   Upload      Text size: [A] [A+] [A++]  
+      10 +---------------------------------------------------------------
+         -----------+
+     … +76 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\04-processing.md)
+  ⎿  Wrote 44 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\04-processing.md
+       1 # 04 Processing
+       2 
+       4 
+       5 ## Wide screen
+       6 
+       8 +---------------------------------------------------------------
+         -----------+
+       9 | Recall   My lectures   Upload      Text size: [A] [A+] [A++]  
+      10 +---------------------------------------------------------------
+         -----------+
+     … +57 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\05-summary.md)
+  ⎿  Wrote 77 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\05-summary.md
+       1 # 05 Summary tab (lecture page hub)
+       3 Reached from: Processing, My lectures, any source chip, review l
+         ist. Leads to: quiz tabs, Results tab.
+       4 
+       6 
+       7 ```
+         -----------------+
+       9 | Recall   My lectures   Upload       Text size: [A] [A+] [A++] 
+               Log out     |
+         -----------------+
+     … +106 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\06-quiz-multiple-cho
+       ice.md)
+  ⎿  Wrote 67 lines to _bmad-output\initiative-recall\ux-recall\wireframes\
+     06-quiz-multiple-choice.md
+       1 # 06 Quiz: multiple choice
+       3 Reached from: the "Multiple choice" tab. Leads to: next question
+         , then Results.
+       4 
+       6 
+       7 ```
+         -----------+
+       9 | Recall   My lectures   Upload      Text size: [A] [A+] [A++]  
+          Log out    |
+         -----------+
+     … +98 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\07-quiz-fill-in-the-
+       gaps.md)
+  ⎿  Wrote 59 lines to _bmad-output\initiative-recall\ux-recall\wireframes\
+     07-quiz-fill-in-the-gaps.md
+       1 # 07 Quiz: fill in the gaps
+       3 Reached from: the "Fill in the gaps" tab. Leads to: next questio
+         n, then Results.
+       4 
+       6 
+       7 ```
+         -----------+
+       9 | Recall   My lectures   Upload      Text size: [A] [A+] [A++]  
+          Log out    |
+         -----------+
+     … +85 lines (ctrl+o to expand)
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\08-quiz-essay.md)
+  ⎿  Wrote 96 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\08-quiz-essay.md
+       1 # 08 Quiz: essay
+       3 Reached from: the "Essay" tab. Leads to: next essay question, th
+         en Results.
+       4 
+       6 
+       7 ```
+         -----------+
+       9 | Recall   My lectures   Upload      Text size: [A] [A+] [A++]  
+          Log out    |
+         -----------+
+     … +146 lines (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\wireframes\09-results.md)
+  ⎿  Wrote 64 lines to
+     _bmad-output\initiative-recall\ux-recall\wireframes\09-results.md
+       1 # 09 Results tab
+       3 Reached from: end of a quiz, or the "Results" tab. Leads to: Sum
+         mary parts (review list), quiz tabs (start again).
+       4 
+       6 
+       7 ```
+         -----------+
+       9 | Recall   My lectures   Upload      Text size: [A] [A+] [A++]  
+          Log out    |
+         -----------+
+     … +94 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've drafted DESIGN.md, EXPERIENCE.md and nine Markdown wireframes. Nothing is
+  committed (git shows only the new ux-recall/ folder as untracked). No
+  validation or review has run, so both documents are still marked status: 
+  draft.
+
+  Everything is in _bmad-output/initiative-recall/ux-recall/:
+
+  - DESIGN.md: the Soft indigo colours, Verdana at 18px with a 1.6 line height,
+    three text sizes, 48px touch targets and 2px input borders. It also lists
+    the components and the do's and don'ts, such as no colour-only meaning, no
+    timers and no red fills.
+  - EXPERIENCE.md:
+    - Screen map and the lecture hub with tabs.
+    - Voice rules and example messages.
+    - Component and state behaviour, including the essay rules (3 attempts, last
+      one counts).
+    - Accessibility floor, responsive rules, and a reading-support section for
+      second-language students.
+    - Three named flows: Amara, the examiner using the demo, and a failed
+      summary.
+    - The "if time" list: inline key term explanations and dark mode.
+  - wireframes/: a README plus nine files: login and register, my lectures,
+    upload, processing, summary, multiple choice, fill in the gaps, essay and
+    results. Each has a phone variant and its error or empty states.
+
+  EXPERIENCE.md also lists these PRD follow-ups. I did not edit the PRD:
+
+  1. The 3-attempt essay rule, where the last attempt counts, is not in the PRD
+     yet.
+  2. FR-2 (logged-out users see no lecture data) conflicts with FR-23 (the
+     example lecture is open to visitors). The example lecture should be stated
+     as public and read-only.
+  3. "Try the demo" is always visible, but the PRD ties demo mode to a missing
+     API key.
+  4. Processing must run as a background job, because it continues when the
+     student leaves the page.
+  5. Quiz progress has to be stored with the account so it survives tab switches
+     and reloads.
+  6. With only 2 key points per essay, the "x of y points" display can only show
+     0, 1 or 2 (PRD open question 7).
+  7. Multiple choice has a "Skip question" button that counts as not answered. I
+     added it myself, so please confirm you want it.
+
+  I did not render HTML mockups, so the screens are built from the Markdown
+  wireframes and the two spines.
+
+  Question 14: Do you want me to run a review before I mark both documents
+  final? The options are an accessibility check of the wireframes and spines
+  against WCAG, a structure and prose check, both, or none. Separately, should I
+  update the PRD with the follow-ups above? I'll do neither until you say.
+
+✻ Brewed for 3m 19s · done 10:35 PM
+
+※ recap: We're designing Recall's UX: DESIGN.md, EXPERIENCE.md and nine Markdown wireframes are drafted in ux-recall/, uncommitted. Next, tell me whether to run a review (accessibility, structure, both or none) before marking them final. (disable recaps in /config)
+
+❯ Run the accessibility check only, and show me the findings before changing    
+  anything.                                                                     
+  Yes, update the PRD with all seven follow-ups. For 6: each essay question has 
+  at least 3 key points, which closes PRD open question 7. For 7: keep "Skip    
+  question"; a skipped question counts as not answered and goes into the review 
+  list.                                                                         
+  Log the decisions in the memlog. Do not commit.                               
+
+  Made 2 scratchpad edits +104, ran 3 shell commands (ctrl+o to expand)
+
+● PRD update is done and logged. I'm now running the accessibility check,
+  starting with measuring the real colour contrast ratios.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\ux-recall\review-accessibility.md)
+  ⎿  Wrote 105 lines to
+     _bmad-output\initiative-recall\ux-recall\review-accessibility.md
+       1 # Accessibility review: Recall UX (2026-10-16)
+       3 Scope: `DESIGN.md`, `EXPERIENCE.md`, `wireframes/01–09`. Target:
+          WCAG 2.1 AA (PRD §6.3), with a few 2.2 criteria noted. This is 
+          the spines or wireframes has been changed. Contrast ratios were
+       4 
+       5 ## Contrast check of the tokens
+       7 | Pair | Ratio | Needed | Result |
+       8 |---|---|---|---|
+         12.99 | 4.5 | Pass |
+         6.91 | 4.5 | Pass |
+     … +196 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The accessibility check found 15 issues, and I updated the PRD with all seven
+  follow-ups. I have not changed any UX file (DESIGN.md, EXPERIENCE.md or the
+  wireframes), and nothing is committed. Decisions are in the memlog.
+
+  The review checked the design documents, not a built app. The full report is
+  ux-recall/review-accessibility.md. I calculated the colour contrast ratios
+  from the hex values. Most pass, including text, primary, success, attention
+  and the focus ring. One fails.
+
+  Accessibility findings
+
+  High: should fix
+  1. Control borders fail contrast. The border colour is only 2.13:1 on white,
+     and WCAG needs 3:1. DESIGN.md wrongly says a 2px border fixes this. Add a
+     darker border colour for inputs, the essay box, answer options and radio
+     outlines.
+  2. Fixed 48px heights will clip text. Buttons and inputs use height: 48px. At
+     "Extra large" text, or when a label wraps, the text is cut off. Use
+     minHeight instead.
+  3. The phone top bar won't fit at 320px with large text. Logo, Menu and the
+     three text size buttons can't share one row. Let the bar wrap, or move the
+     text size control into the menu.
+
+  Medium
+  4. Repeated buttons ("Open", "Delete", "Read this part", "Start again") and
+  source chips need names that include their target, such as "Delete Databases:
+  Normalisation".
+  5. The 15px meta style contradicts the "18px minimum" rule. It is used for
+  chips and "Question 3 of 10".
+  6. An essay answer could be lost if the login session ends. Autosave the
+  draft.
+  7. The interface text breaks its own plain-language rule:
+  - "Not quite yet" and "Well done" are hard for second-language readers.
+  - "Do not upload files you are not allowed to share" is a double negative.
+  - The phone tab labels "Choice" and "Gaps" are unclear.
+  8. Each tab should have its own URL and page title, so the browser Back button
+     works.
+
+  Low
+  9. Check-answer feedback may be announced twice by screen readers.
+  10. Status changes in My lectures need a defined announcement.
+  11. Several controls need explicit semantics: fieldset/legend, aria-pressed,
+  aria-expanded, dialog focus handling, and spellcheck off on the gap input.
+  12. Source chips need a minimum size of 44px.
+  13. The demo banner is long and can't be closed.
+  14. The wireframes use emoji icons. The real icons should be SVG.
+  15. The test plan lacks a screen-reader pass and zoom checks.
+
+  Two related notes. The wireframes and Amara's flow still say "of 2 points"
+  after the 3-key-point decision. Wireframe 07 also has no "Skip question" link.
+
+  PRD changes (prd-recall.md, still status: final, updated 2026-10-16)
+
+  - Essay resubmit: up to 3 submissions per essay question, the last one counts,
+    all are shown on the results page. This is in FR-17, FR-18, FR-19, the
+    glossary and the cost section.
+  - Example lecture access: the example lecture is public and read-only, which
+    resolves the FR-2 and FR-23 conflict.
+  - "Try the demo": always visible on the login page (FR-23).
+  - Background processing: processing continues if the student leaves the page,
+    with real steps and no percentage or timer (FR-5).
+  - Progress storage: quiz progress is stored with the account, and text size is
+    kept on the device.
+  - Essay key points: at least 3 per essay question, and PRD open question 7 is
+    closed.
+  - Skip question: a skipped question counts as not answered and goes into the
+    review list (FR-13, FR-19).
+  - Change log: a new section 13 lists these changes.
+
+  The PRD still needs a check of FR-26, FR-29 and SM-5. The frozen test essays
+  and prepared answers now need at least 3 key points each. I noted this in
+  section 13 but did not change those requirements.
+
+  Question 15: Should I apply fixes for all 15 findings to DESIGN.md,
+  EXPERIENCE.md and the wireframes? That would also update "of 2 points" to 3
+  and add "Skip question" to fill in the gaps. Or would you rather choose which
+  findings to apply, for example only the three high ones?
+
+✻ Brewed for 2m 30s · done 10:42 PM
+
+❯ Apply fixes for all 15 findings, including "of 3 points" everywhere and "Skip 
+  question" in both multiple choice and fill-in-the-gaps.                       
+  Also update FR-26, FR-29 and SM-5 in the PRD so the frozen test essays and    
+  prepared answers have at least 3 key points each, and note it in section 13.  
+  Then check that DESIGN.md, EXPERIENCE.md, the wireframes and the PRD agree    
+  with each other, and mark the UX documents final.                             
+  Log the decisions in the memlog. Show me a short list of the 15 fixes when    
+  done. Do not commit.                                                          
+
+  Made 1 scratchpad edit +95, ran 4 shell commands (ctrl+o to expand)
+
+● The DESIGN.md fixes are done. I'm now applying the fixes to EXPERIENCE.md and
+  the wireframes, then the PRD edits.
+
+  Made 4 scratchpad edits +269, ran 6 shell commands (ctrl+o to expand)
+
+● All 15 accessibility fixes are applied, the PRD is updated, and DESIGN.md,
+  EXPERIENCE.md and ux-recall.md are now status: final. I didn't commit
+  anything. Git shows the commit dc06fad "Add first draft of UX design and
+  wireframes", which I did not make. Everything from this round is uncommitted
+  on top of it.
+
+  The 15 fixes
+
+  1. Control borders: I added a darker border-control colour (#6B739E, 3.7 to
+     4.6:1) for inputs, the essay box, answer options, chips and banners. I also
+     corrected the wrong sentence about 2px borders.
+  2. Fixed heights: buttons and inputs now use minHeight, so they grow when text
+     wraps or is large.
+  3. Phone top bar: it wraps to a second row instead of overflowing at 320px or
+     at "Extra large" text.
+  4. Repeated buttons and links: their names now include the object, for example
+     "Delete Databases: Normalisation" and "Slides 12 to 15, Why we normalise".
+  5. Supporting text size: meta is now 16px and is the smallest size allowed.
+     All type sizes scale together.
+  6. Essay drafts: they are saved while the student types and survive a session
+     end or lost connection.
+  7. Plain-language text:
+     - "Not quite yet" is now "Not correct yet".
+     - "Correct. Well done." is now "Correct."
+     - The upload notice now reads "Only upload files you are allowed to share."
+     - The phone tab row uses the full labels.
+  8. Tab addresses and titles: each tab has its own page address and page title,
+     so Back works.
+  9. Quiz feedback: focus moves to the result line, with no extra live region,
+     so it is read once.
+  10. Lecture list status: it changes in place and is announced politely.
+  11. Control semantics: fieldset/legend, aria-pressed, aria-expanded, a proper
+      alert dialog, aria-describedby, and spellcheck off on the gap input.
+  12. Source chips: they are at least 44px tall.
+  13. Demo banner: one sentence plus a "What is different in demo mode?" link.
+  14. Icons: SVG, never emoji. The wireframe README says so.
+  15. Test plan: it now includes a screen-reader pass, 200% zoom, a 320px check
+      and an "Extra large" text check.
+
+  The other changes
+
+  - Key points: "of 3 points" everywhere in the UX files, including wireframes
+    08 and 09 and Amara's flow.
+  - Skip question: it is in both multiple choice and fill in the gaps. I added
+    it to PRD FR-15 as well, since it was only in FR-13 and FR-19.
+  - PRD FR-26, FR-29, SM-5:
+    - Frozen essays have at least 3 key points.
+    - Good answers cover all or most of them.
+    - Weak answers cover at most one.
+    - Misunderstanding answers cover fewer than the good ones.
+    - I noted this in section 13.
+
+  Cross-check
+
+  - No stale wording remains ("of 2 points", "Well done", short tab labels).
+  - Every colour token used in the text is defined.
+  - The PRD, EXPERIENCE.md and the wireframes agree on:
+    - the 3 attempts per essay question
+    - the last attempt counting
+    - the public example lecture
+    - the always-visible demo button
+    - skip behaviour
+    - key points
+  - I did not run the wireframes through a tool; the cross-check was done with
+    text searches.
+
+  The report is review-accessibility.md, with a table showing where each finding
+  was fixed. The memlog has 24 entries and ends with "spines finalized".
+
+✻ Cooked for 2m 26s · done 10:46 PM
+
+※ recap: We're designing the Recall app's UX: the design and experience documents, wireframes, and the accessibility fixes are done and marked final, with the PRD updated to match. Nothing is committed, so the next step is for you to review the files and decide whether to commit. (disable recaps in /config)
+
+❯    /export docs/ai-sessions/2026-10-16-ux.txt                                 
+
+● /export is a built-in Claude Code command, so I can't run it from here. Type
+  it yourself in the prompt, exactly as you wrote it: /export 
+  docs/ai-sessions/2026-10-16-ux.txt.
+
+  The path is relative to the repo root. If the docs/ai-sessions/ folder doesn't
+  exist yet, create it first. Your earlier "Export doc ai sessions" commit
+  suggests it does.
+
+  Nothing from this session is committed. Once you've exported the session, I
+  can stage and commit the UX files and the PRD update if you want that.
+
+✻ Cogitated for 3s · done 10:51 PM
+
+❯  /export docs/ai-sessions/2026-10-16-ux.txt                                   
+
+● /export is a built-in command, so it only works when you type it in the Claude
+  Code prompt. When it arrives through me as a message, I can't run it, and I
+  can't export the session myself.
+
+  Please run it directly: /export docs/ai-sessions/2026-10-16-ux.txt. Check that
+  docs/ai-sessions/ exists first.
+
+  I can also check that the folder exists, or create it if it's missing.
+
+✻ Cooked for 2s · done 10:53 PM
