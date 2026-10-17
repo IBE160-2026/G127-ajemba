@@ -23,6 +23,7 @@ Recall er for studenter som studerer på et annet språk enn morsmålet sitt. Ap
 - Hvordan brukte dere KI-verktøy i prosessen?
 
 ### 2.3 Teknologi og verktøy
+Choose Django because iam familiar with Python necessary for reveiewing the code, checking Google’s actual terms instead of assuming, and rejecting PyMuPDF because of its licence.
 [Liste over de viktigste teknologiene og verktøyene dere brukte]
 - Frontend: [f.eks. NextJS, HTML/CSS]
 - Backend: [f.eks. Python/FastAPI]
