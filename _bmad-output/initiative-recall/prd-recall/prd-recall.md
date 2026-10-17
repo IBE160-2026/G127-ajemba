@@ -135,10 +135,11 @@ While a Lecture is processed, the User sees that work is in progress. If process
 
 #### FR-6: Notice about external AI processing
 
-Before a User's first upload, the app states that lecture content and essay answers are sent to an external AI service, and the User must acknowledge this.
+Before a User's first upload, the app states that lecture content and essay answers are sent to an external AI service, and the User must acknowledge this. The service is Google Gemini on its free tier. The notice repeats what Google's Gemini API terms say about data use, in Google's own words and no more, including the passage for users in the EEA, Switzerland and the UK. The exact text is in `ux-recall/EXPERIENCE.md` (Upload notice).
 
 **Consequences (testable):**
 - A User who has not acknowledged the notice cannot upload a PDF.
+- The notice names the AI service and quotes Google's terms exactly (checked 2026-10-17, see `architecture-recall/gemini-terms-checked-2026-10-17.md`). A test compares the notice with the stored quotes.
 - The notice is shown once, on the upload page, and again in the README.
 
 #### FR-7: Daily upload limit
@@ -442,7 +443,7 @@ The Test Set covers a handful of lectures chosen by the builder, so it shows tha
 
 ### 6.1 Privacy and Data
 
-- Lecture content and the student's essay answers are sent to an external AI service. The app states this clearly before upload (FR-6).
+- Lecture content and the student's essay answers are sent to an external AI service (Google Gemini, free tier). Google's terms for unpaid quota say that the content is used to improve its products and that human reviewers may read it; for users in the EEA, Switzerland and the UK, the terms for paid services apply to unpaid quota too. The app quotes these terms before upload (FR-6). In v1 the free Gemini key is used only by the builder, as the developer, locally. The examiner uses Demo Mode or their own key. Offering Recall to other users in the EEA, Switzerland or the UK requires a paid key under Google's terms. During development, only the builder's own or freely licensed slides are sent.
 - Passwords are handled by an established authentication approach and never stored in plain text (FR-1).
 - API keys are kept in `.env`, which is excluded from Git; `.env.example` is committed.
 - Copyrighted course material is never added to the repository; test data is the builder's own or freely licensed slides.
@@ -634,3 +635,7 @@ Decisions made in `ux-recall` (see its `.memlog.md`) that changed this PRD. The 
 
 - **Test Set essays (FR-26, FR-29, SM-5):** the frozen Essay questions and the prepared answers have at least three Reference Key Points each. Good answers cover all or most of them; weak answers cover at most one; misunderstanding answers cover fewer than the good ones. The ranking check in SM-5 is unchanged.
 - **Consequences of the 3 Essay Submissions rule for the evaluation:** the evaluation (FR-28, FR-29) assesses each prepared answer three times to check repeatability. This is separate from the student's 3 Essay Submissions per question.
+
+## 14. Changes from the architecture step (2026-10-17)
+
+- **Notice about the AI service (FR-6, §6.1):** the AI service is Google Gemini on the free tier. The upload notice and the README quote Google's terms exactly (checked 2026-10-17), including the EEA, Switzerland and UK passage. In v1 the free key is used only by the builder, locally; the examiner uses Demo Mode or their own key; offering Recall to other users in the EEA, Switzerland or the UK requires a paid key under Google's terms. The builder asked for this change on 2026-10-17.

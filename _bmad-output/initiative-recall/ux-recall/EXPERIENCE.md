@@ -77,10 +77,29 @@ Example messages:
 | Daily limit | "You have used your 5 uploads for today. You can upload again tomorrow." |
 | Processing failed | "We could not make the summary. Please try again." |
 | AI notice (summary/quiz) | "This text was made by AI. It can contain mistakes. Check it against your slides." |
-| AI notice (upload, first time) | "Recall sends your slides and your essay answers to an AI service. Only upload files you are allowed to share." |
+| AI notice (upload, first time) | See "Upload notice (exact text)" below. |
 | Register note | "We can't reset passwords yet. Please remember yours." |
 | Essay hint | "Write 2 to 5 sentences. Spelling and grammar are not marked." |
 | No wrong answers | "You answered everything correctly. There is nothing to review." |
+
+### Upload notice (exact text)
+
+Shown on the Upload page before the first upload (FR-6). It repeats what Google's Gemini API terms say, in Google's own words, no more and no less. The quoted lines are legal text: the 12-word rule and the word list above do not apply to them, and they must not be reworded. The source, the dates and the quotes are in `architecture-recall/gemini-terms-checked-2026-10-17.md`; the architecture (AD-16) keeps the notice in step with that file.
+
+> Recall sends your slides and your essay answers to Google's Gemini API. This is what Google's terms say.
+>
+> **Unpaid quota** ("Unpaid Services"):
+> - Free tier: "Content used to improve our products"
+> - "To help with quality and improve our products, human reviewers may read, annotate, and process your API input and output."
+> - "Do not submit sensitive, confidential, or personal information to the Unpaid Services."
+>
+> **If you are in the EEA, Switzerland or the UK:**
+> - "If you're in the European Economic Area, Switzerland, or the United Kingdom, the terms under "How Google uses Your Data" in "Paid Services" apply to all Services, including Google AI Studio and unpaid quota in the Gemini API, even though they are offered free of charge."
+> - Paid Services: "Google doesn't use your prompts (including associated system instructions, cached content, and files such as images, videos, or documents) or responses to improve our products"
+>
+> Read the terms: Gemini API Additional Terms of Service (link). Only upload files you are allowed to share.
+
+Checkbox: "I have read this notice about Google's terms." The first and last sentences are Recall's own words and follow the voice rules.
 
 ## Component Patterns
 
@@ -122,10 +141,10 @@ Behavioural rules. Visual specs are in `DESIGN.md.Components`.
 | State | Surface | Treatment |
 |---|---|---|
 | Empty list | My lectures | "You have no lectures yet." and a primary button "Upload a lecture". Also a link "Try the demo". |
-| Processing | Processing; My lectures row | Steps: "Reading your PDF", "Finding the key points", "Writing the summary". Done steps show a check icon. The current step shows "In progress". No percentage. The page says "You can leave this page. We keep working." The row in My lectures shows "Processing…". On ready, the processing page moves to the Summary; in the list the row changes to "Ready". |
+| Processing | Processing; My lectures row | Two steps, both real: "Reading your PDF" (already done when the page opens, because the PDF is read during the upload) and "Writing the summary" (in progress until the result is checked and saved). No other steps are shown, because the app does not know any finer progress. Done steps show a check icon. The current step shows "In progress". No percentage. The page says "You can leave this page. We keep working." The row in My lectures shows "Processing…". On ready, the processing page moves to the Summary; in the list the row changes to "Ready". |
 | Processing failed | Processing; row | Message, button "Try again", link "Choose another file". No partial summary (FR-5). Row shows "Failed" with the same buttons. |
 | Upload rejected | Upload | Message under the file field, with icon, plain reason (examples in Voice and Tone). The file field stays. Nothing is created. |
-| Not accepted notice | Upload | "Upload a lecture" is disabled until the checkbox "I understand that my slides are sent to an AI service" is checked. The disabled button is explained in text next to it. |
+| Not accepted notice | Upload | "Upload a lecture" is disabled until the checkbox "I have read this notice about Google's terms." is checked. The disabled button is explained in text next to it. |
 | Daily limit | Upload | Message in place of the form. |
 | Quiz not made yet | Quiz tab, first open | "We are making your questions." with "In progress". Then the first question. Questions are stored for later (PRD §4.4). |
 | Quiz failed | Quiz tab | "We could not make the questions. Please try again." + "Try again". |
@@ -198,7 +217,7 @@ Protagonist: Amara, an international student at Høgskolen i Molde, studying in 
 
 1. Amara opens Recall in the evening. She chooses **Log in**, types her email and password, and presses "Log in".
 2. She lands on **My lectures** and presses "Upload a lecture". On first upload she reads the AI notice, ticks the box, and chooses the databases PDF (30 slides).
-3. The **Processing** page shows three steps. She reads "You can leave this page. We keep working." and stays. After about 40 seconds the Summary opens.
+3. The **Processing** page shows two steps: "Reading your PDF" is done, "Writing the summary" is in progress. She reads "You can leave this page. We keep working." and stays. After about 40 seconds the Summary opens.
 4. On the **Summary** tab she uses "Jump to" and reads five parts. Each part has a key terms panel next to it. She reads "functional dependency" in the panel instead of looking it up.
 5. She opens **Multiple choice**. For question 3 she picks an answer and presses "Check answer". She sees "Not correct yet", the correct answer, and a chip "Slides 12 to 15". She presses "Next question". She finishes with 7 of 10.
 6. She opens **Fill in the gaps** and types "normalisaton"; it is accepted as correct (one wrong letter, FR-15). She finishes the 8 questions.

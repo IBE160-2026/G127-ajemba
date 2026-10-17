@@ -20,7 +20,7 @@ flowchart LR
 
 - **Web app (Django + htmx).** Shows the pages, handles login, and checks every upload. It is mostly Python and HTML, so it is easy to read. htmx lets a page update one part (a quiz result, a status line) without a full reload.
 - **SQLite file.** The database is one file in the project. Nobody needs to install a database server.
-- **Worker.** When you upload a PDF, the web app saves a job and returns at once. The worker does the slow AI work. This is why processing continues if you close the page. The page asks every few seconds "is it done?" and stops asking when it is.
+- **Worker.** When you upload a PDF, the web app reads the text first, so a bad file is rejected at once. Then it saves a job and returns. The worker does the slow AI work. This is why processing continues if you close the page. The page asks every few seconds "is it done?" and stops asking when it is.
 - **AI helper.** Every AI call goes through one file. It checks the AI's answer, retries if the answer is unusable, and waits if the free service says "too many requests". With no key, it uses the prepared example instead.
 - **Prompts.** The instructions we send to the AI are text files in the `prompts/` folder, each with a version number.
 
@@ -46,5 +46,5 @@ Without an API key the app starts in **Demo Mode**. It shows an example lecture 
 | --- | --- | --- |
 | One web app, no separate JavaScript framework | I only know Python, so I can read and review all the code | Interactive quiz screens take more care |
 | SQLite | Nothing to install | One user at a time on the worker, no backups in v1 |
-| Gemini free tier | I cannot pay for API use now | Google may use submitted text to improve its products, and limits can change. The upload notice says this, and only my own or freely licensed slides are used in development |
+| Gemini free tier | I cannot pay for API use now | Outside the EEA, Switzerland and the UK, Google may use free-tier content to improve its products and human reviewers may read it. For API customers in the EEA, Switzerland and the UK, Google applies the paid-service data terms to the free tier too, so prompts and responses are not used to improve its products, but are logged for a limited time to detect misuse. The upload notice quotes the terms exactly (checked 2026-10-17). Limits can change. In v1 the free key is used only by me, as the developer, locally. The examiner uses Demo Mode or their own key. Offering Recall to other users in the EEA, Switzerland or the UK requires a paid key under Google's terms |
 | Local only in v1 | Simple and safe | Not a public website. The README lists what to change before deploying |

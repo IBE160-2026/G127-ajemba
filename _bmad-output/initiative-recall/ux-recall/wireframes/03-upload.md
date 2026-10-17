@@ -11,9 +11,14 @@ Reached from: top bar, My lectures. Leads to: Processing (04).
 |  Upload a lecture                                                        |
 |                                                                          |
 |  +--------------------------------------------------------------------+  |
-|  | (i) Recall sends your slides and your essay answers to an AI       |  |
-|  |     service. Only upload files you are allowed to share.           |  |
-|  |     [ ] I understand                                               |  |
+|  | (i) Recall sends your slides and your essay answers to Google's    |  |
+|  |     Gemini API. This is what Google's terms say:                   |  |
+|  |     "...human reviewers may read, annotate, and process your API   |  |
+|  |     input and output."  (more quotes: unpaid quota, EEA/CH/UK,    |  |
+|  |     paid services; full text in EXPERIENCE.md, Upload notice)      |  |
+|  |     Read the terms (link).                                         |  |
+|  |     Only upload files you are allowed to share.                    |  |
+|  |     [ ] I have read this notice about Google's terms.              |  |
 |  +--------------------------------------------------------------------+  |
 |                                                                          |
 |  Choose a PDF file                                                       |
@@ -26,7 +31,7 @@ Reached from: top bar, My lectures. Leads to: Processing (04).
 |   • You can upload 5 lectures per day. Uploads left today: 4             |
 |                                                                          |
 |  [ ⬆ Upload and make summary ]                                           |
-|  Choose a file and tick "I understand" first.   <- shown while disabled  |
+|  Choose a file and tick the notice first.   <- shown while disabled  |
 +--------------------------------------------------------------------------+
 ```
 

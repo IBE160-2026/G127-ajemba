@@ -161,7 +161,7 @@ Flat. Cards are separated by a 1px `{colors.border}` outline and tone, not by sh
 - **Essay box:** multi-line input, at least 8 lines tall, same border and label rules.
 - **Feedback block:** card with a heading and an icon (for example check mark for "What you explained well", dash for "What is missing", book for "Read this part again").
 - **Tabs:** underlined text tabs on wide screens. On a phone they become a horizontally scrollable row with the same full labels (no short labels). The selected tab has a 3px `{colors.primary}` underline and bold text. An edge fade shows that the row scrolls.
-- **Step list (processing):** vertical list of three steps; done = check icon, current = spinner-free "In progress" label, waiting = empty circle.
+- **Step list (processing):** vertical list of the real steps (two in v1); done = check icon, current = spinner-free "In progress" label, waiting = empty circle.
 - **Notice banner:** `{colors.primary-soft}` fill, 2px `{colors.border-control}` border, icon plus text. Used for the AI notice and the demo banner. The demo banner is one short sentence plus a link, and is not dismissible.
 - **Text size control:** three buttons labelled "A", "A+" and "A++" with the visible words "Text size" and the current level in text, shown in the top bar (or in the first row of the wrapped bar on a phone).
 
