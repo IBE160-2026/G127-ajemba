@@ -1,0 +1,100 @@
+# tickets.toml for initiative-recall: the epics in build order.
+# `tier` is our own key (tickets.py ignores it): must-have or if-time.
+
+[[epic]]
+id = 1
+slug = "epic-foundation-accounts"
+title = "Foundation and accounts"
+covers = ["FR-1", "FR-2", "SM-7"]
+tier = "must-have"
+
+[[epic]]
+id = 2
+slug = "epic-upload-pdf-checks"
+title = "Upload and PDF checks"
+covers = ["FR-3", "FR-4", "FR-6", "FR-7", "SM-8"]
+after = [{ epic = 1, needs = "logged-in users, the base template, settings and the test setup" }]
+tier = "must-have"
+
+[[epic]]
+id = 3
+slug = "epic-summary"
+title = "Summary with source references"
+covers = ["FR-5", "FR-8", "FR-9", "FR-10", "FR-11", "FR-25", "FR-27", "SM-1", "SM-2"]
+after = [
+  { epic = 1, needs = "the project skeleton for ai_client and settings" },
+  { epic = 2, needs = "a stored Lecture with per-page text after a valid upload" },
+]
+tier = "must-have"
+
+[[epic]]
+id = 4
+slug = "epic-multiple-choice-results"
+title = "Multiple choice, results and saved lectures"
+covers = ["FR-12", "FR-13", "FR-18", "FR-19", "FR-20", "SM-3", "SM-6"]
+after = [{ epic = 3, needs = "Summary Parts, the AI client, the job system and the validators" }]
+tier = "must-have"
+
+[[epic]]
+id = 5
+slug = "epic-demo-readme"
+title = "Demo Mode and README"
+covers = ["FR-23", "FR-24", "SM-9"]
+after = [
+  { epic = 1, needs = "the project skeleton and run.py to document" },
+  { epic = 4, needs = "a complete flow (Summary, quiz, results) to demonstrate" },
+]
+tier = "must-have"
+
+[[epic]]
+id = 6
+slug = "epic-evaluation"
+title = "Slim evaluation on the Test Set"
+covers = ["FR-26", "FR-28", "FR-30", "SM-10", "SM-11", "SM-C1", "SM-C2", "SM-C3"]
+after = [
+  { epic = 2, needs = "test lecture 1, the builder's own PowerPoint PDF" },
+  { epic = 3, needs = "Summary generation and its validators to evaluate" },
+  { epic = 4, needs = "Multiple Choice generation to evaluate" },
+]
+tier = "must-have"
+
+[[epic]]
+id = 7
+slug = "epic-fill-in-gaps"
+title = "Fill-in-the-gaps"
+covers = ["FR-14", "FR-15", "FR-23", "SM-4"]
+after = [
+  { epic = 4, needs = "the quiz, scoring, results and Review List pattern" },
+  { epic = 5, needs = "the Example Lecture to extend with fill-in content" },
+  { epic = 6, needs = "the evaluation command to extend" },
+]
+tier = "if-time"
+
+[[epic]]
+id = 8
+slug = "epic-essay-feedback"
+title = "Essay questions and feedback"
+covers = ["FR-16", "FR-17", "FR-18", "FR-19", "FR-23", "FR-26", "FR-29", "SM-5"]
+after = [
+  { epic = 4, needs = "the quiz, results and Review List pattern" },
+  { epic = 5, needs = "the Example Lecture to extend with prepared essay answers" },
+  { epic = 6, needs = "the frozen Test Set and the evaluation command to extend" },
+  { epic = 7, needs = "the second quiz type and its place in the evaluation" },
+]
+tier = "if-time"
+
+[[epic]]
+id = 9
+slug = "epic-delete-report"
+title = "Delete a lecture and report a question"
+covers = ["FR-21", "FR-22", "FR-31"]
+after = [{ epic = 4, needs = "saved lectures and questions to delete and report" }]
+tier = "if-time"
+
+[[epic]]
+id = 10
+slug = "epic-polish"
+title = "Polish: text size and accessibility check"
+covers = []
+after = [{ epic = 4, needs = "the main pages to check" }]
+tier = "if-time"

@@ -1,0 +1,25 @@
+# Epic 7: Fill-in-the-gaps. If time.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Typed-answer matching rules"
+description = "Adds the pure matching module and the shared text normalisation with every FR-15 rule and example."
+verify = "Unit tests pass for case, spaces, edit distance of one for terms of five letters or more, exact match for shorter terms, and the three examples in FR-15."
+covers = ["FR-15", "SM-4"]
+after = ["4.1"]
+hitl = false
+risk = "low"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "Fill-in generation, quiz screen, evaluation and demo content"
+description = "Generates 8 questions once, adds the quiz screen on the existing pattern, adds fill-in answer keys to the evaluation and fill-in content to the Example Lecture."
+verify = "Tests show each question has one expected term and a Summary Part link, a skip creates a Review List entry, and the demo lecture offers the quiz."
+covers = ["FR-14", "FR-15", "FR-23"]
+after = [1, "4.2", "6.2", "5.1"]
+hitl = true
+risk = "medium"
+refine = true

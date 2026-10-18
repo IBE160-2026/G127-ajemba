@@ -1,0 +1,49 @@
+# Epic 8: Essay questions and feedback. If time.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Freeze essay questions and prepared answers"
+description = "You write and freeze 1-2 essay questions per test lecture with at least three Reference Key Points each, and six prepared answers per question marked in advance."
+verify = "A test fails if frozen essay files change, and each question has two good, two weak and two misunderstanding answers."
+covers = ["FR-26", "FR-29"]
+after = ["6.1"]
+hitl = true
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "Essay generation and feedback job"
+description = "Generates 2 essay questions with key points, and adds the feedback job that returns covered key-point indices and computes the rating by one pure function."
+verify = "Tests show out-of-range indices are rejected, empty answers get the lowest rating, and no language error lowers the rating."
+covers = ["FR-16", "FR-17"]
+after = ["4.2", "7.2"]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 3
+type = "story"
+title = "Essay screen with drafts and three submissions"
+description = "Adds the essay screen with draft saving, up to 3 submissions per essay, all feedback visible, and the last submission counting in results and Review List."
+verify = "Tests show a fourth submission is refused, the draft is deleted on submit, and the last submission sets the rating and Review List entry."
+covers = ["FR-17", "FR-18", "FR-19"]
+after = [2, "4.3"]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 4
+type = "story"
+title = "Essay ranking check and demo content"
+description = "Extends the evaluation to run the prepared answers three times each and report the ranking, and adds prepared essay answers with stored feedback to Demo Mode."
+verify = "The evaluation reports good above weak and misunderstanding in all three runs, and the demo shows prepared answers with stored feedback."
+covers = ["FR-29", "SM-5", "FR-23"]
+after = [1, 3, "6.3", "5.1"]
+hitl = true
+risk = "high"
+refine = true

@@ -1,0 +1,37 @@
+# Epic 4: Multiple choice, results and saved lectures.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Scoring and Review List as pure code"
+description = "Adds the pure scoring and Review List modules and their dataclasses, with exactly one entry function each."
+verify = "Unit tests with no database and no key show exact scores, skipped counts as wrong, and one Review List entry per Summary Part."
+covers = ["FR-13", "FR-19", "SM-3", "SM-6"]
+after = ["3.5"]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "Multiple choice generation and quiz screen"
+description = "Generates 10 questions once on first open, stores them, and shows the quiz one question at a time with answer, skip, instant feedback and progress saved on the server."
+verify = "Tests show four options and one correct answer per question, retakes use the same questions, and progress survives a reload."
+covers = ["FR-12", "FR-13", "SM-3"]
+after = [1, "3.3", "3.4"]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 3
+type = "story"
+title = "Results, Review List and saved lectures"
+description = "Adds the results page with score, correct answers and Review List, and the saved-lectures list with past attempts that opens without an AI call."
+verify = "Tests show the shown score equals the correct answers, every wrong or skipped question links to its Summary Part, and reopening a lecture makes no AI call."
+covers = ["FR-18", "FR-19", "FR-20", "SM-6"]
+after = [2]
+hitl = false
+risk = "medium"
+refine = true

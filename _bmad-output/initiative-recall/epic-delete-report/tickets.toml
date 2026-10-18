@@ -1,0 +1,25 @@
+# Epic 9: Delete a lecture and report a question. If time.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Delete a lecture"
+description = "Adds delete for the owner, which removes the lecture, its text, summary, questions and attempts in one transaction and works in any status."
+verify = "After deletion the list no longer shows it, its address returns 404, and no rows remain for it."
+covers = ["FR-21"]
+after = ["4.3"]
+hitl = false
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "Report a question and export reports"
+description = "Adds Report this question with a reason and confirmation, stores a snapshot, and adds manage.py export_reports."
+verify = "A report stores the question, lecture, user, reason and timestamp; the export file lists all reports; a report survives deletion of its question."
+covers = ["FR-22", "FR-31"]
+after = ["4.2"]
+hitl = false
+risk = "low"
+refine = true

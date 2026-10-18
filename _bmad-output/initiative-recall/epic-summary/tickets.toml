@@ -1,0 +1,61 @@
+# Epic 3: Summary with source references.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Gemini key, model choice and ai_client with replay mode"
+description = "You get a free Gemini key and pick the model after testing structured output; then ai_client.py is the only module that calls Gemini, with key detection, replay mode, bounds and the usage log."
+verify = "Replay tests run with no key and no network; the chosen model and the date are recorded."
+covers = ["FR-25"]
+after = ["1.1"]
+hitl = true
+risk = "high"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "Background jobs, Processing page and lecture list"
+description = "Adds the single worker behind jobs.enqueue, safe status changes, stale-job cleanup, the Processing page with real steps, a minimal My lectures list and a retry button."
+verify = "A started job finishes once after the page is closed, a stale job becomes Failed, and a failed lecture can be retried at most 3 times."
+covers = ["FR-5"]
+after = ["2.2"]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 3
+type = "story"
+title = "Summary generation with validation and retries"
+description = "Adds the versioned Summary prompt, the validators for slide numbers, key terms and unsafe markup, two automatic retries, and a Summary stored once in one transaction."
+verify = "Tests feed deliberately broken responses and show each is rejected, retried at most twice and then fails cleanly with nothing stored."
+covers = ["FR-8", "FR-9", "FR-10", "FR-25", "FR-27"]
+after = [1, 2]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 4
+type = "story"
+title = "Summary page and a real timed run"
+description = "Adds the Summary page with Summary Parts, Source References, Key Terms and the AI-generated notice, then a real run on test lecture 1 is timed and recorded."
+verify = "Page tests show every part has a Source Reference and the notice; the timed run is under 60 seconds and recorded in docs/."
+covers = ["FR-8", "FR-9", "FR-11", "SM-1", "SM-2"]
+after = [3]
+hitl = true
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 5
+type = "story"
+title = "Checkpoint: compare real hours with estimates and adjust the cut"
+description = "You compare the hours actually spent on epics 1 to 3 with the plan and decide whether to change the cut of the remaining epics."
+verify = "The initiative Notes hold a dated Decision line with the hours spent and the cut that remains."
+covers = []
+after = [4]
+hitl = true
+risk = "low"
+refine = true

@@ -1,0 +1,25 @@
+# Epic 5: Demo Mode and README.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Example Lecture and Demo Mode"
+description = "Loads the reviewed Example Lecture from stored data and adds Try the demo, the banner, read-only access, session-only progress and the upload message in Demo Mode."
+verify = "With no key the app starts, the demo opens without login, the banner shows on every demo page, and a test shows an example lecture never reaches ai_client."
+covers = ["FR-23", "SM-9"]
+after = ["4.3"]
+hitl = true
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "README, sample PDF and fresh-clone check"
+description = "Adds .env.example, the sample PDF and scripts/fresh_clone_check.ps1, then follows the README (built up by every earlier story) from a fresh clone and fixes or trims whatever is wrong or stale."
+verify = "The fresh-clone script builds a new environment, starts in Demo Mode, opens the demo and records the result in docs/, and the README test passes."
+covers = ["FR-24", "SM-9"]
+after = [1, "1.1"]
+hitl = false
+risk = "medium"
+refine = true

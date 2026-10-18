@@ -1,0 +1,37 @@
+# Epic 1: Foundation and accounts. Order of tables is the build order.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Project skeleton with email user model and one-command start"
+description = "Sets up the Django project with the email-based custom user model before the first migration, settings read from .env, the test runner, run.py that starts the app, and the first README section with install and start commands."
+verify = "python run.py starts the app with no .env file and the home page opens in the browser; python manage.py test passes."
+covers = ["FR-1"]
+after = []
+hitl = true
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "Register, log in and log out"
+description = "Adds register, login and logout pages on the custom user model, with duplicate-email rejection and the limit of 5 failed logins per 15 minutes."
+verify = "Tests prove a duplicate email is rejected, passwords are hashed, the sixth failed login is blocked, and a protected page redirects to login after logout."
+covers = ["FR-1"]
+after = [1]
+hitl = false
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 3
+type = "story"
+title = "Lectures are private to their owner"
+description = "Adds a minimal Lecture table with owner-scoped access, one shared 404 for other users and missing ids, and the generated access test and import-boundary test."
+verify = "The generated test requests every address as user B with user A's ids and as a logged-out visitor and gets no lecture data."
+covers = ["FR-2", "SM-7"]
+after = [2]
+hitl = false
+risk = "high"
+refine = true

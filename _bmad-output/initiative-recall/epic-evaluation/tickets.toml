@@ -1,0 +1,37 @@
+# Epic 6: Slim evaluation on the Test Set.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Freeze the Test Set"
+description = "You add one freely licensed deck (10-12 slides) with its licence and credit, write at least five Reference Key Points for each of the two test lectures, define unsupported statement, and freeze it all."
+verify = "A test fails if any frozen file changes, and the licence and credit file exists for the licensed deck."
+covers = ["FR-26"]
+after = ["2.1"]
+hitl = true
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "The evaluate command and report"
+description = "Adds evaluate, which runs the Test Set through the AI and the automatic checks and writes a dated report with prompt versions and a review sheet."
+verify = "On replay data, evaluate writes a report listing the automatic check results, Summary length next to coverage, and the review sheet."
+covers = ["FR-28"]
+after = [1, "3.3", "4.2"]
+hitl = false
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 3
+type = "story"
+title = "Finish, compare, prompt fingerprints and the real run"
+description = "Adds evaluate --finish and --compare and the prompt fingerprint rule, then you run the real evaluation, tick the review sheet and store the report."
+verify = "finish refuses with an unticked box, a changed prompt without a new version stops the run, and a real report is stored in evaluation/reports/."
+covers = ["FR-28", "FR-30", "SM-10", "SM-11"]
+after = [2]
+hitl = true
+risk = "medium"
+refine = true

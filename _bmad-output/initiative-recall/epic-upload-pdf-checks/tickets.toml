@@ -1,0 +1,37 @@
+# Epic 2: Upload and PDF checks.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Own test slides and the FR-4 extraction test"
+description = "You make test lecture 1 (10-12 slides on a topic you know, PowerPoint exported to PDF); then pdf_text.py extracts it with pdfplumber and pypdf and the result and chosen library are recorded in docs/."
+verify = "Running the extraction on the real PDF gives one string per page, and docs/ holds the result with a 5-slide sample and the library decision."
+covers = ["FR-4"]
+after = ["1.1"]
+hitl = true
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "Upload a PDF with all checks"
+description = "Adds the upload page and pipeline: type, 10 MB, 50 pages and readable-text checks, then a Lecture in status processing with one PageText row per page."
+verify = "Tests show a too-big file, too many pages, a non-PDF and a scanned PDF are each rejected with a clear message, create no Lecture and make no AI call."
+covers = ["FR-3", "FR-4", "SM-8"]
+after = [1, "1.3"]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 3
+type = "story"
+title = "Upload notice acknowledgement and daily limit"
+description = "Adds the one-time notice quoting Google's terms with required acknowledgement before the first upload, and the limit of 5 uploads per user per day."
+verify = "Tests show an upload without acknowledgement is refused, the notice contains the stored quotes, and a sixth upload on one day is rejected while rejected files are not counted."
+covers = ["FR-6", "FR-7", "SM-8"]
+after = [2, "1.2"]
+hitl = false
+risk = "medium"
+refine = true

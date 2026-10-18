@@ -1,0 +1,13 @@
+# Epic 10: Polish. If time.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Text size control and Lighthouse accessibility check"
+description = "Adds the text-size control kept on the device and runs Lighthouse on the main pages, fixing what it finds and recording the result."
+verify = "The control keeps its choice after reload, and Lighthouse accessibility is 90 or higher on the main pages, recorded in docs/."
+covers = []
+after = ["4.3"]
+hitl = false
+risk = "low"
+refine = true
