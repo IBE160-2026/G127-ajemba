@@ -17,6 +17,11 @@
 Recall er for studenter som studerer på et annet språk enn morsmålet sitt. Appen oppsummerer forelesningsmateriale i PDF og lager quizer for å teste forståelsen. Den lager flervalgsspørsmål, fyll inn svar og langsvar med tilbakemelding. Målet er å gi studenter muligheten til å forstå forelesningsmaterialet i ro, samtidig som de kan måle sin egen forståelse. Som student med et annet morsmål som lærer på et annet språk, kjenner jeg meg igjen i problematikken og savner et slikt verktøy i praksis. Product brief og PRD for Recall er ferdige, men utviklingen av selve appen har ikke startet ennå.
 
 ### 2.2 Arbeidsmetodikk
+1.1 Issue → branch → code → tests → your own manual test → commit → pull request → your review → merge
+12 automated tests, running without a .env file
+A real bug found by you, explained to the AI with evidence, fixed, and verified by your own repeated test
+Everything documented: the plan’s triage log, the session log, the exported session and the pull request
+
 [Beskriv hvordan dere organiserte arbeidet]
 - Hvordan fordelte dere oppgaver?
 - Hvilke verktøy brukte dere for samarbeid og hvordan det fungerte? (f.eks. Git, og Teams)
