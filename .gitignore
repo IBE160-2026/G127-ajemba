@@ -59,3 +59,9 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Recall: local database and logs
+db.sqlite3
+db.sqlite3-wal
+db.sqlite3-shm
+logs/
