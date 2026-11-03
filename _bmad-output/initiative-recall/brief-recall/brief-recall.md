@@ -2,7 +2,7 @@
 title: "Product Brief: Recall"
 status: draft
 created: 2026-10-06
-updated: 2026-10-06
+updated: 2026-11-03
 ---
 
 # Product Brief: Recall
@@ -78,7 +78,7 @@ These criteria describe what the first version must do and can be checked with t
 
 The AI produces the summaries, questions, and essay feedback, so its output must be checked, not trusted. We will build a small test set:
 
-- Fixed test lectures. Three to five lectures made from our own or freely licensed slides. For each one, we write down the key points in advance and check that the summary covers them and that the questions are based on them.
+- Fixed test lectures. Two lectures: one made from our own slides and one from freely licensed slides. (Changed from three to five during story planning on 2026-10-18, because of the time budget.) For each one, we write down the key points in advance and check that the summary covers them and that the questions are based on them.
 - Known essay answers. For each test lecture, a set of prepared essay answers: some good, some weak, and some with typical misunderstandings. We check that the feedback ranks them correctly and points out what is missing (success criterion 5).
 - Versioned prompts. The prompts for summaries, questions, and essay feedback are stored as files in the repository, so changes can be tracked and the test set can be re-run after each change.
 - User reporting. A "report this question" button lets users flag wrong or unclear questions, which gives a way to find errors the test set misses.

@@ -2,7 +2,7 @@
 title: Recall
 status: final
 created: 2026-10-06
-updated: 2026-10-16
+updated: 2026-11-03
 ---
 
 # PRD: Recall
@@ -365,7 +365,7 @@ The Prompts for Summary, Questions and Essay Feedback are stored as files in the
 
 #### FR-26: Test Set Lectures and frozen Essay questions
 
-The Test Set contains three to five Lectures made from the builder's own or freely licensed slides, chosen to include at least one real PowerPoint export with messy text. For each Test Set Lecture, the builder writes the Reference Key Points and the Essay questions with their Reference Key Points, and freezes them in the repository.
+The Test Set contains two Lectures of about 10 to 12 slides each. Test Lecture 1 is the builder's own slides on a topic they know well, made in PowerPoint and exported to PDF (a real PowerPoint export with possibly messy text; it is also the FR-4 extraction test). Test Lecture 2 is a freely licensed deck (for example from OpenStax), with the licence checked and credited in the repository. No course material from lecturers is used. The number was reduced from three to five because of the time budget (§8.3). For each Test Set Lecture, the builder writes the Reference Key Points and the Essay questions with their Reference Key Points, and freezes them in the repository.
 
 **Consequences (testable):**
 - Before any AI output is evaluated for a Test Set Lecture, its Reference Key Points (at least five per Lecture) and its Essay questions with their Reference Key Points (at least three per Essay question, as in FR-16) are written down and committed, so they cannot be shaped to fit the output.
@@ -437,7 +437,7 @@ Reports from FR-22 are reviewed and acted on.
 
 ### 5.7 Limits of these checks
 
-The Test Set covers a handful of lectures chosen by the builder, so it shows that the AI works on these lectures, not that it works on every lecture. The quality judgements in §5.4 (completeness, faithfulness, answer keys, and the marking of prepared essay answers) are made by a single builder. This is a known limit of a solo project: the judgement is the best available, but it is not that of an independent expert. The fifteen-minute claim and the second-language fit of the Summary are not measured in v1. These limits are stated in the README, in a short "what we checked and what we did not" section, so the grader can see what the checks do and do not prove.
+The Test Set covers only two lectures of about 10 to 12 slides, chosen by the builder, so it shows that the AI works on these lectures, not that it works on every lecture. It also cannot measure the speed target for PDFs of 31 to 50 pages (SM-1), because no Test Set Lecture is that long. The quality judgements in §5.4 (completeness, faithfulness, answer keys, and the marking of prepared essay answers) are made by a single builder. This is a known limit of a solo project: the judgement is the best available, but it is not that of an independent expert. The fifteen-minute claim and the second-language fit of the Summary are not measured in v1. These limits are stated in the README, in a short "what we checked and what we did not" section, so the grader can see what the checks do and do not prove.
 
 ## 6. Cross-Cutting Requirements
 
@@ -523,12 +523,22 @@ Quiz progress (current question, answers given, essay text) is kept when the stu
 
 **If time (in priority order):** spaced repetition (suggest when to review wrong topics); an exam plan combining all lectures in a course; flashcards generated from Key Terms.
 
+### 8.3 Scope Priority
+
+The deadline is the end of November 2026, with about 40 hours in total: about 30 for building and about 8 for the reflection report. This budget does not cover all of §8.1, so the in-scope features are built in this order. The reasons and the epic plan are in `initiative-recall.md` (Notes).
+
+- **Must-have core (epics 1 to 6):** accounts, upload and checks, Summary, Multiple Choice with results, Demo Mode and README, and a slim evaluation (Summary completeness and faithfulness, Multiple Choice grounding and answer keys, on the 2 Test Set Lectures). Epic 6 is must-have because the lecturer asked for a check of the AI's quality (§5). The planning figure for the core is about 35 hours against about 30 available, so it is checked again at the checkpoint after epic 3.
+- **If time, in this order after epic 6:** (7) Fill-in-the-Gaps, (8) Essay questions and feedback, which also extends the evaluation to essays, (9) delete a lecture and report a question, (10) polish. If time runs out, the list is dropped from the bottom.
+- **Effect on requirements:** a requirement in a dropped epic is listed as dropped, with the reason, in `initiative-recall.md`. The checks in FR-28 and FR-29 that concern Fill-in-the-Gaps and Essays apply only if epics 7 and 8 are built.
+
+The "if time" list under §8.2 (spaced repetition, exam plan, flashcards) comes after all of the above.
+
 ## 9. Success Metrics
 
 The lecturer asked for criteria that can be tested during the course, so every metric below is a test case. Launch metrics (active users, return rate, cost per user) are described under "Success Criteria" and "Vision" in `brief-recall.md` and are not v1 criteria. Requirements without a metric (for example FR-20 to FR-22, FR-31) are covered by the automated tests in §5.5 and the traceability rule in §6.5.
 
 **Primary**
-- **SM-1**: Summary speed — a text-based PDF of up to 30 pages gives a Summary in under 60 seconds, and one of 31 to 50 pages in under 120 seconds. Validates FR-8.
+- **SM-1**: Summary speed — a text-based PDF of up to 30 pages gives a Summary in under 60 seconds, and one of 31 to 50 pages in under 120 seconds. Validates FR-8. *Note: the two Test Set Lectures have about 10 to 12 slides each, so the 31-to-50-page target cannot be measured with them. It is not measured in v1 unless a longer freely licensed deck is added.*
 - **SM-2**: Source references — every Summary Part shows valid slide numbers and every Question links to a Summary Part (100 %, automatic). Validates FR-8, FR-12, FR-14, FR-16, FR-27.
 - **SM-3**: Multiple choice — every question has four options with exactly one correct, and the score for a known set of answers is exactly right. Validates FR-12, FR-13.
 - **SM-4**: Fill-in-the-gaps — the matching rules produce the expected result in all example tests in FR-15. Validates FR-15.
@@ -539,7 +549,7 @@ The lecturer asked for criteria that can be tested during the course, so every m
 - **SM-9**: Runnable without keys — a fresh clone runs in Demo Mode from the README without keys, and the Demo Mode limits are shown. Validates FR-23, FR-24.
 
 **Secondary**
-- **SM-10**: AI output quality — on the Test Set, all of the following hold (FR-28): at least 80 % of Reference Key Points covered per Lecture; no unsupported statement in any Summary in the Test Set; at least 90 % of Questions grounded and 100 % with exactly one correct answer or expected term; 100 % of marked answer keys correct; 100 % of Source References valid and at least 90 % pointing to the right slides. Validates FR-28.
+- **SM-10**: AI output quality — on the Test Set (2 Lectures), all of the following hold (FR-28): at least 80 % of Reference Key Points covered per Lecture; no unsupported statement in any Summary in the Test Set; at least 90 % of Questions grounded and 100 % with exactly one correct answer or expected term; 100 % of marked answer keys correct; 100 % of Source References valid and at least 90 % pointing to the right slides. Validates FR-28.
 - **SM-11**: Prompt discipline — every Prompt change has an evaluation report from before and after. Validates FR-30.
 
 **Counter-metrics (do not optimize)**
@@ -552,8 +562,8 @@ The lecturer asked for criteria that can be tested during the course, so every m
 None of these blocks the UX or architecture steps. Each has an owner (the builder) and a condition for revisiting it.
 
 1. Technology stack, AI service and storage are not chosen. They are decided in the architecture step, keeping to one web app with simple storage. A cost estimate (§6.2) is made once the AI service is chosen. *Revisit: when running the architecture step.*
-2. Which three to five lectures make up the Test Set? None are chosen. At least one should be a real PowerPoint export. *Revisit: before the text-extraction check on a PowerPoint export (FR-4), which comes first in the build order.*
-3. What is the deadline for the project? It is unknown, and it affects whether items under "If time" are realistic. *Revisit: when the epics are planned.*
+2. Which two lectures make up the Test Set? Test Lecture 1 is the builder's own PowerPoint export; Test Lecture 2 is a freely licensed deck (for example from OpenStax). Neither deck is chosen yet, and the licence of Test Lecture 2 must be checked. *Revisit: before the text-extraction check on a PowerPoint export (FR-4), which comes first in the build order.*
+3. ~~What is the deadline for the project?~~ **Answered 2026-10-18:** the deadline is the end of November 2026, with about 40 hours in total, about 30 for building (§8.3).
 4. The extracted-text threshold in FR-4 (100 characters per page) is a confirmed starting value, tuned with real slides early. *Revisit: after the first extraction check on real slides.*
 5. The question counts in FR-12, FR-14 and FR-16 (10, 8 and 2) are confirmed starting values. *Revisit: after the first evaluation runs.*
 6. The faithfulness target ("no unsupported statement in any Summary in the Test Set", FR-28, SM-10) is binary, "unsupported" is not defined (paraphrase? inference? omission?), and one reader judges it. A strict target may be hard to meet and may block Prompt changes (FR-30). Define "unsupported" and decide what happens if the target cannot be met. *Revisit: before the first evaluation run.*
@@ -639,3 +649,13 @@ Decisions made in `ux-recall` (see its `.memlog.md`) that changed this PRD. The 
 ## 14. Changes from the architecture step (2026-10-17)
 
 - **Notice about the AI service (FR-6, §6.1):** the AI service is Google Gemini on the free tier. The upload notice and the README quote Google's terms exactly (checked 2026-10-17), including the EEA, Switzerland and UK passage. In v1 the free key is used only by the builder, locally; the examiner uses Demo Mode or their own key; offering Recall to other users in the EEA, Switzerland or the UK requires a paid key under Google's terms. The builder asked for this change on 2026-10-17.
+
+## 15. Changes from epic and story planning (2026-10-18)
+
+Decisions made while planning the epics and stories (GitHub issue #3; see `initiative-recall.md`, Notes). The builder made all three on 2026-10-18; they were written into this PRD on 2026-11-03.
+
+- **Deadline (open question 3):** answered. The deadline is the end of November 2026, about 40 hours in total, about 30 for building.
+- **Test Set size (FR-26, SM-10, §5.7, open question 2):** 2 Test Set Lectures instead of 3 to 5, about 10 to 12 slides each. Test Lecture 1 is the builder's own PowerPoint export; Test Lecture 2 is a freely licensed deck. Reason: the time budget.
+- **Speed target not measurable (SM-1, §5.7):** the 31-to-50-page target cannot be measured with 10-to-12-slide decks. FR-8 and SM-1 keep their targets, but no Test Set run covers the longer range.
+- **Scope priority (new §8.3):** must-have core is epics 1 to 6; "if time" order is Fill-in-the-Gaps, Essay feedback, delete and report, polish. Reason: the time budget.
+- **Unchanged:** open question 6 (definition of "unsupported statement" for faithfulness) stays open.
