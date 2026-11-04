@@ -1,14 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recall</title>
-</head>
-<body>
-  <main>
-    <h1>Recall</h1>
-    <p>The app is running.</p>
-  </main>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+  <h1>Recall</h1>
+  <p>The app is running.</p>
+  {% if not user.is_authenticated %}
+    <p><a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">register</a> to start.</p>
+  {% endif %}
+{% endblock %}

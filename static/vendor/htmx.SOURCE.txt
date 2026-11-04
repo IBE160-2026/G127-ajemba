@@ -1,0 +1,6 @@
+htmx 2.0.10 (kept in the repository, never loaded from a network; AD-19)
+Source: https://raw.githubusercontent.com/bigskysoftware/htmx/v2.0.10/dist/htmx.min.js
+        (official repository bigskysoftware/htmx, git tag v2.0.10, file dist/htmx.min.js)
+SHA-384: sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V
+Checked 2026-11-04: equals the integrity hash printed in the README of the same tag.
+Do not edit htmx.min.js. To upgrade, replace both files and change the version in the architecture.

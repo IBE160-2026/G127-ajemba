@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Log in - Recall{% endblock %}
+{% block content %}
+  <div class="card">
+    <h1>Recall</h1>
+    <p>Upload a lecture. Read the summary. Test what you understand.</p>
+    <p class="tabs"><a class="tab on" href="{% url 'login' %}" aria-current="page">Log in</a> <a class="tab" href="{% url 'register' %}">Register</a></p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="error" role="alert">
+          {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+      <p>
+        <label for="{{ form.username.id_for_label }}">Email</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+      </p>
+      <p>
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+        {{ form.password.errors }}
+      </p>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit">Log in</button>
+    </form>
+  </div>
+{% endblock %}
