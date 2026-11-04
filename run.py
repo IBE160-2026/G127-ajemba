@@ -126,6 +126,10 @@ def serve(port=DEFAULT_PORT, migrate=True):
             result = subprocess.run(manage + ["migrate"])
             if result.returncode != 0:
                 return result.returncode
+            # The table that holds the login-failure counters (AD-7). Safe to repeat.
+            result = subprocess.run(manage + ["createcachetable"])
+            if result.returncode != 0:
+                return result.returncode
 
         print(f"Starting the web app at http://localhost:{port}/ (press Ctrl+C to stop)")
         server = subprocess.Popen(manage + ["runserver", "--noreload", str(port)])

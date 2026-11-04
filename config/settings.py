@@ -49,6 +49,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "config.middleware.WebSafetyMiddleware",  # CSP header and no-store for logged-in pages (AD-19)
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -100,10 +101,30 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CSRF_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SAMESITE = "Lax"
+
+# Login pages (AD-7). A bad or missing "next" goes to the home page.
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+# The login-failure counters live in a database-backed cache (AD-7). The table is made
+# by "createcachetable" (run.py does it). MAX_ENTRIES is high so that a flood of made-up
+# emails cannot push real counters out; entries expire a little after the 15-minute window.
+LOGIN_FAILURE_LIMIT = 5
+LOGIN_FAILURE_WINDOW_SECONDS = 15 * 60
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "recall_cache",
+        "TIMEOUT": LOGIN_FAILURE_WINDOW_SECONDS + 60,
+        "OPTIONS": {"MAX_ENTRIES": 10000, "CULL_FREQUENCY": 10},
+    }
+}
 
 # Logs go to the console and to logs/web.log. Never content, passwords or keys (AD-15).
 LOG_DIR = BASE_DIR / "logs"

@@ -203,3 +203,41 @@ class RunPyStopsServerTests(SimpleTestCase):
             os.kill(proc.pid, signal.CTRL_BREAK_EVENT)
             self.assertTrue(_wait_for(lambda: proc.poll() is not None, 15), "run.py did not exit")
             self.assertTrue(_wait_for(lambda: not _port_open(port), 5), "the server kept running")
+
+
+class BasePageTests(TestCase):
+    """Story 1.2 AC 8: the base page is safe for htmx (AD-19)."""
+
+    def test_csp_header_and_csrf_header_on_base_page(self):
+        response = self.client.get("/")
+        self.assertEqual(
+            response["Content-Security-Policy"],
+            "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'",
+        )
+        html = response.content.decode()
+        self.assertRegex(html, r"<body hx-headers='\{\"X-CSRFToken\": \"[^\"]+\"\}'>")
+        # htmx settings, set in a meta tag because inline scripts are forbidden by the CSP.
+        for setting in ('"allowEval": false', '"selfRequestsOnly": true', '"historyCacheSize": 0'):
+            self.assertIn(setting, html)
+        self.assertNotIn("<script>", html)
+        self.assertNotIn("http://", html.replace("http://testserver", ""))
+        self.assertNotIn("https://", html)
+
+    def test_htmx_is_the_recorded_file_kept_in_the_repository(self):
+        import base64
+        import hashlib
+
+        vendor = BASE_DIR / "static" / "vendor"
+        data = (vendor / "htmx.min.js").read_bytes()
+        digest = "sha384-" + base64.b64encode(hashlib.sha384(data).digest()).decode()
+        note = (vendor / "htmx.SOURCE.txt").read_text(encoding="utf-8")
+        self.assertIn(digest, note)
+        self.assertIn("2.0.10", note)
+        self.assertIn(b'version:"2.0.10"', data)
+
+    def test_logout_script_clears_recall_and_htmx_history_keys(self):
+        """AD-19.3. The real clearing is a manual browser check; this guards the key prefixes."""
+        script = (BASE_DIR / "static" / "js" / "logout.js").read_text(encoding="utf-8")
+        self.assertIn('"recall:"', script)
+        self.assertIn('"htmx-history-cache"', script)
+        self.assertIn("data-recall-logout", script)

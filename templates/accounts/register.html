@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Register - Recall{% endblock %}
+{% block content %}
+  <div class="card">
+    <h1>Recall</h1>
+    <p>Upload a lecture. Read the summary. Test what you understand.</p>
+    <p class="tabs"><a class="tab" href="{% url 'login' %}">Log in</a> <a class="tab on" href="{% url 'register' %}" aria-current="page">Register</a></p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <p>
+        <label for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}<span class="error" role="alert">{{ form.email.errors|join:" " }}</span>{% endif %}
+      </p>
+      <p>
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+        {% if form.password.errors %}<span class="error" role="alert">{{ form.password.errors|join:" " }}</span>{% endif %}
+      </p>
+      <p class="note">We can't reset passwords yet. Please remember yours.</p>
+      <button type="submit">Register</button>
+    </form>
+  </div>
+{% endblock %}

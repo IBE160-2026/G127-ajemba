@@ -1,0 +1,18 @@
+body { font-family: system-ui, sans-serif; margin: 0; color: #1a1a1a; line-height: 1.5; }
+.bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ccc; }
+.bar nav { display: flex; gap: 16px; align-items: center; }
+.bar form { margin: 0; }
+.brand { font-weight: bold; text-decoration: none; color: inherit; }
+.who { color: #555; }
+main { max-width: 520px; margin: 24px auto; padding: 0 16px; }
+.card { border: 1px solid #ccc; border-radius: 8px; padding: 16px 24px; }
+.tabs { display: flex; gap: 8px; }
+.tab { flex: 1; text-align: center; padding: 8px; border-bottom: 3px solid transparent; text-decoration: none; color: #1a1a1a; }
+.tab.on { border-bottom-color: #1a56db; font-weight: bold; }
+label { display: block; font-weight: bold; margin-bottom: 4px; }
+input[type=email], input[type=password] { width: 100%; box-sizing: border-box; padding: 8px; font-size: 1rem; }
+button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }
+.error { color: #b00020; display: block; }
+.errorlist { color: #b00020; list-style: none; padding: 0; margin: 4px 0 0; }
+.note { color: #555; }
+:focus-visible { outline: 3px solid #1a56db; outline-offset: 2px; }
