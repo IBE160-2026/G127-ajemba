@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "accounts",
+    "lectures",
 ]
 
 # Must be set before the first migration is created (AD-7).

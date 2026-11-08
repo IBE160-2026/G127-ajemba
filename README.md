@@ -71,3 +71,21 @@ Story 1.2. Start the app (`python run.py`) and open http://localhost:8000/.
 - **Not in v1:** there is no email check and no password reset. Please remember your password.
 
 Passwords are stored as hashes, never as text. The login-failure counters are kept in the `recall_cache` database table, made by `python manage.py createcachetable` (`python run.py` runs it for you). htmx is kept in `static/vendor/` (source and hash in `htmx.SOURCE.txt`) and is never loaded from the internet. Static files are served only while `RECALL_ENV` is `local` (the default); with another value the pages load without styling and htmx until a static file server is added.
+
+## Privacy rules
+
+Story 1.3. Each user sees only their own lectures.
+
+- **Own lectures only:** every page gets a lecture through `Lecture.objects.for_user(user)` (or the helpers in `lectures/services.py`), never by a bare id. Another user's lecture, a lecture id that does not exist, and a write to an example lecture all give the same "Page not found" (404) page, so nobody can tell whether an id belongs to someone else. A logged-out visitor is sent to the login page and sees nothing.
+- **One public exception, added later:** the Example Lecture (Demo Mode) is the only lecture anyone can open without owning it. It is built in epic-demo-readme and cannot be edited or deleted.
+- **Two guard tests protect every later epic.** Run them with `python manage.py test`:
+  - `config/test_url_access.py` reads the address list in `urls.py`, asks for every address as a second user (using the first user's lecture id) and as a logged-out visitor, and fails if any lecture data appears. A new address is covered automatically. A new page that logged-out visitors may open must be added on purpose to `PUBLIC_URL_NAMES` in that file.
+  - `core/tests.py` reads the imports of every module and fails if anything but `core/ai_client.py` imports the Gemini library, anything but `core/pdf_text.py` imports pdfplumber, anything but `core/jobs.py` imports django-q2, or a pure module (scoring, matching, ...) imports models, requests or network code. It also checks itself against a deliberately broken example module.
+
+There is no upload page yet. To try the rules by hand, make two accounts and add a lecture to the first one from the Django shell (`python manage.py shell`):
+
+```python
+from accounts.models import User
+from lectures.models import Lecture
+Lecture.objects.create(user=User.objects.get(email="first@example.com"), title="My secret lecture")
+```
