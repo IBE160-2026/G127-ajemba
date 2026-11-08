@@ -2,5 +2,13 @@
 {% block title %}My lectures - Recall{% endblock %}
 {% block content %}
   <h1>My lectures</h1>
-  <p>No lectures yet.</p>
+  {% if lectures %}
+    <ul>
+      {% for lecture in lectures %}
+        <li><a href="{% url 'lecture_detail' lecture.id %}">{{ lecture.title }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No lectures yet.</p>
+  {% endif %}
 {% endblock %}
