@@ -13,3 +13,7 @@
 - [ ] 2026-11-08 [private-forelesninger](997-2026-11-08-19-38-16-private-forelesninger.md) — manuell nettlesertest med to brukere gjenstår (brukeren kjører den)
 - [ ] 2026-11-08 [private-forelesninger](997-2026-11-08-19-38-16-private-forelesninger.md) — epic-demo-readme må bevisst utvide `for_user`/tjenestene for Example Lecture og oppdatere `PUBLIC_URL_NAMES` i `config/test_url_access.py`
 - [ ] 2026-11-08 [private-forelesninger](997-2026-11-08-19-38-16-private-forelesninger.md) — lokalt (DEBUG på) vises Djangos gule 404-side i stedet for `404.html`; samme tekst for feil bruker og manglende id
+- [ ] 2026-11-19 [fr-4-ekstraksjonstest](996-2026-11-19-11-50-54-fr-4-ekstraksjonstest.md) — lim inn forslagstekstene fra docs/extraction-test.md i epic, historie og tickets.toml (pypdf, 100-terskelen)
+- [ ] 2026-11-19 [fr-4-ekstraksjonstest](996-2026-11-19-11-50-54-fr-4-ekstraksjonstest.md) — sidehode og -fot er med i sideteksten; vurder i Summary-epicen
+- [ ] 2026-11-19 [fr-4-ekstraksjonstest](996-2026-11-19-11-50-54-fr-4-ekstraksjonstest.md) — 100-tegn-terskelen testet på ett tekstrikt sett; sjekk igjen med testforelesning 2
+- [ ] 2026-11-19 [fr-4-ekstraksjonstest](996-2026-11-19-11-50-54-fr-4-ekstraksjonstest.md) — uavhengig kodegjennomgang av story 2.1 er ikke kjørt

@@ -63,5 +63,5 @@ risk: medium
 
 ## Notes
 
-- Decision: pdfplumber is the default; pypdf is kept only if it has fewer broken words in the 5-slide sample (AD-9). PyMuPDF is excluded (AGPL).
+- Decision: the user chose pypdf 7.1.1 on 2026-11-19 because column order changes meaning; both libraries had 0 broken words (AD-9, changed). PyMuPDF is excluded (AGPL).
 - Test lecture 1 is also used for the evaluation (epic-evaluation) and for the Example Lecture (epic-demo-readme), so choose a deck you are happy to keep.

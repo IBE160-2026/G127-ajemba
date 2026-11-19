@@ -28,7 +28,7 @@ A user can upload a valid text-based PDF and get a stored Lecture with per-page 
 
 ## Boundaries
 
-Everything from the file chooser to the stored per-page text. Not the AI call or the Summary (epic-summary). Only `pdf_text.py` imports pdfplumber.
+Everything from the file chooser to the stored per-page text. Not the AI call or the Summary (epic-summary). Only `pdf_text.py` imports pypdf.
 
 ## References
 
@@ -41,7 +41,9 @@ Everything from the file chooser to the stored per-page text. Not the AI call or
 
 - Decision: first story is a human step; test lecture 1 is the builder's own PowerPoint slides on a topic they know (likely nursing). Test lecture 2 is a freely licensed deck (for example OpenStax) with the licence checked and credited in the repo; no lecturer course material. Two test lectures in total, each about 10-12 slides (user, 2026-10-18).
 - Decision: build order step 2 is the FR-4 test on a real PowerPoint PDF, before any Summary work (PRD §6.5, architecture AD-9).
-- Unknown: whether pdfplumber output is clean enough or pypdf is better; settled by the FR-4 test story.
-- Unknown: the 100 characters per page threshold may need tuning (PRD open question 4); settled after the first extraction check.
+- Unknown, settled: whether pdfplumber output is clean enough or pypdf is better; settled by the FR-4 test story: pypdf, see the Decision below.
+- Decision (2026-11-19, user): the extraction library is pypdf 7.1.1, not pdfplumber 0.11.10. Both had 0 broken words on test lecture 1, but pdfplumber mixes columns on multi-column slides, which changes meaning (hand rub vs. soap and water). See `docs/extraction-test.md`.
+- Decision: keep the FR-4 threshold at 100 characters per page. Test lecture 1 averages 338 (shortest page 141). Recheck with test lecture 2.
+- Unknown, resolved for now: the 100 characters per page threshold may need tuning (PRD open question 4); settled after the first extraction check: kept at 100, see the Decision above. It will be checked again with test lecture 2.
 - Decision: tracer bullet is story 1 (a real PDF goes through `extract_pages`); the upload page builds on it. The notice and daily limit come last because they only gate an upload that already works.
 - Tier: must-have.

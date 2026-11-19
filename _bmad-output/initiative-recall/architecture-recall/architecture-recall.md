@@ -7,7 +7,7 @@ paradigm: 'Layered monolith: server-rendered Django + htmx, thin views over serv
 scope: 'Recall v1, the whole system: one local web app, one background worker, one SQLite file'
 status: draft
 created: '2026-10-17'
-updated: '2026-10-17'
+updated: '2026-11-19'
 binds: [FR-1..FR-31, SM-1..SM-11]
 sources:
   - ../prd-recall/prd-recall.md
@@ -32,7 +32,7 @@ flowchart TD
     S --> P[Pure logic: scoring, matching, review_list, validation, text_utils, types]
     S --> M[Models and database]
     S --> AI[ai_client.py: only importer of the Gemini library]
-    S --> PDF[pdf_text.py: only importer of pdfplumber]
+    S --> PDF[pdf_text.py: only importer of pypdf]
     P -. imports no models, no request, no network .-> P
 ```
 
@@ -52,7 +52,7 @@ flowchart TD
   1. Views read the request, call one service function, render a template. No scoring, matching or prompt text in views or templates.
   2. Pure modules in `core/`: `scoring.py` (scores, Review List entry points), `matching.py` (Fill-in-the-Gaps rules), `review_list.py`, `validation.py` (AI-output checks), `text_utils.py` (AD-21), `types.py` (frozen dataclasses). They import no models, no request and no network.
   3. Pure modules take and return the dataclasses in `core/types.py` (`AnswerRecord`, `QuestionRecord`, `AttemptResult`, `SourceRef`). Score and Review List each have exactly one entry function; no view or service computes a score itself. The score denominator is the number of questions in the quiz, never the number of `Answer` rows. A skipped or unvisited question counts as wrong (FR-13, FR-15).
-  4. `ai_client.py` is the only module that imports the Gemini library. `pdf_text.py` is the only module that imports pdfplumber. Only `jobs.py` imports django-q2.
+  4. `ai_client.py` is the only module that imports the Gemini library. `pdf_text.py` is the only module that imports pypdf. Only `jobs.py` imports django-q2.
   5. Jobs call the same service functions as views.
   6. Import direction: views and jobs, then services, then pure modules and the two wrappers. Never the reverse.
   7. A test reads the imports of every module and fails on a broken rule (AD-14).
@@ -130,7 +130,7 @@ flowchart TD
 
 - **Binds:** FR-3, FR-4, FR-8
 - **Prevents:** a library choice leaking into the app; an AGPL dependency; shifted slide numbers
-- **Rule:** `pdf_text.extract_pages(pdf) -> list[str]` returns exactly one string per PDF page, in order. An unreadable or image-only page gives an empty string; pages are never filtered, so index + 1 is always the slide number. The average characters per page (FR-4) is computed over all pages. Library: pdfplumber (MIT). PyMuPDF is excluded because of its AGPL licence. The first build step after setup is the FR-4 test on a real PowerPoint-exported PDF. If the output is messy, try pypdf on the same file and keep whichever has fewer broken words (hyphenated line breaks, run-together words, ligature glyphs) in a sample of 5 slides chosen by the builder. Record the result and the sample in `docs/`.
+- **Rule:** `pdf_text.extract_pages(pdf) -> list[str]` returns exactly one string per PDF page, in order. An unreadable or image-only page gives an empty string; pages are never filtered, so index + 1 is always the slide number. The average characters per page (FR-4) is computed over all pages. Library: pypdf 7.1.1 (BSD-3-Clause), changed from pdfplumber on 2026-11-19 (see Change log). PyMuPDF is excluded because of its AGPL licence. The first build step after setup was the FR-4 test on a real PowerPoint-exported PDF; the result and the 5-slide sample are in `docs/extraction-test.md`. `evaluation/compare_pdf_libraries.py` repeats the comparison and may import pdfplumber, which is not part of the app.
 
 ### AD-10 — Demo Mode uses the same screens and the same tables [ADOPTED]
 
@@ -321,7 +321,7 @@ Verified on 2026-10-17 from PyPI, GitHub and official documentation (see `review
 | Django | 5.2 LTS, 5.2.18 (extended support to April 2028) |
 | django-q2 | 1.11.1 (lists Django 5.2); Windows behaviour tested at install, fallback in AD-3 |
 | htmx | 2.0.10, one file kept in the repository (htmx 4 is not used) |
-| pdfplumber | 0.11.10 (MIT) |
+| pypdf | 7.1.1 (BSD-3-Clause, checked on PyPI 2026-11-19) |
 | google-genai (Gemini SDK) | 2.31.0 |
 | django-environ | 0.14.0 |
 | WhiteNoise | pin at install |
@@ -411,9 +411,13 @@ recall/                  # repository root
 | Exact Gemini model and its limits | Names and free-tier limits change; decide when the AI client is built, from Google's current pages, and record the date |
 | How structured output is called in google-genai | Docs show a newer style; spike both styles before building the AI client |
 | django-q2 job test on Windows | Run at install; the thread-based fallback is accepted (AD-3) |
-| Final extraction library (pdfplumber or pypdf) | Decided by the FR-4 test on a real PowerPoint export (AD-9) |
+| Final extraction library | Decided: pypdf 7.1.1, chosen by the user on 2026-11-19 after the FR-4 test (AD-9; `docs/extraction-test.md`) |
 | Test Set contents and deadline | PRD open questions 2 and 3 |
 | Definition of "unsupported statement" for faithfulness | PRD open question 6; needed before the first evaluation |
 | Accessibility test pass and Lighthouse results | Implementation step; results go in `docs/` |
 | Offering Recall to other users | Needs a paid key in the EEA, Switzerland and the UK (AD-16.7); out of scope for v1, re-read the terms first |
 | Deployment, backups, email verification, password reset | Out of scope for v1 (PRD §8.2) |
+
+## Change log
+
+- 2026-11-19 — AD-9 changed by the user: the extraction library is pypdf 7.1.1 (BSD-3-Clause, licence checked on PyPI), not pdfplumber 0.11.10. The FR-4 test on test lecture 1 gave 0 broken words for both libraries, so the rule "keep whichever has fewer broken words" did not favour pypdf. The user overrode it because column order changes meaning: pdfplumber mixes the columns of multi-column slides (slide 5 mixes "routine healthcare" with "when hands are visibly dirty"), which can turn hand rub advice into soap and water advice in the Summary. Also changed: AD-2.4 (only `pdf_text.py` imports pypdf; no app code imports pdfplumber), the diagram, the Stack table and the Deferred table. Details in `docs/extraction-test.md`.
