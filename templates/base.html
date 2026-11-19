@@ -16,6 +16,7 @@
     <nav>
       {% if user.is_authenticated %}
         <a href="{% url 'lectures' %}">My lectures</a>
+        <a href="{% url 'upload' %}">Upload</a>
         <span class="who">{{ user.email }}</span>
         <form method="post" action="{% url 'logout' %}" data-recall-logout>
           {% csrf_token %}

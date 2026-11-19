@@ -40,3 +40,27 @@ class Lecture(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class PageTextQuerySet(models.QuerySet):
+    def for_user(self, user):
+        """The one door to page text (AD-8.1): only pages of lectures this user owns."""
+        if user is None or not getattr(user, "is_authenticated", False):
+            return self.none()
+        return self.filter(lecture__user=user)
+
+
+class PageText(models.Model):
+    """Text of one PDF page. The PDF itself is never stored (AD-20)."""
+
+    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="pages")
+    number = models.PositiveSmallIntegerField()  # 1-based slide number
+    text = models.TextField(blank=True, default="")
+
+    objects = PageTextQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["lecture", "number"], name="unique_page_per_lecture")
+        ]
+        ordering = ["number"]

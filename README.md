@@ -82,7 +82,7 @@ Story 1.3. Each user sees only their own lectures.
   - `config/test_url_access.py` reads the address list in `urls.py`, asks for every address as a second user (using the first user's lecture id) and as a logged-out visitor, and fails if any lecture data appears. A new address is covered automatically. A new page that logged-out visitors may open must be added on purpose to `PUBLIC_URL_NAMES` in that file.
   - `core/tests.py` reads the imports of every module and fails if anything but `core/ai_client.py` imports the Gemini library, anything but `core/pdf_text.py` imports pypdf, anything in the app imports pdfplumber (the `evaluation/` folder is exempt), anything but `core/jobs.py` imports django-q2, or a pure module (scoring, matching, ...) imports models, requests or network code. It also checks itself against a deliberately broken example module.
 
-There is no upload page yet. To try the rules by hand, make two accounts and add a lecture to the first one from the Django shell (`python manage.py shell`):
+The upload page is at `/lectures/upload/`. To try the rules by hand without it, make two accounts and add a lecture to the first one from the Django shell (`python manage.py shell`):
 
 ```python
 from accounts.models import User
@@ -95,6 +95,16 @@ Lecture.objects.create(user=User.objects.get(email="first@example.com"), title="
 Story 2.1 (FR-4). We checked how well the text can be read from a real PowerPoint-exported PDF (test lecture 1, 12 slides on hand hygiene, my own work with ChatGPT help, see `evaluation/testset/test-lecture-1-NOTE.md`).
 
 - **Result:** pypdf and pdfplumber both gave 0 broken words (hyphenated line breaks, run-together words, ligature glyphs) in the 5-slide sample. The average is about 338 characters per page, so the limit of 100 characters per page still looks right for this deck. pdfplumber mixed the columns of multi-column slides, which can change the meaning, so the app uses **pypdf 7.1.1**. Details and the sample: [docs/extraction-test.md](docs/extraction-test.md).
-- **Not checked yet:** image-heavy decks (only one text-rich deck was tested; a second, freely licensed deck comes later), scanned PDFs (the app does not check for them yet; they will be rejected once the scanned-PDF check in a later story of this epic is built), and whether the page header and footer text should be removed.
+- **Not checked yet:** image-heavy decks (only one text-rich deck was tested; a second, freely licensed deck comes later), and whether the page header and footer text should be removed.
 
-**PDF requirements:** text-based PDF only. A PDF exported from PowerPoint works; a scanned or photographed one has no readable text. There is no upload page and no automatic check yet; the app does not reject such files until the later upload stories are built.
+**PDF requirements:** text-based PDF only. A PDF exported from PowerPoint works; a scanned or photographed one has no readable text. See Upload limits below.
+
+## Upload limits
+
+Log in and open **Upload** (`/lectures/upload/`) to add one PDF.
+
+- **10 MB** at most. Reading stops at 10 MB plus one byte.
+- **50 pages** at most.
+- **Scanned or image-only PDFs are rejected.** So are encrypted and corrupt PDFs, and PDFs with fewer than 100 characters of text per page on average. The message says the file has no text we can read.
+- Text is read in a separate process that is stopped after 20 seconds.
+- The PDF is **not kept**. Only the text of each page is stored, and every temporary copy is deleted, also when the file is rejected. A rejected file creates no lecture.
