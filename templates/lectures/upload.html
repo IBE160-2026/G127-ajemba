@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Upload a lecture - Recall{% endblock %}
+{% block content %}
+  <h1>Upload a lecture</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if error %}<p role="alert">{{ error }}</p>{% endif %}
+    <p><label for="pdf">Choose a PDF file</label><br>
+    <input type="file" id="pdf" name="pdf" accept="application/pdf,.pdf"></p>
+    <h2>Rules</h2>
+    <ul>
+      <li>PDF with text (not a scan)</li>
+      <li>Up to 50 pages</li>
+      <li>Up to 10 MB</li>
+    </ul>
+    <button type="submit">Upload</button>
+  </form>
+{% endblock %}

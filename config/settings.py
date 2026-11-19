@@ -147,3 +147,14 @@ LOGGING = {
     },
     "root": {"handlers": ["console", "file"], "level": "INFO"},
 }
+
+# Upload checks (AD-20, FR-3, FR-4).
+UPLOAD_MAX_BYTES = 10 * 1024 * 1024
+UPLOAD_MAX_PAGES = 50
+UPLOAD_MIN_CHARS_PER_PAGE = 100
+PDF_EXTRACT_TIMEOUT_SECONDS = 20
+# Non-file request bodies stay small; uploaded files go to a temporary file on disk, not memory.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
+FILE_UPLOAD_HANDLERS = ["lectures.upload_handlers.LimitedTemporaryFileUploadHandler"]
+# Where temporary copies of an upload are made. None means the system temp folder.
+FILE_UPLOAD_TEMP_DIR = None

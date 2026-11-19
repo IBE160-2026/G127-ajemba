@@ -17,3 +17,6 @@
 - [ ] 2026-11-19 [fr-4-ekstraksjonstest](996-2026-11-19-11-50-54-fr-4-ekstraksjonstest.md) — sidehode og -fot er med i sideteksten; vurder i Summary-epicen
 - [ ] 2026-11-19 [fr-4-ekstraksjonstest](996-2026-11-19-11-50-54-fr-4-ekstraksjonstest.md) — 100-tegn-terskelen testet på ett tekstrikt sett; sjekk igjen med testforelesning 2
 - [ ] 2026-11-19 [fr-4-ekstraksjonstest](996-2026-11-19-11-50-54-fr-4-ekstraksjonstest.md) — uavhengig kodegjennomgang av story 2.1 er ikke kjørt
+- [ ] 2026-11-19 [last-opp-pdf-med-sjekker](995-2026-11-19-16-35-23-last-opp-pdf-med-sjekker.md) — minnegrense for utpakkingsprosessen (AD-20) mangler; bare 20 s grense
+- [ ] 2026-11-19 [last-opp-pdf-med-sjekker](995-2026-11-19-16-35-23-last-opp-pdf-med-sjekker.md) — uavhengig kodegjennomgang av story 2.2 er ikke kjørt
+- [ ] 2026-11-19 [last-opp-pdf-med-sjekker](995-2026-11-19-16-35-23-last-opp-pdf-med-sjekker.md) — manuell nettlesertest av opplasting (gyldig og skannet PDF) gjenstår
