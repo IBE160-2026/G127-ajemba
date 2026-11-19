@@ -158,3 +158,15 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
 FILE_UPLOAD_HANDLERS = ["lectures.upload_handlers.LimitedTemporaryFileUploadHandler"]
 # Where temporary copies of an upload are made. None means the system temp folder.
 FILE_UPLOAD_TEMP_DIR = None
+
+# Daily upload limit (FR-7, AD-15.5). The day is the local date in LIMIT_TIME_ZONE.
+UPLOADS_PER_DAY = env.int("UPLOADS_PER_DAY", default=5)
+LIMIT_TIME_ZONE = env.str("LIMIT_TIME_ZONE", default="Europe/Oslo").strip() or "Europe/Oslo"
+if UPLOADS_PER_DAY < 1:
+    raise ImproperlyConfigured("UPLOADS_PER_DAY must be 1 or more.")
+try:
+    from zoneinfo import ZoneInfo
+
+    ZoneInfo(LIMIT_TIME_ZONE)
+except Exception:
+    raise ImproperlyConfigured(f"LIMIT_TIME_ZONE '{LIMIT_TIME_ZONE}' is not a known time zone name.") from None

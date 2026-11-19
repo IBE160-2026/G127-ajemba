@@ -108,3 +108,28 @@ Log in and open **Upload** (`/lectures/upload/`) to add one PDF.
 - **Scanned or image-only PDFs are rejected.** So are encrypted and corrupt PDFs, and PDFs with fewer than 100 characters of text per page on average. The message says the file has no text we can read.
 - Text is read in a separate process that is stopped after 20 seconds.
 - The PDF is **not kept**. Only the text of each page is stored, and every temporary copy is deleted, also when the file is rejected. A rejected file creates no lecture.
+
+## AI notice and daily limit
+
+**AI notice.** Before the first upload, the upload page shows this notice and the user must tick "I have read this notice about Google's terms." The server refuses any upload without a current acknowledgement. If the notice changes, `NOTICE_VERSION` goes up and everyone must tick again.
+
+> Recall sends your slides and your essay answers to Google's Gemini API. This is what Google's terms say.
+>
+> **Unpaid quota** ("Unpaid Services"):
+> - Free tier: "Content used to improve our products"
+> - "To help with quality and improve our products, human reviewers may read, annotate, and process your API input and output."
+> - "Do not submit sensitive, confidential, or personal information to the Unpaid Services."
+>
+> **If you are in the EEA, Switzerland or the UK:**
+> - "If you're in the European Economic Area, Switzerland, or the United Kingdom, the terms under "How Google uses Your Data" in "Paid Services" apply to all Services, including Google AI Studio and unpaid quota in the Gemini API, even though they are offered free of charge."
+> - Paid Services: "Google doesn't use your prompts (including associated system instructions, cached content, and files such as images, videos, or documents) or responses to improve our products"
+>
+> Read the terms: [Gemini API Additional Terms of Service](https://ai.google.dev/gemini-api/terms). Only upload files you are allowed to share.
+
+Source: <https://ai.google.dev/gemini-api/terms>, checked on 2026-10-17 (the terms page showed "Effective March 23, 2026" and "Last updated 2026-04-28 UTC"). The quotes are stored in `_bmad-output/initiative-recall/architecture-recall/gemini-terms-checked-2026-10-17.md`. The notice shows the quotes about data use that matter to a student; the stored file also holds quotes for the developer, for example "Use Restrictions". In v1 the free Gemini key is used only by the builder, locally.
+
+**Daily limit.** Each user can upload **5 PDFs per day**. Only accepted uploads count: a file rejected for size, type, pages or missing text is not counted, and neither is an upload refused for the notice or the limit. Deleting a lecture does not give an upload back.
+
+- `UPLOADS_PER_DAY` (default `5`) sets the limit.
+- `LIMIT_TIME_ZONE` (default `Europe/Oslo`) decides when a day starts: at midnight in that time zone, also across summer and winter time.
+- Both are set in `.env` (see `.env.example`). A value below 1 or an unknown time zone name stops the app at start.

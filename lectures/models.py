@@ -64,3 +64,24 @@ class PageText(models.Model):
             models.UniqueConstraint(fields=["lecture", "number"], name="unique_page_per_lecture")
         ]
         ordering = ["number"]
+
+
+class UploadLogQuerySet(models.QuerySet):
+    def for_user(self, user):
+        """The one door to the upload count (AD-8.1): only this user's rows."""
+        if user is None or not getattr(user, "is_authenticated", False):
+            return self.none()
+        return self.filter(user=user)
+
+
+class UploadLog(models.Model):
+    """One row per accepted upload (FR-7). No link to Lecture: deleting a lecture keeps the count."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="upload_logs")
+    created_at = models.DateTimeField(default=timezone.now)  # UTC
+    local_day = models.DateField()  # the date in LIMIT_TIME_ZONE when the upload was accepted
+
+    objects = UploadLogQuerySet.as_manager()
+
+    class Meta:
+        indexes = [models.Index(fields=["user", "local_day"], name="uploadlog_user_day")]

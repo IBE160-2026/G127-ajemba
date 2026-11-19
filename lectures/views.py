@@ -1,7 +1,17 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from .services import MSG_TOO_BIG, UploadRejected, create_lecture_from_upload, get_lecture
+from . import notice
+from .services import (
+    MSG_TOO_BIG,
+    UploadRejected,
+    acknowledge_notice,
+    create_lecture_from_upload,
+    get_lecture,
+    notice_is_current,
+    uploads_left_today,
+)
 
 
 @login_required
@@ -17,6 +27,8 @@ def upload(request):
     error = ""
     if request.method == "POST":
         uploaded = request.FILES.get("pdf")
+        if request.POST.get("notice_ack") and not notice_is_current(request.user):
+            acknowledge_notice(request.user)  # stored at once, whatever happens to the file
         try:
             if getattr(request, "upload_too_big", False):
                 raise UploadRejected(MSG_TOO_BIG)  # the upload handler stopped reading at 10 MB + 1
@@ -29,4 +41,11 @@ def upload(request):
             # Django's own temporary copy of the upload is removed on every path.
             if uploaded is not None:
                 uploaded.close()
-    return render(request, "lectures/upload.html", {"error": error}, status=400 if error else 200)
+    context = {
+        "error": error,
+        "notice": notice,
+        "show_notice": not notice_is_current(request.user),
+        "uploads_per_day": settings.UPLOADS_PER_DAY,
+        "uploads_left": uploads_left_today(request.user),
+    }
+    return render(request, "lectures/upload.html", context, status=400 if error else 200)

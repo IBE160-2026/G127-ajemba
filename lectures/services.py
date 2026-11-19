@@ -6,14 +6,17 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.db import transaction
 from django.http import Http404
+from django.utils import timezone
 
 from core.pdf_text import average_chars_per_page
 
-from .models import Lecture, PageText
+from .models import Lecture, PageText, UploadLog
+from .notice import NOTICE_VERSION
 
 
 def get_lecture(user, lecture_id):
@@ -39,6 +42,7 @@ MSG_TOO_BIG = "This file is larger than 10 MB. Choose a smaller file."
 MSG_NOT_PDF = "This file is not a PDF. Choose a PDF file."
 MSG_TOO_LONG = "This PDF has more than 50 pages. Choose a shorter file."
 MSG_NO_TEXT = "This file has no text we can read. Choose a PDF with text, not a scan."
+MSG_NOTICE = "Tick the box to confirm you have read the notice."
 
 _CHUNK = 64 * 1024
 _EXTRACT_CLI = Path(__file__).resolve().parent.parent / "core" / "extract_cli.py"
@@ -46,6 +50,39 @@ _EXTRACT_CLI = Path(__file__).resolve().parent.parent / "core" / "extract_cli.py
 
 class UploadRejected(Exception):
     """A check failed. The message is the plain text shown to the student."""
+
+
+def limit_message():
+    return f"You have used your {settings.UPLOADS_PER_DAY} uploads for today. You can upload again tomorrow."
+
+
+# --- Notice (FR-6, AD-16) and daily limit (FR-7) -----------------------------------------------
+
+def notice_is_current(user):
+    """True when the user acknowledged the current notice version."""
+    return user.notice_ack_at is not None and user.notice_version == str(NOTICE_VERSION)
+
+
+def acknowledge_notice(user):
+    """Store the acknowledgement of the current notice. Only ever called with request.user."""
+    user.notice_ack_at = timezone.now()
+    user.notice_version = str(NOTICE_VERSION)
+    user.save(update_fields=["notice_ack_at", "notice_version"])
+
+
+def _now():
+    """The one clock for the daily limit; tests replace it with a fixed time."""
+    return timezone.now()
+
+
+def local_today():
+    """Today's date in LIMIT_TIME_ZONE. A new day starts at local midnight."""
+    return _now().astimezone(ZoneInfo(settings.LIMIT_TIME_ZONE)).date()
+
+
+def uploads_left_today(user):
+    used = UploadLog.objects.for_user(user).filter(local_day=local_today()).count()
+    return max(settings.UPLOADS_PER_DAY - used, 0)
 
 
 def _copy_with_limit(uploaded, target):
@@ -84,10 +121,13 @@ def _extract_in_subprocess(path):
 def create_lecture_from_upload(user, uploaded):
     """Run the checks in order, then create the Lecture and its PageText rows.
 
-    Raises UploadRejected with the student-facing message; a rejection creates nothing.
+    Raises UploadRejected with the student-facing message; a rejection creates nothing
+    and is not counted toward the daily limit.
     The PDF is only ever a temporary file, deleted in `finally` (data minimisation).
     No PDF read happens inside atomic() (AD-24).
     """
+    if not notice_is_current(user):  # FR-6: refused by the server before anything is read
+        raise UploadRejected(MSG_NOTICE)
     if uploaded is None:
         raise UploadRejected(MSG_NO_FILE)
     fd, temp_path = tempfile.mkstemp(suffix=".pdf", dir=settings.FILE_UPLOAD_TEMP_DIR)
@@ -111,7 +151,12 @@ def create_lecture_from_upload(user, uploaded):
 
     title = Path(getattr(uploaded, "name", "") or "").stem.strip()[:200] or "Untitled lecture"
     with transaction.atomic():
+        # FR-7: count and insert in one transaction (the database starts it IMMEDIATE, AD-24).
+        today = local_today()
+        if UploadLog.objects.for_user(user).filter(local_day=today).count() >= settings.UPLOADS_PER_DAY:
+            raise UploadRejected(limit_message())
         lecture = Lecture.objects.create(user=user, title=title, status="processing")
+        UploadLog.objects.create(user=user, local_day=today)
         PageText.objects.bulk_create(
             [PageText(lecture=lecture, number=i, text=t) for i, t in enumerate(pages, start=1)]
         )
