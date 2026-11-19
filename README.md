@@ -80,7 +80,7 @@ Story 1.3. Each user sees only their own lectures.
 - **One public exception, added later:** the Example Lecture (Demo Mode) is the only lecture anyone can open without owning it. It is built in epic-demo-readme and cannot be edited or deleted.
 - **Two guard tests protect every later epic.** Run them with `python manage.py test`:
   - `config/test_url_access.py` reads the address list in `urls.py`, asks for every address as a second user (using the first user's lecture id) and as a logged-out visitor, and fails if any lecture data appears. A new address is covered automatically. A new page that logged-out visitors may open must be added on purpose to `PUBLIC_URL_NAMES` in that file.
-  - `core/tests.py` reads the imports of every module and fails if anything but `core/ai_client.py` imports the Gemini library, anything but `core/pdf_text.py` imports pdfplumber, anything but `core/jobs.py` imports django-q2, or a pure module (scoring, matching, ...) imports models, requests or network code. It also checks itself against a deliberately broken example module.
+  - `core/tests.py` reads the imports of every module and fails if anything but `core/ai_client.py` imports the Gemini library, anything but `core/pdf_text.py` imports pypdf, anything in the app imports pdfplumber (the `evaluation/` folder is exempt), anything but `core/jobs.py` imports django-q2, or a pure module (scoring, matching, ...) imports models, requests or network code. It also checks itself against a deliberately broken example module.
 
 There is no upload page yet. To try the rules by hand, make two accounts and add a lecture to the first one from the Django shell (`python manage.py shell`):
 
@@ -89,3 +89,12 @@ from accounts.models import User
 from lectures.models import Lecture
 Lecture.objects.create(user=User.objects.get(email="first@example.com"), title="My secret lecture")
 ```
+
+## What we checked and what we did not
+
+Story 2.1 (FR-4). We checked how well the text can be read from a real PowerPoint-exported PDF (test lecture 1, 12 slides on hand hygiene, my own work with ChatGPT help, see `evaluation/testset/test-lecture-1-NOTE.md`).
+
+- **Result:** pypdf and pdfplumber both gave 0 broken words (hyphenated line breaks, run-together words, ligature glyphs) in the 5-slide sample. The average is about 338 characters per page, so the limit of 100 characters per page still looks right for this deck. pdfplumber mixed the columns of multi-column slides, which can change the meaning, so the app uses **pypdf 7.1.1**. Details and the sample: [docs/extraction-test.md](docs/extraction-test.md).
+- **Not checked yet:** image-heavy decks (only one text-rich deck was tested; a second, freely licensed deck comes later), scanned PDFs (the app does not check for them yet; they will be rejected once the scanned-PDF check in a later story of this epic is built), and whether the page header and footer text should be removed.
+
+**PDF requirements:** text-based PDF only. A PDF exported from PowerPoint works; a scanned or photographed one has no readable text. There is no upload page and no automatic check yet; the app does not reject such files until the later upload stories are built.

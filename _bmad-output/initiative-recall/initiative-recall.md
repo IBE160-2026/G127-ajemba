@@ -30,7 +30,7 @@ A second-language student can upload a text-based lecture PDF and learn in about
 The whole of Recall v1 as one local Django web app, one background worker and one SQLite file (architecture AD-1). Not in v1: scanned PDFs, audio or video, shared quizzes, Canvas, mobile apps, payments, email verification, password reset, an admin screen (PRD §8.2). Tracer path across epics: log in, upload the real PowerPoint PDF, wait for the Summary, read it, take the multiple choice quiz, see results.
 
 - Touch point: Google Gemini API — consumed only through `ai_client.py`; owner: epic-summary
-- Touch point: pdfplumber — consumed only through `pdf_text.py`; owner: epic-upload-pdf-checks
+- Touch point: pypdf — consumed only through `pdf_text.py`; owner: epic-upload-pdf-checks
 - Touch point: django-q2 (or the thread fallback) — consumed only through `jobs.py`; owner: epic-summary
 
 ## References

@@ -18,16 +18,21 @@ BASE_DIR = Path(settings.BASE_DIR)
 # library prefixes -> the one file allowed to import them
 SINGLE_OWNER_RULES = [
     (("google.genai", "google.generativeai"), "core/ai_client.py"),
-    (("pdfplumber",), "core/pdf_text.py"),
+    (("pypdf",), "core/pdf_text.py"),
     (("django_q",), "core/jobs.py"),
+    # pdfplumber is only for the one-off comparison in evaluation/; no app file may import it.
+    (("pdfplumber",), None),
 ]
+
+# Folders that are not app code: evaluation scripts may import pdfplumber and pypdf.
+EXEMPT_FOLDERS = {"evaluation"}
 
 # Pure modules in core/ (AD-2.2).
 PURE_MODULES = {"scoring", "matching", "review_list", "validation", "text_utils", "types"}
 PURE_FORBIDDEN_PREFIXES = (
     "django.db", "django.http", "django.shortcuts", "django.contrib",
     "requests", "httpx", "urllib", "http", "socket", "ssl",
-    "google", "pdfplumber", "django_q",
+    "google", "pdfplumber", "pypdf", "django_q",
 )
 # Anything from this project is forbidden in a pure module, except the other pure modules.
 PROJECT_PACKAGES_FORBIDDEN = ("accounts", "config", "lectures")
@@ -67,6 +72,8 @@ def find_import_violations(root):
     problems = []
     for path in project_python_files(root):
         relative = path.relative_to(root).as_posix()
+        if relative.split("/")[0] in EXEMPT_FOLDERS:
+            continue
         names = imported_names(path)
 
         for prefixes, owner in SINGLE_OWNER_RULES:
@@ -74,7 +81,8 @@ def find_import_violations(root):
                 continue
             for name in names:
                 if any(_matches(name, prefix) for prefix in prefixes):
-                    problems.append(f"{relative} imports {name}; only {owner} may")
+                    who = f"only {owner} may" if owner else "no app code may"
+                    problems.append(f"{relative} imports {name}; {who}")
 
         is_pure = path.parent.name == "core" and path.stem in PURE_MODULES
         if is_pure and path.parent.parent == root:
@@ -104,6 +112,7 @@ class ImportBoundaryTests(SimpleTestCase):
                     import pdfplumber
                     from google import genai
                     from django_q.tasks import async_task
+                    import pypdf
                     """
                 ),
                 encoding="utf-8",
@@ -113,17 +122,26 @@ class ImportBoundaryTests(SimpleTestCase):
                 "from django.db import models\nfrom lectures.models import Lecture\n",
                 encoding="utf-8",
             )
+            # Fine: the evaluation folder is not app code and may import pypdf and pdfplumber.
+            evaluation = Path(folder) / "evaluation"
+            evaluation.mkdir()
+            (evaluation / "__init__.py").write_text("", encoding="utf-8")
+            (evaluation / "compare.py").write_text(
+                "import pypdf\nimport pdfplumber\n", encoding="utf-8"
+            )
             # Fine: each guarded file may import its own library.
             (core / "ai_client.py").write_text("from google import genai\n", encoding="utf-8")
-            (core / "pdf_text.py").write_text("import pdfplumber\n", encoding="utf-8")
+            (core / "pdf_text.py").write_text("import pypdf\n", encoding="utf-8")
             (core / "jobs.py").write_text("import django_q\n", encoding="utf-8")
 
             problems = find_import_violations(folder)
 
         text = "\n".join(problems)
-        self.assertIn("core/bad_example.py imports pdfplumber", text)
+        self.assertIn("core/bad_example.py imports pdfplumber; no app code may", text)
         self.assertIn("core/bad_example.py imports google.genai", text)
         self.assertIn("core/bad_example.py imports django_q.tasks", text)
+        self.assertIn("core/bad_example.py imports pypdf; only core/pdf_text.py may", text)
+        self.assertNotIn("evaluation/", text)
         self.assertIn("core/scoring.py (pure module) imports django.db", text)
         self.assertIn("core/scoring.py (pure module) imports lectures.models", text)
         # The three guarded files import their own library, so no problem is reported about them.
@@ -131,3 +149,28 @@ class ImportBoundaryTests(SimpleTestCase):
             self.assertFalse(
                 [line for line in problems if line.startswith(f"core/{allowed}")], allowed
             )
+
+    def test_ad2_pdf_library_rules_work_both_ways(self):
+        """pypdf only in pdf_text.py, pdfplumber nowhere in the app, evaluation/ exempt."""
+        with tempfile.TemporaryDirectory() as folder:
+            core = Path(folder) / "core"
+            core.mkdir()
+            (core / "__init__.py").write_text("", encoding="utf-8")
+            (core / "pdf_text.py").write_text("import pdfplumber\n", encoding="utf-8")
+            (core / "views_like.py").write_text("from pypdf import PdfReader\n", encoding="utf-8")
+            problems = "\n".join(find_import_violations(folder))
+        self.assertIn("core/pdf_text.py imports pdfplumber; no app code may", problems)
+        self.assertIn("core/views_like.py imports pypdf; only core/pdf_text.py may", problems)
+
+        with tempfile.TemporaryDirectory() as folder:
+            core = Path(folder) / "core"
+            core.mkdir()
+            (core / "__init__.py").write_text("", encoding="utf-8")
+            (core / "pdf_text.py").write_text("import pypdf\n", encoding="utf-8")
+            evaluation = Path(folder) / "evaluation"
+            evaluation.mkdir()
+            (evaluation / "__init__.py").write_text("", encoding="utf-8")
+            (evaluation / "compare.py").write_text(
+                "import pypdf\nimport pdfplumber\n", encoding="utf-8"
+            )
+            self.assertEqual(find_import_violations(folder), [])

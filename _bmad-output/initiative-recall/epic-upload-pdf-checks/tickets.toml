@@ -4,7 +4,7 @@
 id = 1
 type = "story"
 title = "Own test slides and the FR-4 extraction test"
-description = "You make test lecture 1 (10-12 slides on a topic you know, PowerPoint exported to PDF); then pdf_text.py extracts it with pdfplumber and pypdf and the result and chosen library are recorded in docs/."
+description = "You make test lecture 1 (10-12 slides on a topic you know, PowerPoint exported to PDF); then pdf_text.py extracts it with pypdf (chosen over pdfplumber after the comparison) and the result and chosen library are recorded in docs/."
 verify = "Running the extraction on the real PDF gives one string per page, and docs/ holds the result with a 5-slide sample and the library decision."
 covers = ["FR-4"]
 after = ["1.1"]
