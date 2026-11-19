@@ -2,7 +2,7 @@ import re
 
 from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from accounts.tests import STRONG_PASSWORD, make_user
@@ -141,6 +141,7 @@ class UploadTests(TestCase):
     def setUp(self):
         self.user = make_user("a@example.com")
         self.client.login(email="a@example.com", password=STRONG_PASSWORD)
+        services.acknowledge_notice(self.user)  # FR-6: story 2.2 behaviour is tested as an acknowledged user
         # Both the service copy and Django's own temporary upload file go here.
         self.temp_dir = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp_dir.cleanup)
@@ -288,3 +289,274 @@ class UploadTests(TestCase):
             response = method(reverse("upload"))
             self.assertEqual(response.status_code, 302)
             self.assertTrue(response["Location"].startswith("/accounts/login/"))
+
+
+# --- Story 2.3: upload notice (FR-6) and daily limit (FR-7) ------------------------------------
+
+import html as html_lib
+from datetime import datetime, timezone as dt_timezone
+
+from django.conf import settings as django_settings
+
+from . import notice
+from .models import UploadLog
+
+STORED_QUOTES_FILE = (
+    Path(django_settings.BASE_DIR)
+    / "_bmad-output" / "initiative-recall" / "architecture-recall" / "gemini-terms-checked-2026-10-17.md"
+)
+
+
+def utc(year, month, day, hour, minute=0):
+    return datetime(year, month, day, hour, minute, tzinfo=dt_timezone.utc)
+
+
+class NoticeAndLimitBase(TestCase):
+    def setUp(self):
+        self.user = make_user("a@example.com")
+        self.client.login(email="a@example.com", password=STRONG_PASSWORD)
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp_dir.cleanup)
+        override = override_settings(FILE_UPLOAD_TEMP_DIR=self.temp_dir.name)
+        override.enable()
+        self.addCleanup(override.disable)
+        self.good = pdf_bytes([GOOD_LINE, GOOD_LINE])
+
+    def post(self, content=None, ack=False, name="slides.pdf"):
+        data = {"pdf": upload_file(self.good if content is None else content, name)}
+        if ack:
+            data["notice_ack"] = "1"
+        return self.client.post(reverse("upload"), data)
+
+    def acknowledge(self):
+        services.acknowledge_notice(self.user)
+        self.user.refresh_from_db()
+
+    def freeze(self, moment):
+        patcher = mock.patch.object(services, "_now", return_value=moment)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def assert_nothing_created(self):
+        self.assertEqual(Lecture.objects.count(), 0)
+        self.assertEqual(PageText.objects.count(), 0)
+        self.assertEqual(UploadLog.objects.count(), 0)
+        self.assertEqual(os.listdir(self.temp_dir.name), [], "a temporary file was left behind")
+
+
+class NoticeTests(NoticeAndLimitBase):
+    def test_fr6_upload_refused_without_acknowledgement(self):
+        self.assertIsNone(self.user.notice_ack_at)
+        response = self.post()
+        self.assertContains(response, services.MSG_NOTICE, status_code=400)
+        self.assertContains(response, "I have read this notice about Google&#x27;s terms.", status_code=400)
+        self.assert_nothing_created()
+
+    def test_fr6_service_refuses_directly_too(self):
+        with self.assertRaises(services.UploadRejected):
+            services.create_lecture_from_upload(self.user, upload_file(self.good))
+        self.assert_nothing_created()
+
+    def test_fr6_ticking_the_box_stores_ack_and_version_and_unlocks(self):
+        response = self.post(ack=True)
+        lecture = Lecture.objects.get()
+        self.assertRedirects(response, reverse("lecture_detail", args=[lecture.id]))
+        self.user.refresh_from_db()
+        self.assertIsNotNone(self.user.notice_ack_at)
+        self.assertEqual(self.user.notice_version, str(notice.NOTICE_VERSION))
+        # The next upload needs no tick, and the page shows only a short line.
+        page = self.client.get(reverse("upload"))
+        self.assertNotContains(page, "human reviewers")
+        self.assertContains(page, "You have read the notice about Google")
+        self.post()
+        self.assertEqual(Lecture.objects.count(), 2)
+
+    def test_fr6_tick_is_stored_even_when_the_file_is_rejected(self):
+        response = self.post(content=b"not a pdf", ack=True)
+        self.assertContains(response, services.MSG_NOT_PDF, status_code=400)
+        self.assertNotContains(response, "human reviewers", status_code=400)
+        self.user.refresh_from_db()
+        self.assertIsNotNone(self.user.notice_ack_at)
+        self.assertEqual(Lecture.objects.count(), 0)
+
+    def test_fr6_new_notice_version_requires_new_acknowledgement(self):
+        self.acknowledge()
+        self.post()
+        self.assertEqual(Lecture.objects.count(), 1)
+        with mock.patch.object(services, "NOTICE_VERSION", notice.NOTICE_VERSION + 1):
+            response = self.post()
+            self.assertContains(response, services.MSG_NOTICE, status_code=400)
+            self.assertEqual(Lecture.objects.count(), 1)
+            self.post(ack=True)
+            self.assertEqual(Lecture.objects.count(), 2)
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.notice_version, str(notice.NOTICE_VERSION + 1))
+
+    def test_fr6_notice_contains_stored_google_quotes(self):
+        stored = STORED_QUOTES_FILE.read_text(encoding="utf-8")
+        shown = " ".join(html_lib.unescape(self.client.get(reverse("upload")).content.decode()).split())
+        self.assertGreaterEqual(len(notice.QUOTES), 5)
+        for quote in notice.QUOTES:
+            self.assertIn(quote, stored, "the notice quotes something Google's stored terms do not")
+            self.assertIn(quote, shown, "a quote is missing from the page")
+        for needed in ("human reviewers may read, annotate, and process your API input and output.",
+                       "Do not submit sensitive, confidential, or personal information",
+                       "If you're in the European Economic Area, Switzerland, or the United Kingdom"):
+            self.assertIn(needed, shown)
+        self.assertIn(notice.TERMS_URL, self.client.get(reverse("upload")).content.decode())
+
+    def test_fr6_notice_text_matches_experience_md(self):
+        """The rendered notice equals EXPERIENCE.md word for word, bold words included.
+
+        The only allowed difference: "(link)" in EXPERIENCE.md is replaced by the real link.
+        """
+        experience = (STORED_QUOTES_FILE.parents[1] / "ux-recall" / "EXPERIENCE.md").read_text(encoding="utf-8")
+        section = experience.split("### Upload notice (exact text)")[1].split("## Component Patterns")[0]
+        quoted = [line[1:].strip() for line in section.splitlines() if line.startswith(">")]
+        expected_bold = re.findall(r"\*\*(.+?)\*\*", " ".join(quoted))
+        expected = " ".join(re.sub(r"^- ", "", line) for line in quoted if line).replace("**", "")
+        label = re.search(r'^Checkbox: "(.+?)"', section, re.M).group(1)
+        expected = " ".join((expected + " " + label).replace(" (link)", "").split())
+
+        page = self.client.get(reverse("upload")).content.decode()
+        block = re.search(r"<section aria-label=.*?</section>", page, re.S).group(0)
+        shown = " ".join(html_lib.unescape(re.sub(r"<[^>]+>", " ", block)).split())
+        shown = re.sub(r" ([.,:])", lambda m: m.group(1), shown)  # tags were replaced by a space
+        self.assertEqual(shown, expected)
+        self.assertEqual(re.findall(r"<strong>(.*?)</strong>", block), expected_bold)
+        self.assertIn(
+            f'<a href="{notice.TERMS_URL}" rel="noopener noreferrer">{notice.TERMS_LINK_TEXT}</a>', block
+        )
+        self.assertNotIn("<h2", block)  # no heading that EXPERIENCE.md does not have
+
+    def test_fr6_readme_quotes_the_notice_exactly(self):
+        readme = " ".join((Path(django_settings.BASE_DIR) / "README.md").read_text(encoding="utf-8").split())
+        for quote in notice.QUOTES:
+            self.assertIn(quote, readme)
+        for text in (notice.TERMS_URL, notice.CHECKED_ON, "UPLOADS_PER_DAY", "LIMIT_TIME_ZONE"):
+            self.assertIn(text, readme)
+
+    def test_fr6_acknowledgement_only_changes_the_logged_in_user(self):
+        other = make_user("b@example.com")
+        self.post(ack=True)
+        other.refresh_from_db()
+        self.assertIsNone(other.notice_ack_at)
+        self.assertEqual(other.notice_version, "")
+
+
+class DailyLimitTests(NoticeAndLimitBase):
+    def setUp(self):
+        super().setUp()
+        self.acknowledge()
+        self.freeze(utc(2026, 11, 19, 10))
+
+    def test_fr7_sixth_upload_rejected(self):
+        for _ in range(5):
+            self.post()
+        self.assertEqual(Lecture.objects.count(), 5)
+        response = self.post()
+        self.assertContains(response, "You have used your 5 uploads for today. You can upload again tomorrow.", status_code=400)
+        self.assertEqual(Lecture.objects.count(), 5)
+        self.assertEqual(UploadLog.objects.count(), 5)
+        self.assertEqual(os.listdir(self.temp_dir.name), [])
+
+    def test_fr7_rejected_files_do_not_count(self):
+        bad = [b"not a pdf", b"%PDF-" + b"0" * (10 * 1024 * 1024), pdf_bytes([None]), pdf_bytes([GOOD_LINE] * 51)]
+        for content in bad * 2:
+            self.post(content=content)
+        self.assertEqual(UploadLog.objects.count(), 0)
+        self.post()
+        self.assertEqual(UploadLog.objects.count(), 1)
+        self.assertEqual(services.uploads_left_today(self.user), 4)
+
+    def test_fr7_lecture_and_log_row_are_written_together(self):
+        with mock.patch.object(UploadLog.objects, "create", side_effect=RuntimeError("boom")):
+            with self.assertRaises(RuntimeError):
+                services.create_lecture_from_upload(self.user, upload_file(self.good))
+        self.assertEqual(Lecture.objects.count(), 0)
+        self.assertEqual(PageText.objects.count(), 0)
+
+    @override_settings(UPLOADS_PER_DAY=2)
+    def test_fr7_limit_is_a_setting(self):
+        self.post()
+        self.post()
+        response = self.post()
+        self.assertContains(response, "You have used your 2 uploads for today.", status_code=400)
+        self.assertEqual(Lecture.objects.count(), 2)
+        self.assertContains(self.client.get(reverse("upload")), "You can upload 2 lectures per day. Uploads left today: 0")
+
+    @override_settings(UPLOADS_PER_DAY=2)
+    def test_fr7_day_boundary_uses_oslo_time(self):
+        # Winter (UTC+1): 22:59 UTC is 23:59 on the 19th; 23:01 UTC is 00:01 on the 20th.
+        self.freeze(utc(2026, 11, 19, 22, 59))
+        self.post()
+        self.post()
+        self.assertEqual(services.uploads_left_today(self.user), 0)
+        self.assertContains(self.post(), "uploads for today", status_code=400)
+        self.freeze(utc(2026, 11, 19, 23, 1))
+        self.assertEqual(services.uploads_left_today(self.user), 2)
+        self.post()
+        self.assertEqual(Lecture.objects.count(), 3)
+        self.assertEqual(
+            list(UploadLog.objects.order_by("id").values_list("local_day", flat=True)),
+            [datetime(2026, 11, 19).date()] * 2 + [datetime(2026, 11, 20).date()],
+        )
+
+    @override_settings(UPLOADS_PER_DAY=1)
+    def test_fr7_day_boundary_follows_summer_time(self):
+        # Summer (UTC+2): 21:59 UTC is 23:59 on 30 June; 22:01 UTC is 00:01 on 1 July.
+        self.freeze(utc(2026, 6, 30, 21, 59))
+        self.post()
+        self.assertContains(self.post(), "uploads for today", status_code=400)
+        self.freeze(utc(2026, 6, 30, 22, 1))
+        self.post()
+        self.assertEqual(Lecture.objects.count(), 2)
+
+    @override_settings(UPLOADS_PER_DAY=1, LIMIT_TIME_ZONE="UTC")
+    def test_fr7_time_zone_is_a_setting(self):
+        self.freeze(utc(2026, 11, 19, 23, 30))
+        self.post()
+        self.freeze(utc(2026, 11, 20, 0, 30))  # a new day in UTC, but the same Oslo day (00:30 and 01:30 on the 20th)
+        self.post()
+        self.assertEqual(Lecture.objects.count(), 2)
+
+    @override_settings(UPLOADS_PER_DAY=1)
+    def test_fr7_deleting_a_lecture_does_not_lower_the_count(self):
+        self.post()
+        Lecture.objects.get().delete()
+        self.assertContains(self.post(), "uploads for today", status_code=400)
+
+    @override_settings(UPLOADS_PER_DAY=1)
+    def test_fr7_count_is_per_user(self):
+        self.post()
+        other = make_user("b@example.com")
+        services.acknowledge_notice(other)
+        self.client.logout()
+        self.client.login(email="b@example.com", password=STRONG_PASSWORD)
+        self.post()
+        self.assertEqual(Lecture.objects.filter(user=other).count(), 1)
+
+    def test_sm7_upload_log_is_owner_scoped(self):
+        self.post()
+        other = make_user("b@example.com")
+        self.assertEqual(UploadLog.objects.for_user(self.user).count(), 1)
+        self.assertEqual(UploadLog.objects.for_user(other).count(), 0)
+        self.assertEqual(UploadLog.objects.for_user(AnonymousUser()).count(), 0)
+
+    def test_fr7_limit_refusal_shows_uploads_left_in_rules(self):
+        self.post()
+        self.assertContains(self.client.get(reverse("upload")), "You can upload 5 lectures per day. Uploads left today: 4")
+
+
+class LimitSettingsTests(SimpleTestCase):
+    def test_bad_values_stop_startup(self):
+        import subprocess, sys
+        for env_name, value in (("UPLOADS_PER_DAY", "0"), ("LIMIT_TIME_ZONE", "Mars/Olympus")):
+            result = subprocess.run(
+                [sys.executable, "-c", "import config.settings"],
+                cwd=str(django_settings.BASE_DIR),
+                env={**os.environ, env_name: value, "RECALL_ENV_FILE": "missing.env"},
+                capture_output=True,
+            )
+            self.assertNotEqual(result.returncode, 0, env_name)
+            self.assertIn(b"ImproperlyConfigured", result.stderr)

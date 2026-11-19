@@ -1,0 +1,15 @@
+<section aria-label="Notice about Google's terms">
+  <p>{{ notice.INTRO }}</p>
+  <p><strong>{{ notice.UNPAID_HEADING_BOLD }}</strong>{{ notice.UNPAID_HEADING_REST }}</p>
+  <ul>
+    {% for before, quote in notice.UNPAID_ITEMS %}<li>{{ before }}"{{ quote }}"</li>
+    {% endfor %}
+  </ul>
+  <p><strong>{{ notice.EEA_HEADING }}</strong></p>
+  <ul>
+    {% for before, quote in notice.EEA_ITEMS %}<li>{{ before }}"{{ quote }}"</li>
+    {% endfor %}
+  </ul>
+  <p>Read the terms: <a href="{{ notice.TERMS_URL }}" rel="noopener noreferrer">{{ notice.TERMS_LINK_TEXT }}</a>. {{ notice.OUTRO }}</p>
+  <p><label><input type="checkbox" name="notice_ack" value="1"> {{ notice.CHECKBOX_LABEL }}</label></p>
+</section>

@@ -5,6 +5,11 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% if error %}<p role="alert">{{ error }}</p>{% endif %}
+    {% if show_notice %}
+      {% include "lectures/_upload_notice.html" %}
+    {% else %}
+      <p>{{ notice.SHORT_LINE }}</p>
+    {% endif %}
     <p><label for="pdf">Choose a PDF file</label><br>
     <input type="file" id="pdf" name="pdf" accept="application/pdf,.pdf"></p>
     <h2>Rules</h2>
@@ -12,6 +17,7 @@
       <li>PDF with text (not a scan)</li>
       <li>Up to 50 pages</li>
       <li>Up to 10 MB</li>
+      <li>You can upload {{ uploads_per_day }} lectures per day. Uploads left today: {{ uploads_left }}</li>
     </ul>
     <button type="submit">Upload</button>
   </form>

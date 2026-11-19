@@ -20,3 +20,8 @@
 - [ ] 2026-11-19 [last-opp-pdf-med-sjekker](995-2026-11-19-16-35-23-last-opp-pdf-med-sjekker.md) — minnegrense for utpakkingsprosessen (AD-20) mangler; bare 20 s grense
 - [ ] 2026-11-19 [last-opp-pdf-med-sjekker](995-2026-11-19-16-35-23-last-opp-pdf-med-sjekker.md) — uavhengig kodegjennomgang av story 2.2 er ikke kjørt
 - [ ] 2026-11-19 [last-opp-pdf-med-sjekker](995-2026-11-19-16-35-23-last-opp-pdf-med-sjekker.md) — manuell nettlesertest av opplasting (gyldig og skannet PDF) gjenstår
+- [x] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — uavhengig kodegjennomgang av story 2.3 er ikke kjørt (løst 2026-11-19: reviewer-underagent kjørt, funn rettet)
+- [ ] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — manuell nettlesertest av varsel og daglig grense gjenstår
+- [ ] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — deaktivert opplastingsknapp til fil og avkryssing er valgt (skissen) er ikke bygget
+- [ ] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — AC 3 sier «alle lagrede sitater», varselet følger EXPERIENCE.md; juster kravteksten eller bekreft avviket
+- [ ] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — bytte av `LIMIT_TIME_ZONE` på kjørende app kan gi én ekstra/blokkert opplasting (utsatt)
