@@ -22,3 +22,24 @@ Story 3.4 (issue #21): Summary-siden for en klar forelesning, med deler, kildehe
 - Brukerens manuelle tidtakte kjøring (start `run.py`, last opp egen testforelesning, mål tid) og utfylling av `docs/summary-timing.md`; deretter oppdatere README med resultatet (AC 6, 7, 8).
 - AI-merknaden er en delt partial, ikke i `base.html` slik AC 3 bokstavelig sier; avklar om det holder.
 - Story 3.4 er ikke committet (brukeren committer selv).
+
+## 2026-11-25 kl. 14:34 — Augustina Ajemba
+
+### Oppgave
+Den manuelle tidtakingen (forelesning 13) fikk 503 to ganger på rad, og jobben feilet etter ett forsøk. Brukeren ba om flere forsøk med økende ventetid, innenfor jobbens tidsbudsjett, aldri ved «limit: 0».
+
+### Plan
+- Forslag og tester vist først; brukeren sa ja: 3 forsøk, 2/5/10 sekunder, grensen på 30 per bruker uendret.
+- Funnet ført i planens Review Triage Log som funnet av brukerens manuelle test.
+
+### Resultat
+- `AI_RETRY_WAITS_S` (standard `2,5,10`, validert ved oppstart) erstatter `AI_RETRY_WAIT_S`; `call()` prøver 503/429 opptil 3 ganger, feiler med `job_budget` hvis ventetiden ikke får plass, og prøver aldri «limit: 0».
+- Tester i `core/test_ai_client.py` og `lectures/test_summary_job.py` (fake transport, `_sleep` mocket, ingen ekte kall); README oppdatert.
+- Reviewer-subagent kjørt på diffen; små rettinger gjort (budsjettgrense, loggilinje, test, README).
+- Ingenting committet i denne runden (brukerens instruks: ikke commit noe, heller ikke loggen). Tidligere committet jeg én gang: `0ae7519 Logg: sammendragsside-og-tidtaking`.
+
+### Åpne punkter
+- Worst case er nå 12 forespørsler per opplasting, og hvert forsøk teller mot dagsgrensen på 30.
+- Manuell tidtakt kjøring må gjentas (SM-1) og `docs/summary-timing.md` fylles ut.
+- Gammelt `AI_RETRY_WAIT_S` i en `.env` ignoreres stille.
+- Kode og logg for story 3.4 er ikke committet (brukeren committer selv).

@@ -18,5 +18,6 @@
     </form>
   {% else %}
     <p><strong>Your summary is ready.</strong></p>
+    <p><a href="{% url 'lecture_summary' lecture.id %}" aria-label="Open the summary of {{ lecture.title }}">Open the summary</a></p>
   {% endif %}
 </div>

@@ -438,3 +438,74 @@ class NoContentLeaksTests(TestCase):
             self.assertTrue(part.source_refs)
             self.assertTrue(all(isinstance(n, int) and 1 <= n <= len(PAGES) for n in part.source_refs))
             self.assertEqual(part.source_refs, sorted(set(part.source_refs)))
+
+
+class Busy(Exception):
+    """A provider 503: a code and a message that could echo request details."""
+
+    code = 503
+
+    def __init__(self):
+        super().__init__(f"503 busy {SECRET} {KEY}")
+
+
+class BusyThenProvider(FakeProvider):
+    """Raises each Exception it is given, in turn, and returns each other answer."""
+
+    def __call__(self, model, prompt, schema, timeout):
+        self.prompts.append(prompt)
+        item = self.answers.pop(0)
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+
+@override_settings(GEMINI_API_KEY=KEY, GEMINI_KEY_PRESENT=True, AI_RETRY_WAITS_S=(2, 5, 10))
+class BusyProviderTests(TestCase):
+    """Found by the manual timed run: the free tier answers 503 in a row. Fake provider, no sleeping, no network."""
+
+    def setUp(self):
+        no_real_calls(self)
+        sleeper = mock.patch.object(ai_client, "_sleep")
+        self.sleep = sleeper.start()
+        self.addCleanup(sleeper.stop)
+        self.user = make_user("a@example.com")
+        self.lecture = lecture_with_pages(self.user)
+
+    def run_job(self, provider):
+        with mock.patch.object(ai_client, "_genai_transport", provider):
+            jobs.run_job(jobs.SUMMARY, self.lecture.id)
+        return Lecture.objects.get(pk=self.lecture.pk)
+
+    def waits(self):
+        return [c.args[0] for c in self.sleep.call_args_list]
+
+    def test_three_503_then_a_good_answer_gives_a_ready_lecture(self):
+        provider = BusyThenProvider(Busy(), Busy(), Busy(), answer(GOOD))
+        lecture = self.run_job(provider)
+        self.assertEqual(lecture.status, Lecture.READY)
+        self.assertEqual(self.waits(), [2, 5, 10])
+        self.assertEqual((len(provider.prompts), AiCallLog.objects.count()), (4, 4))
+        self.assertEqual(SummaryPart.objects.count(), 2)
+
+    def test_only_503_fails_after_four_requests_with_nothing_stored_and_no_content_logged(self):
+        provider = BusyThenProvider(*[Busy() for _ in range(6)])
+        with self.assertLogs("recall", level="INFO") as logged:
+            lecture = self.run_job(provider)
+        self.assertEqual((lecture.status, lecture.claimed_by), (Lecture.FAILED, ""))
+        self.assertEqual(len(provider.prompts), 4, "a busy streak is not also retried as a bad answer")
+        self.assertEqual((SummaryPart.objects.count(), KeyTerm.objects.count()), (0, 0))
+        text = "".join(logged.output)
+        self.assertNotIn(SECRET, text)
+        self.assertNotIn(KEY, text)
+
+    def test_busy_streak_bad_answer_then_busy_again_still_ends_ready(self):
+        """The busy counter starts again for the next validation attempt: 6 requests is the cost, the budget bounds it."""
+        provider = BusyThenProvider(Busy(), Busy(), Busy(), answer("nope"), Busy(), answer(GOOD))
+        self.assertEqual(self.run_job(provider).status, Lecture.READY)
+        self.assertEqual((len(provider.prompts), self.waits()), (6, [2, 5, 10, 2]))
+
+    def test_busy_retry_and_validation_retry_work_together(self):
+        provider = BusyThenProvider(Busy(), answer("not json"), answer(GOOD))
+        self.assertEqual(self.run_job(provider).status, Lecture.READY)
+        self.assertEqual((len(provider.prompts), self.waits()), (3, [2]))

@@ -45,3 +45,4 @@
 - [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — manuell tidtakt kjøring av testforelesning (SM-1) og utfylling av `docs/summary-timing.md` + README-resultat gjenstår
 - [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — AI-merknaden er en delt partial, ikke i `base.html` (AC 3 bokstavelig); avklar
 - [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — story 3.4 er ikke committet (brukeren committer selv)
+- [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — 503-forsøk koster dagsgrensen (opptil 12 forespørsler per opplasting); gammelt `AI_RETRY_WAIT_S` i `.env` ignoreres stille

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Summary – {{ lecture.title }} – Recall{% endblock %}
+{% block main_class %}wide summary{% endblock %}
+{% block content %}
+  {# Wireframe 05. Every AI field below is printed with the default escaping: never marked safe (AD-5.4). #}
+  <h1>{{ lecture.title }}</h1>
+  <p class="meta"><span class="tab-on">Summary</span></p>
+  {% include "_ai_notice.html" %}
+  <div lang="{{ lecture.language }}">
+    {% if parts %}
+      <nav aria-label="Jump to a part">
+        <h2 class="jump-title">Jump to</h2>
+        <ol class="jump">
+          {% for part in parts %}<li><a href="#part-{{ part.number }}">{{ part.heading }}</a></li>{% endfor %}
+        </ol>
+      </nav>
+      {% for part in parts %}
+        <section class="part" aria-labelledby="part-{{ part.number }}">
+          <article class="card part-text">
+            <h2 id="part-{{ part.number }}" tabindex="-1">{{ part.number }}. {{ part.heading }}</h2>
+            {% for paragraph in part.paragraphs %}<p>{{ paragraph }}</p>{% endfor %}
+            <p><a class="chip" href="#part-{{ part.number }}" aria-label="{{ part.slides }}, {{ part.heading }}">{{ part.slides }}
+              <svg class="icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></a></p>
+          </article>
+          <aside class="card terms" aria-labelledby="terms-{{ part.number }}">
+            <h3 id="terms-{{ part.number }}">Key terms</h3>
+            {% if part.terms %}
+              <dl>
+                {% for term in part.terms %}<dt>{{ term.term }}</dt><dd>{{ term.explanation }}</dd>{% endfor %}
+              </dl>
+            {% else %}
+              <p class="note">This part has no key terms.</p>
+            {% endif %}
+          </aside>
+        </section>
+      {% endfor %}
+    {% else %}
+      <p>This lecture has no summary.</p>
+    {% endif %}
+  </div>
+  <script src="{% static 'js/summary_focus.js' %}" defer></script>
+{% endblock %}

@@ -34,3 +34,7 @@
 - source_plan: `_bmad-output/initiative-recall/epic-summary/story-summary-generation-with-validation-and-retries-plan.md`
   summary: A lecture refused for too much text (MAX_PROMPT_CHARS) shows only the generic Failed text, and Try again cannot help.
   evidence: `Lecture` has no field for a failure message; `run_summary` logs `reason=too_long` only. Fix: store a short reason code on the lecture and show the "too much text" message on the Processing page and the list, and hide Try again for it. Found by the story 3.3 review. The 50-page limit makes it rare.
+
+- source_plan: `_bmad-output/initiative-recall/epic-summary/story-summary-page-and-a-real-timed-run-plan.md`
+  summary: For the polish epic: when the retry limit (3) and the daily upload limit are both reached, the message says "Please upload the file again", but the user cannot upload.
+  evidence: `MSG_RETRY_LIMIT` in `lectures/services.py` tells the student to upload again, while `create_lecture_from_upload` refuses a new upload once `UPLOADS_PER_DAY` is used up. Found by the builder's manual test on 2026-11-25. The message should say when the student can try again.

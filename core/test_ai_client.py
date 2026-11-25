@@ -69,6 +69,19 @@ class KeyDetectionTests(SimpleTestCase):
             self.assertEqual(ai_client.call("summary", "sample-1")["parts"][0]["slides"], [1, 2])
 
 
+class RetryWaitsSettingTests(SimpleTestCase):
+    def test_retry_waits_parse_and_refuse_bad_values(self):
+        from django.core.exceptions import ImproperlyConfigured
+
+        from config.settings import _retry_waits
+
+        self.assertEqual(_retry_waits("2,5,10"), (2, 5, 10))
+        self.assertEqual(_retry_waits(" 1 , 3 "), (1, 3))
+        for bad in ["", "a,b", "2,,5", "-1", "61", "1,2,3,4,5,6"]:
+            with self.assertRaises(ImproperlyConfigured, msg=bad):
+                _retry_waits(bad)
+
+
 class ReplayTests(SimpleTestCase):
     def test_replay_hit(self):
         self.assertIn("key_terms", ai_client.replay("summary", "sample-1")["parts"][0])
@@ -84,7 +97,7 @@ class ReplayTests(SimpleTestCase):
             ai_client.call("summary", "sample-1", is_example=True)
 
 
-@override_settings(GEMINI_API_KEY=FAKE_KEY, GEMINI_KEY_PRESENT=True, AI_RETRY_WAIT_S=1)
+@override_settings(GEMINI_API_KEY=FAKE_KEY, GEMINI_KEY_PRESENT=True, AI_RETRY_WAITS_S=(2, 5, 10))
 class RealCallTests(TestCase):
     def setUp(self):
         self.user = make_user()
@@ -101,24 +114,51 @@ class RealCallTests(TestCase):
         self.assertEqual((row.task, row.input_tokens, row.output_tokens, row.prompt_version), ("summary", 10, 5, "v1"))
         self.assertIsNotNone(row.local_day)
 
-    def test_503_one_wait_one_retry_then_calm_error(self):
-        transport = failing(FakeError(503), FakeError(503))
+    def test_503_three_retries_with_growing_waits_then_calm_error(self):
+        transport = failing(*[FakeError(503)] * 4)
+        with self.assertRaises(AiCallFailed) as ctx:
+            self.run_call(transport)
+        self.assertEqual(len(transport.calls), 4)
+        self.assertEqual([c.args[0] for c in self.sleep.call_args_list], [2, 5, 10])
+        self.assertEqual(str(ctx.exception), ai_client.MSG_FAILED)
+        self.assertNotIn(FAKE_KEY, str(ctx.exception))
+        self.assertEqual(AiCallLog.objects.count(), 4)
+
+    def test_three_503_then_success(self):
+        transport = failing(*[FakeError(503)] * 3)
+        self.assertEqual(self.run_call(transport), {"ok": True})
+        self.assertEqual(len(transport.calls), 4)
+        self.assertEqual([c.args[0] for c in self.sleep.call_args_list], [2, 5, 10])
+
+    def test_429_and_503_can_be_mixed(self):
+        transport = failing(FakeError(429, "slow down"), FakeError(503))
+        self.assertEqual(self.run_call(transport), {"ok": True})
+        self.assertEqual([c.args[0] for c in self.sleep.call_args_list], [2, 5])
+
+    def test_quota_zero_on_a_later_error_stops_at_once(self):
+        transport = failing(FakeError(503), FakeError(429, "quota exceeded, limit: 0"))
         with self.assertRaises(AiCallFailed) as ctx:
             self.run_call(transport)
         self.assertEqual(len(transport.calls), 2)
-        self.sleep.assert_called_once_with(1)
-        self.assertEqual(str(ctx.exception), ai_client.MSG_FAILED)
-        self.assertNotIn(FAKE_KEY, str(ctx.exception))
-        self.assertEqual(AiCallLog.objects.count(), 2)
+        self.assertEqual([c.args[0] for c in self.sleep.call_args_list], [2])
+        self.assertEqual(ctx.exception.reason, "quota_zero")
+
+    def test_a_wait_that_does_not_fit_the_job_budget_fails_without_sleeping(self):
+        transport = failing(*[FakeError(503)] * 4)
+        with self.assertRaises(AiCallFailed) as ctx:
+            self.run_call(transport, budget=ai_client.JobBudget(4))
+        self.assertEqual(ctx.exception.reason, "job_budget")
+        self.assertEqual([c.args[0] for c in self.sleep.call_args_list], [2])
+        self.assertEqual(len(transport.calls), 2)
 
     def test_429_retry_then_success(self):
         transport = failing(FakeError(429, "slow down"))
         self.assertEqual(self.run_call(transport), {"ok": True})
         self.assertEqual(len(transport.calls), 2)
 
-    def test_429_twice_gives_calm_error_without_key(self):
+    def test_429_four_times_gives_calm_error_without_key(self):
         with self.assertLogs("recall.ai", level="INFO") as logs, self.assertRaises(AiCallFailed) as ctx:
-            self.run_call(failing(FakeError(429), FakeError(429)))
+            self.run_call(failing(*[FakeError(429)] * 4))
         self.assertNotIn(FAKE_KEY, str(ctx.exception))
         self.assertIsNone(ctx.exception.__cause__)
         self.assertNotIn(FAKE_KEY, " ".join(r.getMessage() for r in logs.records))

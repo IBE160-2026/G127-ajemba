@@ -231,7 +231,7 @@ def call(task, id, *, user=None, prompt="", schema=None, prompt_version="", is_e
 
     budget = budget or JobBudget()
     transport = transport or _genai_transport
-    retried = False
+    retries = 0
     while True:
         try:
             answer = _attempt(user, task, prompt_version, prompt, schema, budget, transport)
@@ -248,14 +248,17 @@ def call(task, id, *, user=None, prompt="", schema=None, prompt_version="", is_e
                 logger.warning("ai task=%s id=%s result=failed reason=%s", task, id, reason)
                 raise AiCallFailed(reason="timeout") from None
             busy = code in (503, 429) and not _quota_zero(error)
-            if not busy or retried:
+            waits = settings.AI_RETRY_WAITS_S
+            if not busy or retries >= len(waits):
                 logger.warning("ai task=%s id=%s result=failed reason=%s", task, id, reason)
                 raise AiCallFailed(reason="quota_zero" if _quota_zero(error) else reason) from None
-            retried = True
-            if settings.AI_RETRY_WAIT_S > budget.remaining():
+            wait = waits[retries]
+            if wait >= budget.remaining():  # time must be left after the wait, or the slot would be spent for nothing
+                logger.warning("ai task=%s id=%s result=failed reason=job_budget busy=%s retry=%s", task, id, code, retries + 1)
                 raise AiCallFailed(reason="job_budget") from None
-            logger.info("ai task=%s id=%s busy=%s retry=1", task, id, code)
-            _sleep(settings.AI_RETRY_WAIT_S)
+            retries += 1
+            logger.info("ai task=%s id=%s busy=%s retry=%s wait=%s", task, id, code, retries, wait)
+            _sleep(wait)
 
 
 # --- The Summary task (AD-4.4, AD-5, AD-6) ---------------------------------------------------

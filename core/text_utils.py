@@ -20,3 +20,31 @@ def normalize_text(text):
     text = _HYPHEN_AT_LINE_BREAK.sub("", text)
     text = text.casefold()
     return _WHITESPACE.sub(" ", text).strip()
+
+
+def format_slides(slides):
+    """Write slide numbers for a source chip (AD-21): "Slides 12 to 15", "Slides 3, 7 and 12".
+
+    Only a run of three or more consecutive numbers becomes "a to b". Pure; takes any list of whole
+    numbers (a SourceRef's `slides` too) and sorts and de-duplicates them first.
+    """
+    numbers = sorted(set(slides))
+    if not numbers:
+        return ""
+    groups = []  # each item is a list of consecutive numbers
+    for number in numbers:
+        if groups and number == groups[-1][-1] + 1:
+            groups[-1].append(number)
+        else:
+            groups.append([number])
+    pieces = []
+    for run in groups:
+        if len(run) >= 3:
+            pieces.append(f"{run[0]} to {run[-1]}")
+        else:
+            pieces.extend(str(n) for n in run)
+    if len(pieces) == 1:
+        text = pieces[0]
+    else:
+        text = ", ".join(pieces[:-1]) + " and " + pieces[-1]
+    return ("Slide " if len(numbers) == 1 else "Slides ") + text
