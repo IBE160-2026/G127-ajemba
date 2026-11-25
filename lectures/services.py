@@ -1,7 +1,9 @@
 """The only way for views to get a lecture (AD-8)."""
 
 import json
+import logging
 import os
+import secrets
 import subprocess
 import sys
 import tempfile
@@ -17,8 +19,11 @@ from django.utils import timezone
 
 from core.pdf_text import average_chars_per_page
 
-from .models import AiCallLog, Lecture, PageText, UploadLog
+from .models import AiCallLog, KeyTerm, Lecture, PageText, SummaryPart, UploadLog
 from .notice import NOTICE_VERSION
+
+
+logger = logging.getLogger("recall.jobs")
 
 
 def get_lecture(user, lecture_id):
@@ -109,7 +114,7 @@ def set_status(lecture, from_states, to_state):
         if (state, to_state) not in ALLOWED_CHANGES:
             raise ValueError(f"The change {state} -> {to_state} is not allowed.")
     changed = Lecture.objects.filter(pk=lecture.pk, status__in=from_states).update(
-        status=to_state, status_changed_at=timezone.now()
+        status=to_state, status_changed_at=timezone.now(), claimed_by=""
     )
     if changed:
         lecture.status = to_state
@@ -120,7 +125,7 @@ def reap_stale():
     """A lecture in `processing` longer than STALE_MINUTES becomes `failed`. Returns how many."""
     cutoff = timezone.now() - timedelta(minutes=settings.STALE_MINUTES)
     return Lecture.objects.filter(status=Lecture.PROCESSING, status_changed_at__lt=cutoff).update(
-        status=Lecture.FAILED, status_changed_at=timezone.now()
+        status=Lecture.FAILED, status_changed_at=timezone.now(), claimed_by=""
     )
 
 
@@ -144,7 +149,9 @@ def retry_lecture(user, lecture_id):
         raise RetryRefused(MSG_AI_BUDGET)
     changed = Lecture.objects.filter(
         pk=lecture.pk, status=Lecture.FAILED, retry_count__lt=settings.RETRY_LIMIT
-    ).update(status=Lecture.PROCESSING, status_changed_at=timezone.now(), retry_count=F("retry_count") + 1)
+    ).update(
+        status=Lecture.PROCESSING, status_changed_at=timezone.now(), retry_count=F("retry_count") + 1, claimed_by=""
+    )
     if not changed:
         raise RetryRefused(MSG_RETRY_LIMIT)
     lecture.refresh_from_db()
@@ -244,3 +251,82 @@ def get_page_texts(user, lecture_id):
     """Page text of a lecture the user owns, through the owner-scoped door (AD-8)."""
     lecture = get_lecture(user, lecture_id)
     return PageText.objects.for_user(user).filter(lecture=lecture)
+
+
+# --- The Summary job (AD-3, AD-4, AD-18.1) -----------------------------------------------------
+
+def claim_lecture(lecture_id):
+    """Take the one run of this lecture: one conditional UPDATE, `processing` and not yet claimed.
+
+    Returns the job's own token, or None when the row is gone, not `processing` or already claimed
+    (a second, old or redelivered job). Every status change clears the token, so a token from before
+    a retry never matches again.
+    """
+    token = secrets.token_hex(8)
+    taken = Lecture.objects.filter(pk=lecture_id, status=Lecture.PROCESSING, claimed_by="").update(claimed_by=token)
+    return token if taken else None
+
+
+def fail_claimed(lecture_id, token):
+    """processing -> failed, but only for the job that still holds the claim. Returns whether it changed."""
+    return bool(
+        Lecture.objects.filter(pk=lecture_id, status=Lecture.PROCESSING, claimed_by=token).update(
+            status=Lecture.FAILED, status_changed_at=timezone.now(), claimed_by=""
+        )
+    )
+
+
+def store_summary(lecture_id, token, summary, generated_with):
+    """Write a checked Summary once, in one short transaction, and make the lecture `ready`.
+
+    The row and the claim are checked first (AD-3.8). Returns False, writing nothing, when the lecture
+    is gone, changed status or is held by another job. A ready lecture is never given a second Summary.
+    """
+    with transaction.atomic():
+        done = Lecture.objects.filter(pk=lecture_id, status=Lecture.PROCESSING, claimed_by=token).update(
+            status=Lecture.READY, status_changed_at=timezone.now(), claimed_by="",
+            language=summary["language"], generated_with=generated_with[:100],
+        )
+        if not done:
+            return False
+        for part in summary["parts"]:
+            row = SummaryPart.objects.create(
+                lecture_id=lecture_id, order=part["order"], heading=part["heading"],
+                text=part["text"], source_refs=part["source_refs"],
+            )
+            KeyTerm.objects.bulk_create(
+                [KeyTerm(summary_part=row, term=t["term"], explanation=t["explanation"]) for t in part["key_terms"]]
+            )
+    return True
+
+
+def run_summary(lecture_id):
+    """The body of the Summary job. Returns nothing; logs carry ids and reason codes only.
+
+    Claim first (the real lock), then one AI task with one shared time budget, then one final write.
+    Any failure after the claim ends the lecture as `failed` with nothing stored.
+    """
+    from core import ai_client  # function-level, like ai_client's own imports of this package
+
+    token = claim_lecture(lecture_id)
+    if token is None:
+        return  # deleted, second run, redelivered or already finished: stop without work
+    try:
+        lecture = Lecture.objects.filter(pk=lecture_id).first()
+        if lecture is None:
+            return  # deleted between the claim and now: nothing to fail, nothing to store (AD-3.8)
+        pages = list(PageText.objects.filter(lecture_id=lecture_id).order_by("number").values_list("text", flat=True))
+        if not pages:
+            raise ai_client.AiCallFailed(reason="no_pages")
+        summary, generated_with = ai_client.generate_summary(
+            lecture.user, lecture_id, pages, budget=ai_client.JobBudget()
+        )
+        stored = store_summary(lecture_id, token, summary, generated_with)
+    except ai_client.AiError as error:
+        fail_claimed(lecture_id, token)
+        logger.info("job=summary lecture=%s result=failed reason=%s", lecture_id, getattr(error, "reason", "replay_missing"))
+        return
+    except Exception:
+        fail_claimed(lecture_id, token)
+        raise
+    logger.info("job=summary lecture=%s result=%s", lecture_id, "ready" if stored else "dropped")

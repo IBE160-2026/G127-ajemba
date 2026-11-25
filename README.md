@@ -153,11 +153,17 @@ After an upload, the lecture is saved with the status **Processing** and a backg
 - **Only an id goes in the queue.** Never slide text. A job changes the status with one conditional update, so the same lecture queued twice runs once.
 - **Stuck lectures.** A lecture that stays in Processing for more than 10 minutes (`STALE_MINUTES`) is shown as Failed. This is checked when `run.py` starts and whenever a status is read.
 - **Try again.** A failed lecture has a **Try again** button, at most 3 times per lecture. A retry does not count as a new upload.
-- **AI budget.** `AI_CALLS_PER_USER_PER_DAY` (default 30) and `AI_CALLS_GLOBAL_PER_DAY` (default 200) are counted from the AI call log. When either is used up, no job is queued and the user sees a message. Nothing writes to that log yet.
-- **What does not exist yet:** the summary itself. For now the job only ends the lecture as **Failed**, so every upload ends as Failed. The app does not call any AI and needs no Gemini key.
+- **AI budget.** `AI_CALLS_PER_USER_PER_DAY` (default 30) and `AI_CALLS_GLOBAL_PER_DAY` (default 200) are counted from the AI call log. When either is used up, no job is queued and the user sees a message. Every real AI request writes one row to that log (never any text).
+- **The summary job.** The job first claims the lecture, so only one job can work on one run; an old job that was queued before a retry stops without work. It then asks the AI for one summary, checks the answer, and stores it once, in one short transaction. All AI requests of one job share one time budget (`AI_JOB_BUDGET_S`, 220 seconds, under the worker limit of 240).
+- **What is checked.** Every answer must have the right structure, parts that cite real slide numbers (1 to the page count), key terms that appear in the lecture text with an explanation, a language of `en` or `nb`, and no links (`http://`, `https://`, `www.`), no `<` or `>` and no `hx-`. The plain word "HTTP" is allowed, so a lecture about HTTP can work. A bad answer is tried again at most twice. If the last one is bad too, the lecture ends as **Failed** with the plain message and nothing is stored. Without a key the job uses a stored sample answer (replay) if one exists for that lecture, and fails calmly if not.
+- **What does not exist yet:** a page that shows the summary (a Ready lecture says "Summary coming soon"), and quizzes.
 - **Known limit:** on macOS and Linux, stopping `run.py` with `kill` or SIGTERM may leave the web app and the worker running. Ctrl+C is the supported way to stop it. On Windows, `run.py` also stops both if it is killed.
 - **Known limit:** when you press Ctrl+C, django-q2 may print CRITICAL lines such as "reincarnated worker ... after sudden death" before it stops. The terminal sends Ctrl+C to the worker's own child processes too, and the worker restarts them for a moment. The result is correct: `run.py` stops, and the web app and the worker are gone. It only looks alarming.
 - **Windows:** django-q2 was tested on Windows 11 with Python 3.13. Result: [docs/django-q2-windows-test.md](docs/django-q2-windows-test.md).
+
+## Prompts
+
+The prompts for the AI are plain files in the `prompts/` folder (now `prompts/summary.md`). Each file starts with a header that has a version number and a changelog line, and each asks the AI for plain language: short sentences, common words, no unexplained jargon, for a student who reads in a second language. The slides are sent between random markers, and the prompt says that marked text is data and never instructions. Only `core/ai_client.py` loads the prompt files. When you change a prompt, raise its version and write a changelog line.
 
 ## If you deploy this
 

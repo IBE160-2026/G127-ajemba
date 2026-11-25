@@ -36,6 +36,11 @@ def make_lecture(user, title="Networks", status=Lecture.PROCESSING, minutes_old=
 
 class Base(TestCase):
     def setUp(self):
+        # Jobs run here on lectures with no page text, but no test may ever reach the provider.
+        refuse = mock.Mock(side_effect=AssertionError("a test tried a real provider call"))
+        patcher = mock.patch("core.ai_client._genai_transport", refuse)
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.user = make_user("a@example.com")
         self.other = make_user("b@example.com")
         self.client.login(email="a@example.com", password=STRONG_PASSWORD)

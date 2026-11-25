@@ -30,3 +30,7 @@
 - source_plan: `_bmad-output/initiative-recall/epic-summary/story-gemini-key-model-choice-and-ai-client-with-replay-mode-plan.md`
   summary: Add deliberately broken stored replay samples (bad JSON shape, wrong slide numbers) with the validators.
   evidence: AD-14 asks for broken samples; only one valid sample exists and validators are story 3.3.
+
+- source_plan: `_bmad-output/initiative-recall/epic-summary/story-summary-generation-with-validation-and-retries-plan.md`
+  summary: A lecture refused for too much text (MAX_PROMPT_CHARS) shows only the generic Failed text, and Try again cannot help.
+  evidence: `Lecture` has no field for a failure message; `run_summary` logs `reason=too_long` only. Fix: store a short reason code on the lecture and show the "too much text" message on the Processing page and the list, and hide Try again for it. Found by the story 3.3 review. The 50-page limit makes it rare.

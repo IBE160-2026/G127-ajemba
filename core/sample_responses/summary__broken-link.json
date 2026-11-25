@@ -1,0 +1,19 @@
+{
+  "language": "en",
+  "parts": [
+    {
+      "heading": "Why hand hygiene matters",
+      "text": "See https://example.com for more.",
+      "slides": [
+        1,
+        2
+      ],
+      "key_terms": [
+        {
+          "term": "Hand rub",
+          "explanation": "An alcohol-based rub used on hands that are not visibly dirty."
+        }
+      ]
+    }
+  ]
+}

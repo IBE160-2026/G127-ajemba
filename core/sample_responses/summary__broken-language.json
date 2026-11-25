@@ -1,0 +1,19 @@
+{
+  "language": "fr",
+  "parts": [
+    {
+      "heading": "Why hand hygiene matters",
+      "text": "Clean hands stop infections from spreading.",
+      "slides": [
+        1,
+        2
+      ],
+      "key_terms": [
+        {
+          "term": "Hand rub",
+          "explanation": "An alcohol-based rub used on hands that are not visibly dirty."
+        }
+      ]
+    }
+  ]
+}

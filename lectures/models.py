@@ -38,6 +38,9 @@ class Lecture(models.Model):
     status_changed_at = models.DateTimeField(default=timezone.now)
     retry_count = models.PositiveSmallIntegerField(default=0)
     generated_with = models.CharField(max_length=100, blank=True, default="")
+    # The token of the one job that owns this run (story 3.3). Empty when no job holds it. Cleared by
+    # every status change, so an old or redelivered job can never write to a retried lecture.
+    claimed_by = models.CharField(max_length=32, blank=True, default="")
 
     objects = LectureQuerySet.as_manager()
 
@@ -127,3 +130,48 @@ class RateLimitState(models.Model):
     local_day = models.DateField(null=True, blank=True)
     day_count = models.PositiveIntegerField(default=0)
 
+
+
+class SummaryPartQuerySet(models.QuerySet):
+    def for_user(self, user):
+        """The one door to Summary Parts (AD-8.1): only parts of lectures this user owns."""
+        if user is None or not getattr(user, "is_authenticated", False):
+            return self.none()
+        return self.filter(lecture__user=user)
+
+
+class SummaryPart(models.Model):
+    """One part of a Summary. Plain text only (AD-5.4). Written once, with its lecture's `ready` status."""
+
+    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="summary_parts")
+    order = models.PositiveSmallIntegerField()
+    heading = models.CharField(max_length=300)
+    text = models.TextField()
+    source_refs = models.JSONField(default=list)  # sorted slide numbers (SourceRef, AD-21)
+
+    objects = SummaryPartQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["order"]
+        constraints = [
+            models.UniqueConstraint(fields=["lecture", "order"], name="unique_part_order_per_lecture")
+        ]
+
+
+class KeyTermQuerySet(models.QuerySet):
+    def for_user(self, user):
+        """The one door to Key Terms (AD-8.1): only terms of lectures this user owns."""
+        if user is None or not getattr(user, "is_authenticated", False):
+            return self.none()
+        return self.filter(summary_part__lecture__user=user)
+
+
+class KeyTerm(models.Model):
+    summary_part = models.ForeignKey(SummaryPart, on_delete=models.CASCADE, related_name="key_terms")
+    term = models.CharField(max_length=200)
+    explanation = models.TextField()
+
+    objects = KeyTermQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["id"]

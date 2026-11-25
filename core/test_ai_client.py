@@ -71,7 +71,7 @@ class KeyDetectionTests(SimpleTestCase):
 
 class ReplayTests(SimpleTestCase):
     def test_replay_hit(self):
-        self.assertIn("key_terms", ai_client.replay("summary", "sample-1"))
+        self.assertIn("key_terms", ai_client.replay("summary", "sample-1")["parts"][0])
 
     def test_replay_miss_is_clear_error(self):
         with self.assertRaises(AiReplayMissing):
