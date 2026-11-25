@@ -1,14 +1,22 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import redirect, render
+
+from core import jobs
 
 from . import notice
 from .services import (
     MSG_TOO_BIG,
+    RetryRefused,
     UploadRejected,
     acknowledge_notice,
     create_lecture_from_upload,
     get_lecture,
+    get_lecture_for_write,
+    reap_stale,
+    retry_lecture,
     notice_is_current,
     uploads_left_today,
 )
@@ -16,9 +24,28 @@ from .services import (
 
 @login_required
 def lecture_detail(request, lecture_id):
-    """Stub page so the privacy tests have something to request. epic-summary replaces it."""
+    """The Processing page while the lecture is processing or failed (AD-11). The Summary page
+    replaces the Ready part in story 3.4."""
+    reap_stale()
     lecture = get_lecture(request.user, lecture_id)
-    return render(request, "lectures/detail.html", {"lecture": lecture})
+    return render(request, "lectures/detail.html", {"lecture": lecture, "poll_seconds": settings.POLL_SECONDS})
+
+
+@login_required
+def retry(request, lecture_id):
+    """Try a failed lecture again, at most 3 times. The owner check comes before the method check."""
+    get_lecture_for_write(request.user, lecture_id)
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    try:
+        with transaction.atomic():
+            retry_lecture(request.user, lecture_id)
+            jobs.enqueue(jobs.SUMMARY, lecture_id)
+    except RetryRefused as refused:
+        lecture = get_lecture(request.user, lecture_id)
+        context = {"lecture": lecture, "poll_seconds": settings.POLL_SECONDS, "error": str(refused)}
+        return render(request, "lectures/detail.html", context, status=400)
+    return redirect("lecture_detail", lecture_id=lecture_id)
 
 
 @login_required
@@ -36,6 +63,7 @@ def upload(request):
         except UploadRejected as rejected:
             error = str(rejected)
         else:
+            jobs.enqueue(jobs.SUMMARY, lecture.id)  # runs after the commit (AD-3.4)
             return redirect("lecture_detail", lecture_id=lecture.id)
         finally:
             # Django's own temporary copy of the upload is removed on every path.

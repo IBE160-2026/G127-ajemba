@@ -1,0 +1,17 @@
+{# One line in My lectures. Polls while processing; the text changes in place (AD-11, AD-22). #}
+<div class="status-row" role="status" aria-live="polite"
+  {% if lecture.status == "processing" %}hx-get="{% url 'lecture_status' lecture.id %}?row=1" hx-trigger="every {{ poll_seconds }}s" hx-swap="outerHTML"{% endif %}>
+  {% if lecture.status == "processing" %}
+    Status: Processing&hellip;
+    <span class="note">You can leave this page. We keep working.</span>
+  {% elif lecture.status == "failed" %}
+    <span class="error">Status: Failed. We could not make the summary.</span>
+    <form method="post" action="{% url 'lecture_retry' lecture.id %}">
+      {% csrf_token %}
+      <button type="submit" aria-label="Try again, {{ lecture.title }}">Try again</button>
+      <a href="{% url 'upload' %}">Choose another file</a>
+    </form>
+  {% else %}
+    Status: Ready
+  {% endif %}
+</div>

@@ -2,5 +2,6 @@
 {% block title %}{{ lecture.title }} - Recall{% endblock %}
 {% block content %}
   <h1>{{ lecture.title }}</h1>
-  <p>Summary coming soon.</p>
+  {% include "lectures/_status.html" %}
+  {% if lecture.status == "ready" %}<p>Summary coming soon.</p>{% endif %}
 {% endblock %}

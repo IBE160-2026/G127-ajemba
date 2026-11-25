@@ -43,13 +43,13 @@ Windows commands first (PowerShell). You need Python 3.12 or 3.13.
    pip install -r requirements.txt
    ```
 
-4. Start the app. No `.env` file is needed. It runs `migrate` and starts the web app:
+4. Start the app. No `.env` file is needed. It runs `migrate`, marks stuck lectures as failed, and starts the web app and the background worker together:
 
    ```powershell
    python run.py
    ```
 
-   Open http://localhost:8000/ in your browser. Press Ctrl+C to stop; it stops the web app too. If port 8000 is busy, use `python run.py --port 8001`.
+   Open http://localhost:8000/ in your browser. Press Ctrl+C to stop; it stops the web app and the worker. If port 8000 is busy, use `python run.py --port 8001`.
 
 5. Run the tests (also without a `.env`):
 
@@ -133,3 +133,29 @@ Source: <https://ai.google.dev/gemini-api/terms>, checked on 2026-10-17 (the ter
 - `UPLOADS_PER_DAY` (default `5`) sets the limit.
 - `LIMIT_TIME_ZONE` (default `Europe/Oslo`) decides when a day starts: at midnight in that time zone, also across summer and winter time.
 - Both are set in `.env` (see `.env.example`). A value below 1 or an unknown time zone name stops the app at start.
+
+## How processing works
+
+After an upload, the lecture is saved with the status **Processing** and a background job is queued. `python run.py` starts the web app and the worker (django-q2, one worker) together, and Ctrl+C stops both. If one of the two stops by itself, `run.py` stops the other.
+
+- **You can close the page.** The worker keeps going. My lectures (`/lectures/`) shows **Processing…**, **Ready** or **Failed** and updates itself every 3 seconds. The Processing page (`/lectures/<id>/`) shows two steps, "Reading your PDF" (done) and "Writing the summary" (in progress), and no percentage or timer. It stops asking at Ready or Failed.
+- **Only an id goes in the queue.** Never slide text. A job changes the status with one conditional update, so the same lecture queued twice runs once.
+- **Stuck lectures.** A lecture that stays in Processing for more than 10 minutes (`STALE_MINUTES`) is shown as Failed. This is checked when `run.py` starts and whenever a status is read.
+- **Try again.** A failed lecture has a **Try again** button, at most 3 times per lecture. A retry does not count as a new upload.
+- **AI budget.** `AI_CALLS_PER_USER_PER_DAY` (default 30) and `AI_CALLS_GLOBAL_PER_DAY` (default 200) are counted from the AI call log. When either is used up, no job is queued and the user sees a message. Nothing writes to that log yet.
+- **What does not exist yet:** the summary itself. For now the job only ends the lecture as **Failed**, so every upload ends as Failed. The app does not call any AI and needs no Gemini key.
+- **Known limit:** on macOS and Linux, stopping `run.py` with `kill` or SIGTERM may leave the web app and the worker running. Ctrl+C is the supported way to stop it. On Windows, `run.py` also stops both if it is killed.
+- **Known limit:** when you press Ctrl+C, django-q2 may print CRITICAL lines such as "reincarnated worker ... after sudden death" before it stops. The terminal sends Ctrl+C to the worker's own child processes too, and the worker restarts them for a moment. The result is correct: `run.py` stops, and the web app and the worker are gone. It only looks alarming.
+- **Windows:** django-q2 was tested on Windows 11 with Python 3.13. Result: [docs/django-q2-windows-test.md](docs/django-q2-windows-test.md).
+
+## If you deploy this
+
+Recall is built to run locally in v1. Before it runs anywhere else:
+
+- Turn debug off (`RECALL_ENV` other than `local`) and set a real `SECRET_KEY`.
+- Set `ALLOWED_HOSTS` to your host name and use HTTPS.
+- Use a production server that runs on the host, for example Waitress on Windows, not `runserver`.
+- Run exactly one worker. The queue and the status changes are built for one.
+- Use a paid Gemini key. In v1 the free key is used only by the builder, locally; offering Recall to users in the EEA, Switzerland or the UK needs a paid key under Google's terms.
+- Do a privacy review. The slide text of every lecture is stored and sent to Google.
+- The SQLite file (`db.sqlite3`) is the only copy of the data. There are no backups.

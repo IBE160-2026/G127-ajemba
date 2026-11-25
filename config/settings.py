@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_q",  # the background worker; only core/jobs.py imports it (AD-3)
     "accounts",
     "lectures",
 ]
@@ -76,7 +77,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        # DATABASE_FILE lets a test run its own worker against a throwaway database.
+        "NAME": env.str("DATABASE_FILE", default=str(BASE_DIR / "db.sqlite3")),
         "OPTIONS": {
             "timeout": 20,
             "transaction_mode": "IMMEDIATE",
@@ -170,3 +172,30 @@ try:
     ZoneInfo(LIMIT_TIME_ZONE)
 except Exception:
     raise ImproperlyConfigured(f"LIMIT_TIME_ZONE '{LIMIT_TIME_ZONE}' is not a known time zone name.") from None
+
+
+# Background jobs and status (AD-3, AD-11, AD-23). Names checked against django-q2 1.11.1.
+STALE_MINUTES = 10  # a lecture in "processing" longer than this is treated as failed
+POLL_SECONDS = 3  # how often the Processing page asks for the status
+RETRY_LIMIT = 3  # retries of a failed lecture
+AI_CALLS_PER_USER_PER_DAY = env.int("AI_CALLS_PER_USER_PER_DAY", default=30)
+AI_CALLS_GLOBAL_PER_DAY = env.int("AI_CALLS_GLOBAL_PER_DAY", default=200)
+if AI_CALLS_PER_USER_PER_DAY < 1 or AI_CALLS_GLOBAL_PER_DAY < 1:
+    raise ImproperlyConfigured("AI_CALLS_PER_USER_PER_DAY and AI_CALLS_GLOBAL_PER_DAY must be 1 or more.")
+
+# Exactly one worker. "retry" is larger than "timeout" so a running job is never queued again.
+# max_attempts 1 and ack_failures: a failed job is never run again by the queue; a retry is our
+# own status change. save_limit -1: successful tasks are not stored. Only ids go in (AD-3.1).
+Q_CLUSTER = {
+    "name": "recall",
+    "orm": "default",
+    "workers": 1,
+    "timeout": 240,
+    "retry": 300,
+    "max_attempts": 1,
+    "ack_failures": True,
+    "save_limit": -1,
+    "recycle": 100,
+    "poll": 0.5,
+    "scheduler": False,
+}

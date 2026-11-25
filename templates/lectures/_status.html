@@ -1,0 +1,22 @@
+{# The Processing card. Polls while processing and stops at Ready or Failed (AD-11.1, AD-22). #}
+<div id="lecture-status" class="card" role="status" aria-live="polite"
+  {% if lecture.status == "processing" %}hx-get="{% url 'lecture_status' lecture.id %}" hx-trigger="every {{ poll_seconds }}s" hx-swap="outerHTML"{% endif %}>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  {% if lecture.status == "processing" %}
+    <p><strong>We are making your summary.</strong></p>
+    <ul class="steps">
+      <li>&#10003; Reading your PDF: Done</li>
+      <li>&#9679; Writing the summary: In progress</li>
+    </ul>
+    <p class="note">You can leave this page. We keep working. Find your lecture in "My lectures".</p>
+  {% elif lecture.status == "failed" %}
+    <p class="error"><strong>We could not make the summary. Please try again.</strong></p>
+    <form method="post" action="{% url 'lecture_retry' lecture.id %}">
+      {% csrf_token %}
+      <button type="submit" aria-label="Try again, {{ lecture.title }}">Try again</button>
+      <a href="{% url 'upload' %}">Choose another file</a>
+    </form>
+  {% else %}
+    <p><strong>Your summary is ready.</strong></p>
+  {% endif %}
+</div>

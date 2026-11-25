@@ -1,7 +1,7 @@
 """Start Recall with one command: python run.py (AD-15).
 
-Checks the Python version, runs migrate, then starts the web app. Ctrl+C stops the web app and
-everything it started. Uses only the standard library, so it works the same on Windows.
+Checks the Python version, runs migrate, then starts the web app and the background worker
+together. Ctrl+C stops both and everything they started. Uses only the standard library, so it works the same on Windows.
 """
 
 import argparse
@@ -90,36 +90,47 @@ def bind_children_to_this_process():
     return True
 
 
-def stop_server(server):
-    """Give the server a moment to stop by itself, then stop it and its children by force."""
+def stop_process(process):
+    """Give a child a moment to stop by itself, then stop it and its children by force."""
     try:
-        server.wait(timeout=STOP_GRACE_SECONDS)
+        process.wait(timeout=STOP_GRACE_SECONDS)
         return
     except subprocess.TimeoutExpired:
         pass
     if os.name == "nt":
-        # /T also ends the processes the server started.
-        subprocess.run(["taskkill", "/F", "/T", "/PID", str(server.pid)], capture_output=True)
+        # /T also ends the processes it started (the worker's own processes).
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(process.pid)], capture_output=True)
     else:
-        server.terminate()
+        process.terminate()
     try:
-        server.wait(timeout=STOP_GRACE_SECONDS)
+        process.wait(timeout=STOP_GRACE_SECONDS)
     except subprocess.TimeoutExpired:
-        server.kill()
+        process.kill()
+
+
+def stop_all(children):
+    """Stop every child that is still running. One that is already gone is left alone."""
+    for child in children:
+        if child.poll() is None:
+            stop_process(child)
 
 
 def _raise_keyboard_interrupt(signum, frame):
     raise KeyboardInterrupt
 
 
-def serve(port=DEFAULT_PORT, migrate=True):
-    """Run migrate (unless told not to), then the web app, until Ctrl+C or the server ends."""
+def serve(port=DEFAULT_PORT, migrate=True, worker=True, on_start=None):
+    """Run migrate (unless told not to), then the web app and the worker, until Ctrl+C or one ends.
+
+    If one of the two ends by itself, the other is stopped too, so nothing is left running.
+    `on_start` is for tests: it is called with the list of started children.
+    """
     bind_children_to_this_process()
     if hasattr(signal, "SIGBREAK"):  # Ctrl+Break on Windows behaves like Ctrl+C
         signal.signal(signal.SIGBREAK, _raise_keyboard_interrupt)
 
     manage = [sys.executable, "manage.py"]
-    server = None
+    children = []
     try:
         if migrate:
             print("Preparing the database (migrate)...")
@@ -130,18 +141,33 @@ def serve(port=DEFAULT_PORT, migrate=True):
             result = subprocess.run(manage + ["createcachetable"])
             if result.returncode != 0:
                 return result.returncode
+            # A lecture stuck in "processing" from an earlier run is marked as failed (AD-3.7).
+            result = subprocess.run(manage + ["reap_stale"])
+            if result.returncode != 0:
+                return result.returncode
 
         print(f"Starting the web app at http://localhost:{port}/ (press Ctrl+C to stop)")
-        server = subprocess.Popen(manage + ["runserver", "--noreload", str(port)])
+        children.append(subprocess.Popen(manage + ["runserver", "--noreload", str(port)]))
+        if worker:
+            print("Starting the background worker...")
+            children.append(subprocess.Popen(manage + ["qcluster"]))
+        if on_start is not None:
+            on_start(children)
         # Wait in short rounds. A plain wait() cannot be interrupted by Ctrl+C on Windows.
-        while server.poll() is None:
+        while all(child.poll() is None for child in children):
             time.sleep(POLL_SECONDS)
-        return server.returncode
+        code = next(child.returncode for child in children if child.poll() is not None)
+        print("One of the two stopped. Stopping the other...")
+        stop_all(children)
+        return code
     except KeyboardInterrupt:
-        print("\nStopping the web app...")
-        if server is not None:
-            stop_server(server)
+        print("\nStopping the web app and the worker...")
+        stop_all(children)
         return 0
+    finally:
+        # Whatever happened (a failed start of the second child, a second Ctrl+C, an error),
+        # nothing this run started is left running. Children that already ended are skipped.
+        stop_all(children)
 
 
 def main():

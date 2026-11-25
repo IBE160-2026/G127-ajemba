@@ -3,11 +3,12 @@
 {% block content %}
   <h1>My lectures</h1>
   {% if lectures %}
-    <ul>
-      {% for lecture in lectures %}
-        <li><a href="{% url 'lecture_detail' lecture.id %}">{{ lecture.title }}</a></li>
-      {% endfor %}
-    </ul>
+    {% for lecture in lectures %}
+      <div class="card">
+        <a href="{% url 'lecture_detail' lecture.id %}">{{ lecture.title }}</a>
+        {% include "lectures/_status_row.html" %}
+      </div>
+    {% endfor %}
   {% else %}
     <p>No lectures yet.</p>
   {% endif %}

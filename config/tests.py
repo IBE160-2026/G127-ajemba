@@ -135,13 +135,16 @@ class ReadmeTests(SimpleTestCase):
 _SERVE_WRAPPER = """
 import os, sys, threading, time
 import run
-port, flag = int(sys.argv[1]), sys.argv[2]
+port, flag, pidfile = int(sys.argv[1]), sys.argv[2], sys.argv[3]
+def started(children):
+    with open(pidfile, "w") as f:
+        f.write(" ".join(str(c.pid) for c in children))
 def watch():
     while not os.path.exists(flag):
         time.sleep(0.1)
     os._exit(1)
 threading.Thread(target=watch, daemon=True).start()
-sys.exit(run.serve(port, migrate=False))
+sys.exit(run.serve(port, migrate=False, on_start=started))
 """
 
 
@@ -166,43 +169,93 @@ def _wait_for(condition, seconds):
     return condition()
 
 
+class RunPyCleanUpTests(SimpleTestCase):
+    """AD-15.1: if starting the worker fails, the web app that already started is stopped."""
+
+    def test_server_is_stopped_when_the_worker_cannot_start(self):
+        import run
+        from unittest import mock
+
+        server = mock.MagicMock()
+        server.poll.return_value = None  # still running
+        popen = mock.MagicMock(side_effect=[server, OSError("cannot start the worker")])
+        with mock.patch.object(run.subprocess, "Popen", popen),                 mock.patch.object(run, "bind_children_to_this_process"),                 mock.patch.object(run, "stop_process") as stop:
+            with self.assertRaises(OSError):
+                run.serve(port=1, migrate=False)
+        stop.assert_called_once_with(server)
+
+
+def _pid_alive(pid):
+    out = subprocess.run(
+        ["tasklist", "/FI", f"PID eq {pid}", "/FO", "CSV", "/NH"], capture_output=True, text=True
+    ).stdout
+    # CSV rows look like "python.exe","1234","Console",... ; a missing process gives an INFO line.
+    return any(line.split('","')[1:2] == [str(pid)] for line in out.splitlines())
+
+
 @unittest.skipUnless(os.name == "nt", "run.py stopping its children is a Windows concern")
 class RunPyStopsServerTests(SimpleTestCase):
-    """AD-15.1: run.py stops the web app and everything it started."""
+    """AD-15.1: run.py stops the web app, the worker and everything they started."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # The worker reads a throwaway database, so the real db.sqlite3 is not touched.
+        cls.folder = tempfile.mkdtemp()
+        cls.db_file = str(Path(cls.folder) / "test.sqlite3")
+        env = {**os.environ, "DATABASE_FILE": cls.db_file, "RECALL_ENV_FILE": str(BASE_DIR / "no-such-env-file")}
+        for name in ("RECALL_ENV", "SECRET_KEY"):
+            env.pop(name, None)
+        cls.env = env
+        subprocess.run([sys.executable, "manage.py", "migrate", "-v", "0"], cwd=BASE_DIR, env=env, check=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.folder, ignore_errors=True)
+        super().tearDownClass()
 
     def _start(self, flag, **popen_options):
         port = _free_port()
+        pidfile = Path(self.folder) / f"pids-{port}.txt"
         proc = subprocess.Popen(
-            [sys.executable, "-c", _SERVE_WRAPPER, str(port), str(flag)],
-            cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **popen_options,
+            [sys.executable, "-c", _SERVE_WRAPPER, str(port), str(flag), str(pidfile)],
+            cwd=BASE_DIR, env=self.env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **popen_options,
         )
         self.addCleanup(
             lambda: subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)], capture_output=True)
         )
-        started = _wait_for(lambda: _port_open(port), 30)
+        started = _wait_for(lambda: _port_open(port) and pidfile.exists(), 30)
         self.assertTrue(started, "the web app did not start")
         with urllib.request.urlopen(f"http://localhost:{port}/", timeout=5) as response:
             self.assertEqual(response.status, 200)
-        return proc, port
+        server_pid, worker_pid = (int(p) for p in pidfile.read_text().split())
+        self.assertTrue(_pid_alive(worker_pid), "the worker did not start")
+        return proc, port, server_pid, worker_pid
 
-    def test_server_dies_when_run_py_is_killed(self):
-        """Story 1.1 bug: killing run.py must not leave the server running in the background."""
-        with tempfile.TemporaryDirectory() as folder:
-            flag = Path(folder) / "die"
-            proc, port = self._start(flag)
-            flag.write_text("now")
-            self.assertTrue(
-                _wait_for(lambda: not _port_open(port), 15),
-                "the server kept running after run.py was killed",
-            )
+    def test_server_and_worker_die_when_run_py_is_killed(self):
+        """Story 1.1 bug: killing run.py must not leave the server or the worker running."""
+        flag = Path(self.folder) / "die"
+        proc, port, server_pid, worker_pid = self._start(flag)
+        flag.write_text("now")
+        self.assertTrue(_wait_for(lambda: not _port_open(port), 15), "the server kept running after run.py was killed")
+        self.assertTrue(_wait_for(lambda: not _pid_alive(worker_pid), 15), "the worker kept running after run.py was killed")
 
-    def test_ctrl_break_stops_run_py_and_server(self):
-        """Ctrl+Break goes through the same clean-up as Ctrl+C."""
-        with tempfile.TemporaryDirectory() as folder:
-            proc, port = self._start(Path(folder) / "unused", creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-            os.kill(proc.pid, signal.CTRL_BREAK_EVENT)
-            self.assertTrue(_wait_for(lambda: proc.poll() is not None, 15), "run.py did not exit")
-            self.assertTrue(_wait_for(lambda: not _port_open(port), 5), "the server kept running")
+    def test_ctrl_break_stops_run_py_server_and_worker(self):
+        """AC 8: Ctrl+Break goes through the same clean-up as Ctrl+C and stops both."""
+        proc, port, server_pid, worker_pid = self._start(
+            Path(self.folder) / "unused", creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+        )
+        os.kill(proc.pid, signal.CTRL_BREAK_EVENT)
+        self.assertTrue(_wait_for(lambda: proc.poll() is not None, 20), "run.py did not exit")
+        self.assertTrue(_wait_for(lambda: not _port_open(port), 5), "the server kept running")
+        self.assertTrue(_wait_for(lambda: not _pid_alive(worker_pid), 5), "the worker kept running")
+
+    def test_run_py_stops_the_server_when_the_worker_ends(self):
+        """If one of the two ends, the other is stopped too."""
+        proc, port, server_pid, worker_pid = self._start(Path(self.folder) / "unused")
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(worker_pid)], capture_output=True)
+        self.assertTrue(_wait_for(lambda: proc.poll() is not None, 20), "run.py kept running without its worker")
+        self.assertTrue(_wait_for(lambda: not _port_open(port), 10), "the server kept running without its worker")
 
 
 class BasePageTests(TestCase):
