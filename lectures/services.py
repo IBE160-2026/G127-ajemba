@@ -18,6 +18,7 @@ from django.http import Http404
 from django.utils import timezone
 
 from core.pdf_text import average_chars_per_page
+from core.text_utils import format_slides
 
 from .models import AiCallLog, KeyTerm, Lecture, PageText, SummaryPart, UploadLog
 from .notice import NOTICE_VERSION
@@ -251,6 +252,45 @@ def get_page_texts(user, lecture_id):
     """Page text of a lecture the user owns, through the owner-scoped door (AD-8)."""
     lecture = get_lecture(user, lecture_id)
     return PageText.objects.for_user(user).filter(lecture=lecture)
+
+
+def get_summary(user, lecture_id):
+    """The Summary page data for a lecture the user owns: (lecture, list of part dicts).
+
+    Owner check first (same bare 404). Parts and terms come through the owner-scoped managers.
+    Everything is plain text; the template escapes it (AD-5.4).
+    """
+    lecture = get_lecture(user, lecture_id)
+    parts = SummaryPart.objects.for_user(user).filter(lecture=lecture).prefetch_related("key_terms")
+    shown = []
+    for part in parts:
+        shown.append({
+            "number": part.order,
+            "heading": part.heading,
+            "paragraphs": [line.strip() for line in part.text.splitlines() if line.strip()],
+            "slides": format_slides(part.source_refs),
+            "terms": list(part.key_terms.all()),
+        })
+    return lecture, shown
+
+
+def check_source_refs(lecture_id):
+    """SM-2 check: return the problems found (empty list = every Source Reference slide exists)."""
+    page_count = PageText.objects.filter(lecture_id=lecture_id).count()
+    problems = []
+    lecture = Lecture.objects.filter(pk=lecture_id).first()
+    if lecture is None or lecture.status != Lecture.READY:
+        problems.append("the lecture is not ready")
+    if not SummaryPart.objects.filter(lecture_id=lecture_id).exists():
+        problems.append("the lecture has no summary parts")
+    for part in SummaryPart.objects.filter(lecture_id=lecture_id):
+        refs = part.source_refs
+        if not refs:
+            problems.append(f"part {part.order} has no slides")
+        for number in refs:
+            if isinstance(number, bool) or not isinstance(number, int) or not 1 <= number <= page_count:
+                problems.append(f"part {part.order} cites slide {number}, but the PDF has {page_count} pages")
+    return problems
 
 
 # --- The Summary job (AD-3, AD-4, AD-18.1) -----------------------------------------------------

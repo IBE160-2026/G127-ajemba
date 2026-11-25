@@ -5,7 +5,7 @@ Checked on **2026-11-25**. The model name is a setting (`GEMINI_MODEL`), never w
 ## Choice
 
 - **Model:** `gemini-3.5-flash-lite`
-- **Documented fallback:** `gemini-3.1-flash-lite`. It was **not** tested in this spike, because the first model worked. Switching is a change of the `GEMINI_MODEL` setting only. Run the spike again first (see below).
+- **Documented fallback:** `gemini-3.1-flash-lite`. It was **not** tested in this spike, because the first model worked. **Tested later (2026-11-25, story 3.4):** it works. The 12-slide test lecture was Ready in 8 seconds with the fallback, with every Source Reference slide valid (see [summary-timing.md](summary-timing.md)). The default model worked once that day (a text-only journal PDF, 16 seconds) and failed with repeated 503 on the test lecture. The default in `config/settings.py` stays `gemini-3.5-flash-lite`. Switching is a change of the `GEMINI_MODEL` setting only. Run the spike again first (see below).
 - **Structured-output style that works:** `response_json_schema` with a JSON Schema (made from a Pydantic class with `model_json_schema()`) together with `response_mime_type="application/json"`. The answer is then checked with Pydantic.
 - **Not decided:** the Pydantic-class style (`response_schema=<class>`) was tried once and got a 503 from Google, so it is neither proven nor rejected. It is not used.
 
@@ -31,7 +31,7 @@ Input: only `evaluation/testset/test-lecture-1.pdf` (the builder's own lecture, 
 
 ## What the 503 means for the code
 
-The free tier can be unavailable for a short time. `ai_client.py` handles 503 and 429 calmly: one short wait and one retry, then a clear error that the job turns into the plain message of FR-5. A 429 whose text says `limit: 0` is not retried. No message, log line or error text contains the key.
+The free tier can be unavailable for a short time. `ai_client.py` handles 503 and 429 calmly: up to 3 retries after 2, 5 and 10 seconds (inside the job budget), then a clear error that the job turns into the plain message of FR-5. A 429 whose text says `limit: 0` is not retried. No message, log line or error text contains the key.
 
 ## Run the spike again
 

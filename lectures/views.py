@@ -15,6 +15,7 @@ from .services import (
     create_lecture_from_upload,
     get_lecture,
     get_lecture_for_write,
+    get_summary,
     reap_stale,
     retry_lecture,
     notice_is_current,
@@ -28,7 +29,20 @@ def lecture_detail(request, lecture_id):
     replaces the Ready part in story 3.4."""
     reap_stale()
     lecture = get_lecture(request.user, lecture_id)
+    if lecture.status == "ready":
+        return redirect("lecture_summary", lecture_id=lecture.id)
     return render(request, "lectures/detail.html", {"lecture": lecture, "poll_seconds": settings.POLL_SECONDS})
+
+
+@login_required
+def lecture_summary(request, lecture_id):
+    """The Summary page (FR-8, FR-9, FR-11). Owner only: a wrong owner and a missing id give the
+    same 404. A lecture that is not ready goes to its Processing page. No AI call is made here."""
+    reap_stale()
+    lecture, parts = get_summary(request.user, lecture_id)
+    if lecture.status != "ready":
+        return redirect("lecture_detail", lecture_id=lecture.id)
+    return render(request, "lectures/summary.html", {"lecture": lecture, "parts": parts})
 
 
 @login_required

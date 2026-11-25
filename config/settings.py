@@ -230,7 +230,24 @@ GEMINI_MODEL = env.str("GEMINI_MODEL", default="").strip() or "gemini-3.5-flash-
 AI_CALL_TIMEOUT_S = env.int("AI_CALL_TIMEOUT_S", default=60)
 RATE_WAIT_MAX_S = env.int("RATE_WAIT_MAX_S", default=90)
 AI_JOB_BUDGET_S = env.int("AI_JOB_BUDGET_S", default=220)
-AI_RETRY_WAIT_S = env.int("AI_RETRY_WAIT_S", default=5)  # the one short wait before the one retry
+
+
+def _retry_waits(raw):
+    """Parse the waits before each retry of a busy provider (503 or 429), e.g. "2,5,10" -> (2, 5, 10).
+
+    One number per retry, so the list length is the number of retries (1 to 5). Bad text stops the start.
+    """
+    try:
+        waits = tuple(int(part) for part in str(raw).split(","))
+    except ValueError:
+        raise ImproperlyConfigured("AI_RETRY_WAITS_S must be whole seconds separated by commas, like 2,5,10.") from None
+    if not 1 <= len(waits) <= 5 or any(not 0 <= wait <= 60 for wait in waits):
+        raise ImproperlyConfigured("AI_RETRY_WAITS_S needs 1 to 5 numbers, each from 0 to 60 seconds.")
+    return waits
+
+
+# The waits before each retry after a 503 or 429 (3 retries). Always inside the job budget.
+AI_RETRY_WAITS_S = _retry_waits(env.str("AI_RETRY_WAITS_S", default="2,5,10"))
 MAX_PROMPT_CHARS = env.int("MAX_PROMPT_CHARS", default=200000)
 # Free-tier limits read from the builder's AI Studio page on 2026-11-25 (docs/ai-model-choice.md).
 AI_REQUESTS_PER_MINUTE = env.int("AI_REQUESTS_PER_MINUTE", default=15)
