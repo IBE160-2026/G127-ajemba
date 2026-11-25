@@ -23,3 +23,10 @@
   summary: A real Ctrl+C makes django-q2 log CRITICAL "reincarnated worker/monitor/pusher after sudden death" lines before the clean stop.
   evidence: Found by the user's manual test of story 3.2 (real terminal; nothing was left running afterwards). The terminal sends Ctrl+C to every process on the console. django-q2 makes only its sentinel ignore it (`cluster.py` line 175), so the pusher, monitor and worker processes die and the sentinel's guard restarts them. A separate process group alone would not fix it: the only clean stop in django-q2 is its in-process SIGINT/SIGTERM handler, and CTRL_BREAK would kill the whole group at once. Proposed fix, not built: a function in `core/jobs.py` called from `LecturesConfig.ready()` that sets SIGINT to ignore when `multiprocessing.parent_process()` is not None, so the cluster's main process still stops cleanly. It needs a test that sends a real CTRL_C_EVENT to a hidden console (attach with AttachConsole, then GenerateConsoleCtrlEvent). A first try failed to reproduce: `run.py` did not exit after the event in that test, and a probe run on a database without the cache table only showed `no such table: recall_cache` errors, so the setup needs to be fixed first (run `createcachetable` in the test database).
 
+
+- source_plan: `_bmad-output/initiative-recall/epic-summary/story-gemini-key-model-choice-and-ai-client-with-replay-mode-plan.md`
+  summary: Story 3.3 must pass one shared `JobBudget` to every `ai_client.call` in a job, or AI_JOB_BUDGET_S is not enforced.
+  evidence: `call()` makes a new 220 s budget when none is passed; no caller exists yet, so 3.3 is where the bound is won or lost.
+- source_plan: `_bmad-output/initiative-recall/epic-summary/story-gemini-key-model-choice-and-ai-client-with-replay-mode-plan.md`
+  summary: Add deliberately broken stored replay samples (bad JSON shape, wrong slide numbers) with the validators.
+  evidence: AD-14 asks for broken samples; only one valid sample exists and validators are story 3.3.

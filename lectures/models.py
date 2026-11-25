@@ -116,3 +116,14 @@ class AiCallLog(models.Model):
 
     class Meta:
         indexes = [models.Index(fields=["local_day"], name="aicalllog_day")]
+
+
+class RateLimitState(models.Model):
+    """The one shared rate row (AD-4.6, AD-17): requests used this minute and this day.
+    Web app and worker read and update it in a short transaction (pk is always 1)."""
+
+    minute_start = models.DateTimeField(default=timezone.now)  # UTC start of the current minute window
+    minute_count = models.PositiveIntegerField(default=0)
+    local_day = models.DateField(null=True, blank=True)
+    day_count = models.PositiveIntegerField(default=0)
+
