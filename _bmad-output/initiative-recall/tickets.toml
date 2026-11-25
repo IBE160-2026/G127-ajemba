@@ -1,5 +1,5 @@
 # tickets.toml for initiative-recall: the epics in build order.
-# `tier` is our own key (tickets.py ignores it): must-have or if-time.
+# `tier` is our own key (tickets.py ignores it): must-have, if-time or dropped (epics 7 and 8, 2026-11-25; their epic files have status: dropped).
 
 [[epic]]
 id = 1
@@ -68,7 +68,7 @@ after = [
   { epic = 5, needs = "the Example Lecture to extend with fill-in content" },
   { epic = 6, needs = "the evaluation command to extend" },
 ]
-tier = "if-time"
+tier = "dropped"
 
 [[epic]]
 id = 8
@@ -81,7 +81,7 @@ after = [
   { epic = 6, needs = "the frozen Test Set and the evaluation command to extend" },
   { epic = 7, needs = "the second quiz type and its place in the evaluation" },
 ]
-tier = "if-time"
+tier = "dropped"
 
 [[epic]]
 id = 9

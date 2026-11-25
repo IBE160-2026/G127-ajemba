@@ -46,3 +46,7 @@
 - [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — AI-merknaden er en delt partial, ikke i `base.html` (AC 3 bokstavelig); avklar
 - [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — story 3.4 er ikke committet (brukeren committer selv)
 - [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — 503-forsøk koster dagsgrensen (opptil 12 forespørsler per opplasting); gammelt `AI_RETRY_WAIT_S` i `.env` ignoreres stille
+- [x] 2026-11-25 [sjekkpunkt-3-5-justert-kutt](989-2026-11-25-15-26-39-sjekkpunkt-3-5-justert-kutt.md) — `docs/time-log.md` med timer per story (AC 1–2 i story 3.5) mangler; bare totaltall er gitt (løst 2026-11-25)
+- [x] 2026-11-25 [sjekkpunkt-3-5-justert-kutt](989-2026-11-25-15-26-39-sjekkpunkt-3-5-justert-kutt.md) — `tickets.toml` ikke oppdatert for droppede epic 7 og 8 (AC 4) (løst 2026-11-25)
+- [ ] 2026-11-25 [sjekkpunkt-3-5-justert-kutt](989-2026-11-25-15-26-39-sjekkpunkt-3-5-justert-kutt.md) — PRD §5.2/FR-26/SM-10/§8.3 og epic-evaluation sier fortsatt to testforelesninger og epic 7–8 i kuttet
+- [x] 2026-11-25 [sjekkpunkt-3-5-justert-kutt](989-2026-11-25-15-26-39-sjekkpunkt-3-5-justert-kutt.md) — frist: gammel Decision sier slutten av november, ny er 15. desember (løst 2026-11-25: ny Decision-linje, den gamle står igjen)

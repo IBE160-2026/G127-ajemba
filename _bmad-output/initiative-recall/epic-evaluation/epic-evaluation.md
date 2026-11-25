@@ -39,6 +39,7 @@ The `evaluate` command, the Test Set files, the review sheet and the report. Nev
 
 - Decision: slim version only: Summary completeness and faithfulness, Multiple Choice grounding and answer keys, on 2 test lectures (user, 2026-10-18).
 - Decision: two test lectures of about 10-12 slides each: the builder's own slides plus one freely licensed deck with the licence credited in the repo (user, 2026-10-18).
+- Decision: only one test lecture is evaluated, the builder's own `evaluation/testset/test-lecture-1.pdf`; no second, freely licensed deck. This replaces the two lectures above and in the PRD §15; see PRD §16 (user, 2026-11-25).
 - Open question: definition of "unsupported statement" for faithfulness and what happens if the target cannot be met (PRD open question 6); settle before the first run.
 - Note: writing the Reference Key Points is human work; those stories are hitl.
 - Note: daily rate limits may spread a run over several days (AD-13.4).

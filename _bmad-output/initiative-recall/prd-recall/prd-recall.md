@@ -659,3 +659,10 @@ Decisions made while planning the epics and stories (GitHub issue #3; see `initi
 - **Speed target not measurable (SM-1, §5.7):** the 31-to-50-page target cannot be measured with 10-to-12-slide decks. FR-8 and SM-1 keep their targets, but no Test Set run covers the longer range.
 - **Scope priority (new §8.3):** must-have core is epics 1 to 6; "if time" order is Fill-in-the-Gaps, Essay feedback, delete and report, polish. Reason: the time budget.
 - **Unchanged:** open question 6 (definition of "unsupported statement" for faithfulness) stays open.
+
+## 16. Changes from the checkpoint after epic 3 (2026-11-25)
+
+Decisions made at the checkpoint (story 3.5, GitHub issue #23; see `initiative-recall.md`, Notes). The builder made both on 2026-11-25. Real time spent on stories 1.1 to 3.4 was about 15 hours against 20 planned. The deadline is now 15 December 2026.
+
+- **Quiz types (FR-14 to FR-17, §8.3):** Fill-in-the-Gaps (epic 7) and Essay questions with feedback (epic 8) are dropped. v1 keeps Multiple Choice only. Reason: the remaining work fitted, but the builder cut it to give the reflection report and the hand-in checks more time and to keep a buffer before 15 December. The text of FR-14 to FR-17 and FR-29 stays as written; they are not delivered in v1.
+- **Test Set size (FR-26, SM-10, §5.7):** 1 Test Set Lecture instead of 2. Only Test Lecture 1, the builder's own PowerPoint export (`evaluation/testset/test-lecture-1.pdf`), is evaluated. There is no second, freely licensed deck. This changes §15, which said 2 lectures. Reason: the remaining work fitted, but the builder cut it to give the reflection report and the hand-in checks more time and to keep a buffer before 15 December.
