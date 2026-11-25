@@ -5,17 +5,19 @@ import os
 import subprocess
 import sys
 import tempfile
+from datetime import timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models import F
 from django.http import Http404
 from django.utils import timezone
 
 from core.pdf_text import average_chars_per_page
 
-from .models import Lecture, PageText, UploadLog
+from .models import AiCallLog, Lecture, PageText, UploadLog
 from .notice import NOTICE_VERSION
 
 
@@ -43,6 +45,9 @@ MSG_NOT_PDF = "This file is not a PDF. Choose a PDF file."
 MSG_TOO_LONG = "This PDF has more than 50 pages. Choose a shorter file."
 MSG_NO_TEXT = "This file has no text we can read. Choose a PDF with text, not a scan."
 MSG_NOTICE = "Tick the box to confirm you have read the notice."
+MSG_AI_BUDGET = "Recall has used up its AI budget for today. Please try again tomorrow."
+MSG_RETRY_LIMIT = "This lecture has already been tried again 3 times. Please upload the file again."
+MSG_RETRY_NOT_FAILED = "Only a lecture that failed can be tried again."
 
 _CHUNK = 64 * 1024
 _EXTRACT_CLI = Path(__file__).resolve().parent.parent / "core" / "extract_cli.py"
@@ -83,6 +88,76 @@ def local_today():
 def uploads_left_today(user):
     used = UploadLog.objects.for_user(user).filter(local_day=local_today()).count()
     return max(settings.UPLOADS_PER_DAY - used, 0)
+
+
+# --- Status changes (AD-3.5 to AD-3.7) -------------------------------------------------------
+
+ALLOWED_CHANGES = {
+    (Lecture.PROCESSING, Lecture.READY),
+    (Lecture.PROCESSING, Lecture.FAILED),
+    (Lecture.FAILED, Lecture.PROCESSING),  # retry
+}
+
+
+def set_status(lecture, from_states, to_state):
+    """Change the status only if it is still one of `from_states`; return whether it changed.
+
+    One conditional UPDATE, so of two callers only one gets True. A caller that gets False stops.
+    """
+    from_states = list(from_states)
+    for state in from_states:
+        if (state, to_state) not in ALLOWED_CHANGES:
+            raise ValueError(f"The change {state} -> {to_state} is not allowed.")
+    changed = Lecture.objects.filter(pk=lecture.pk, status__in=from_states).update(
+        status=to_state, status_changed_at=timezone.now()
+    )
+    if changed:
+        lecture.status = to_state
+    return bool(changed)
+
+
+def reap_stale():
+    """A lecture in `processing` longer than STALE_MINUTES becomes `failed`. Returns how many."""
+    cutoff = timezone.now() - timedelta(minutes=settings.STALE_MINUTES)
+    return Lecture.objects.filter(status=Lecture.PROCESSING, status_changed_at__lt=cutoff).update(
+        status=Lecture.FAILED, status_changed_at=timezone.now()
+    )
+
+
+class RetryRefused(Exception):
+    """The retry was not allowed. The message is the plain text shown to the student."""
+
+
+def retry_lecture(user, lecture_id):
+    """failed -> processing, at most RETRY_LIMIT times per lecture; adds no upload row (AD-15.5).
+
+    Owner check first (same bare 404), then the AI budget, then one conditional UPDATE.
+    """
+    lecture = get_lecture_for_write(user, lecture_id)
+    reap_stale()
+    lecture.refresh_from_db()
+    if lecture.status != Lecture.FAILED:
+        raise RetryRefused(MSG_RETRY_NOT_FAILED)
+    if lecture.retry_count >= settings.RETRY_LIMIT:
+        raise RetryRefused(MSG_RETRY_LIMIT)
+    if not ai_budget_left(user):
+        raise RetryRefused(MSG_AI_BUDGET)
+    changed = Lecture.objects.filter(
+        pk=lecture.pk, status=Lecture.FAILED, retry_count__lt=settings.RETRY_LIMIT
+    ).update(status=Lecture.PROCESSING, status_changed_at=timezone.now(), retry_count=F("retry_count") + 1)
+    if not changed:
+        raise RetryRefused(MSG_RETRY_LIMIT)
+    lecture.refresh_from_db()
+    return lecture
+
+
+def ai_budget_left(user):
+    """False when this user's or everybody's AI calls for today are used up (AD-23)."""
+    today = local_today()
+    todays = AiCallLog.objects.filter(local_day=today)
+    if todays.count() >= settings.AI_CALLS_GLOBAL_PER_DAY:
+        return False
+    return AiCallLog.objects.for_user(user).filter(local_day=today).count() < settings.AI_CALLS_PER_USER_PER_DAY
 
 
 def _copy_with_limit(uploaded, target):
@@ -155,7 +230,9 @@ def create_lecture_from_upload(user, uploaded):
         today = local_today()
         if UploadLog.objects.for_user(user).filter(local_day=today).count() >= settings.UPLOADS_PER_DAY:
             raise UploadRejected(limit_message())
-        lecture = Lecture.objects.create(user=user, title=title, status="processing")
+        if not ai_budget_left(user):  # AD-20 step 5: nothing is created and no job is queued
+            raise UploadRejected(MSG_AI_BUDGET)
+        lecture = Lecture.objects.create(user=user, title=title, status=Lecture.PROCESSING)
         UploadLog.objects.create(user=user, local_day=today)
         PageText.objects.bulk_create(
             [PageText(lecture=lecture, number=i, text=t) for i, t in enumerate(pages, start=1)]

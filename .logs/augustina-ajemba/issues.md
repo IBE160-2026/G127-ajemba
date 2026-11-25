@@ -25,3 +25,10 @@
 - [ ] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — deaktivert opplastingsknapp til fil og avkryssing er valgt (skissen) er ikke bygget
 - [ ] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — AC 3 sier «alle lagrede sitater», varselet følger EXPERIENCE.md; juster kravteksten eller bekreft avviket
 - [ ] 2026-11-19 [varsel-og-daglig-grense](994-2026-11-19-17-26-35-varsel-og-daglig-grense.md) — bytte av `LIMIT_TIME_ZONE` på kjørende app kan gi én ekstra/blokkert opplasting (utsatt)
+- [x] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — uavhengig kodegjennomgang av story 3.2 er ikke kjørt (løst 2026-11-25: reviewer-underagent kjørt, patch 1, 4 og 8 rettet, resten utsatt)
+- [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — manuell test av `run.py` (opplasting, lukk fane, Ctrl+C stopper web og worker) gjenstår
+- [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — `logs/worker.log` (AD-15.2) mangler; workeren logger bare til konsollen
+- [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — bekreft standardgrensene 30/200 for AI-kall per dag
+- [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — story 3.1 må skrive én `AiCallLog`-rad (med `local_day`) per AI-kall; story 3.3 må beholde `set_status` som første handling
+- [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — utsatt i deferred-work.md: story 3.3 må ha claim-steg/generasjonsteller før ekte Summary-jobb; SIGTERM på macOS/Linux; UX for Try again fra listen (polish)
+- [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — Ctrl+C gir CRITICAL «reincarnated»-linjer fra django-q2 før ren stopp (utsatt, README kjent begrensning)

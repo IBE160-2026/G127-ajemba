@@ -1,0 +1,413 @@
+ ▐▛███▛█   Claude Code v2.1.328
+▝▜██████▀  Sonnet 5.5 · Claude Pro
+ ▝▝   ▝▝   ~\OneDrive\Desktop\Himolde\IBE160\IBE160\productbrief.md\G127-aj…
+
+
+❯  selected] Run bmad-build for the story in _bmad-output/initiative-recall/epi 
+  c-upload-pdf-checks/story-upload-notice-acknowledgement-and-daily-limit.md    
+  (GitHub issue #13). Build on the upload from story 2.2 and keep its rules:    
+  the PDF is not stored, temporary copies are always deleted, and everything    
+  new is owner-scoped with the same uniform 404. In the plan, tell me: the      
+  exact notice text and where it comes from (EXPERIENCE.md or the PRD), what    
+  counts toward the daily limit (only accepted uploads, or rejected ones too),  
+  and which time zone decides when a "day" starts. Use .venv/Scripts/python for 
+  every Python command. Before installing any package, tell me the exact name,  
+  version and why, and wait for my yes. Only search inside the project folder,  
+  and ask me before downloading anything. When commands are run with "!", use   
+  forward slashes in paths. If you start a test server, stop it when you are    
+  done. Write the session log as CLAUDE.md requires, but do not commit it,      
+  since I commit everything myself after reviewing. Do not commit.              
+
+● Skill(bmad-build)
+  ⎿  Loaded skill
+
+  Read 2 files, ran 3 shell commands (ctrl+o to expand)
+
+● Resolving the story and loading context. The tree only has an untracked
+  session file, and the branch matches the story.
+
+  Searched for 2 patterns, read 10 files, ran 5 shell commands (ctrl+o to expand)
+
+● Investigation is done. Next I'm writing the plan file. It will have a few open
+  questions for you, mainly where the stored Google quotes and the
+  EXPERIENCE.md notice don't match.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(_bmad-output\initiative-recall\epic-upload-pdf-checks\story-upload-notic
+       e-acknowledgement-and-daily-limit-plan.md)
+  ⎿  Wrote 111 lines to _bmad-output\initiative-recall\epic-upload-pdf-chec
+     ks\story-upload-notice-acknowledgement-and-daily-limit-plan.md
+       1 ---
+       2 title: 'Upload notice acknowledgement and daily limit'
+       3 type: 'feature'
+       4 ticket: 'story-upload-notice-acknowledgement-and-daily-limit'
+       5 created: '2026-11-19'
+       6 status: 'draft'
+       7 baseline_revision: 'ca20d16fc4893ef7d4cdc518ca2009375b1eed34'
+       8 route: 'full'
+       9 route_source: 'auto'
+      10 risk: 'medium'
+     … +101 lines (ctrl+o to expand)
+
+● I've written the plan, but I haven't started on the code. I need your answers
+  to 3 open questions first. The plan is _bmad-output/initiative-recall/epic-upl
+  oad-pdf-checks/story-upload-notice-acknowledgement-and-daily-limit-plan.md.
+  It's a draft with risk: medium.
+
+  What you asked me to state
+
+  - Notice text and source: The text comes from EXPERIENCE.md, section "Upload
+    notice (exact text)". It's the only copy. FR-6 in the PRD just points to it.
+    Google's quotes come from
+    architecture-recall/gemini-terms-checked-2026-10-17.md. Only the first and
+    last sentences and the checkbox label are the app's own words. The link will
+    be https://ai.google.dev/gemini-api/terms.
+  - What counts toward the limit: Only accepted uploads. A rejected file writes
+    no row, and neither does an upload refused for the notice or the limit. A
+    new UploadLog row is written in the same transaction as the Lecture and its
+    page rows.
+  - Which time zone: The local date in LIMIT_TIME_ZONE, which defaults to
+    Europe/Oslo. Django's own TIME_ZONE stays UTC.
+  - Packages: None to install. tzdata 2026.6 is already in .venv, and
+    Europe/Oslo loads there.
+
+  Open questions
+
+  1. Which quotes must the notice contain?
+     - The stored file has 11 quotes, but the EXPERIENCE.md notice shows only
+       some of them. The rest are the "disconnecting this data" sentence, the
+       paid-services logging sentence, the "Use Restrictions" sentence and a
+       cut-off first quote.
+     - AC 3 says every stored quote must appear. EXPERIENCE.md says "no more and
+       no less".
+     - A (my recommendation): The notice is EXPERIENCE.md exactly. The test
+       checks that every quote the notice shows is in the stored file, and that
+       the three key ones are present. Stored quotes the notice leaves out
+       aren't tested.
+     - B: Add all stored quotes to the notice.
+     - C: Change EXPERIENCE.md and the story first.
+  2. Where does the tick go if the file is bad?
+     - A (my recommendation): Store the acknowledgement right away, then show
+       the file error.
+     - B: Store it only together with an accepted upload.
+  3. README timing: AC 8 wants the README section "AI notice and daily limit"
+     now. The story's Boundaries say the README copy belongs to
+     epic-demo-readme.
+     - A (my recommendation): Do it now, as AC 8 says.
+     - B: Only name the setting and the link now.
+
+  How I'll build it
+
+  - Route: Full, so over 100 lines. I'll implement it directly, as in 2.2, and
+    won't start any subagent.
+  - Order of checks: The daily-limit check comes after the file checks, as AD-20
+    step 5 says, so story 2.2's order and messages stay unchanged.
+  - Test setup: The existing upload tests will acknowledge the notice in their
+    setup.
+  - Git: I won't commit anything.
+  - Session log: The log is written at the end and not committed.
+  - Test server: If I start one, I'll stop it afterwards.
+  - Working tree: The only untracked file is
+    docs/ai-sessions/2026-11-19-story-2.2.txt. The branch
+    story-2.3-notice-daily-limit fits the story, so I went ahead.
+
+  Please answer 1–3 (for example "1A 2A 3A"). Then choose Approve and continue,
+  Approve and stop or Review plan. You can also edit the plan file first.
+
+✻ Baked for 2m 18s · done 5:21 PM
+
+❯ 1A 2A 3A.                                                                     
+                                                                                
+  For 1A: record in the plan's Change Log that the notice follows EXPERIENCE.md 
+  instead of AC 3's "every stored quote", that this is my decision because a    
+  short, plain notice is better for the primary user (second-language           
+  students), and that the quotes left out mainly concern the developer (for     
+  example Use Restrictions). The stored quote file stays unchanged as the       
+  source.                                                                       
+                                                                                
+  Also confirm in one line each: what counts toward the daily limit (accepted   
+  uploads only, or rejected ones too), what the limit is, and which time zone   
+  decides when a day starts.                                                    
+                                                                                
+  Then Approve and continue.                                                    
+
+● Confirmed:
+  - Counts toward the limit: accepted uploads only. Rejected files, and uploads
+    refused for the notice or the limit, are not counted.
+  - The limit: 5 uploads per user per day, set by UPLOADS_PER_DAY.
+  - Time zone: the local date in LIMIT_TIME_ZONE, default Europe/Oslo. A new day
+    starts at local midnight.
+
+  Now I'm recording your decisions in the plan and approving it.
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● Plan approved. I ran the plan edit with the system python instead of the venv,
+  but it only touched the plan text, so I'll use the venv from here and start
+  the implementation from the project root. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(lectures\notice.py)
+  ⎿  Wrote 34 lines to lectures\notice.py
+       1 """The upload notice (FR-6, AD-16). One source for the page, the
+          README text and the tests.
+       2 
+       3 The wording is EXPERIENCE.md "Upload notice (exact text)". The q
+         uotes are Google's own words and
+       4 must not be reworded. The stored source is
+       5 _bmad-output/initiative-recall/architecture-recall/gemini-terms-
+         checked-2026-10-17.md.
+       6 When Google's text changes: change the quotes here and raise NOT
+         ICE_VERSION, so every user
+     … +28 lines (ctrl+o to expand)
+
+  Ran 5 shell commands (ctrl+o to expand)
+
+● Writing the README section now. I'm generating it from notice.py so the quotes
+  can't drift from the notice.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All 83 tests pass and there are no pending migrations. Next is the diff and
+  the review step.
+
+  Read 1 file (ctrl+o to expand)
+
+● The review step calls for a separate reviewer subagent. You didn't ask for
+  one, so I'll do the quick review myself against the diff.
+
+  Read 1 file, ran 2 shell commands (ctrl+o to expand)
+
+● Skill(sesjonslogg)
+  ⎿  Loaded skill
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Story 2.3 is built, and all 83 tests pass. makemigrations --check shows no
+  pending migrations. I haven't committed anything. I didn't start a test
+  server, so nothing needed stopping. I installed no package.
+
+  - Notice: An upload is refused unless the user has acknowledged the current
+    notice. The text is word for word from EXPERIENCE.md. Per your 1A decision,
+    AC 3's "every stored quote" is not met, and the Change Log in the plan
+    records that. Per 2A, the tick is stored even when the file is then
+    rejected.
+  - Daily limit: The limit is 5 per user, set by UPLOADS_PER_DAY. Only accepted
+    uploads count. The count and the new Lecture are written in one transaction.
+    A new day starts at midnight in LIMIT_TIME_ZONE, default Europe/Oslo. Tests
+    use a fixed clock and cover both winter and summer time.
+  - README: The "AI notice and daily limit" section is written now (3A). It is
+    generated from lectures/notice.py, and a test checks it against the notice
+    quotes.
+  - New files: lectures/notice.py, lectures/migrations/0003_uploadlog.py and
+    templates/lectures/_upload_notice.html.
+  - Review: The workflow's review step normally starts a reviewer subagent. You
+    hadn't asked for one, so I did the quick review myself against the diff. It
+    found nothing to keep, but that is not an independent review. I listed one
+    as an open point.
+  - Slip: I ran the plan-text edit at approval with the system python, not
+    .venv/Scripts/python. It only changed plan text.
+  - Not built: The upload button isn't disabled until a file is chosen and the
+    box is ticked, as the wireframe shows. The server check works, but there is
+    no JavaScript.
+  - Session log:
+    .logs/augustina-ajemba/994-2026-11-19-17-26-35-varsel-og-daglig-grense.md is
+    written, and I added 4 lines to issues.md. Neither is committed.
+
+  The plan, now with status built, is _bmad-output/initiative-recall/epic-upload
+  -pdf-checks/story-upload-notice-acknowledgement-and-daily-limit-plan.md.
+
+  Next steps: try the upload page yourself with a new user, with and without the
+  tick, then commit. I can also walk you through the change with
+  bmad-walkthrough, or prepare the pull request.
+
+✻ Cogitated for 4m 46s · done 5:26 PM
+
+❯ Please run the review step with a reviewer subagent, as in story 2.2, against 
+  the full diff of this story. Pay special attention to: whether the new        
+  UploadLog table is owner-scoped like Lecture and PageText, whether the daily  
+  limit can be bypassed (for example two uploads at the same time), and whether 
+  the notice text matches EXPERIENCE.md word for word. Show me the findings     
+  and your triage before you change anything.                                   
+
+● I'm staging the full diff, including the new untracked files, in the
+  scratchpad. Then I'll launch the reviewer.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Agent(Review story 2.3 diff)
+  ⎿  Backgrounded agent (↓ to manage · ctrl+o to expand)
+
+● The reviewer subagent is running against the full diff. It's answering your
+  three questions on owner scoping, the daily-limit bypass and the notice
+  wording. I'll show you its findings and my triage once it's done. I won't
+  change any code until you've seen both.
+
+✻ Worked for 17s · done 5:28 PM
+● Agent "Review story 2.3 diff" finished · 3m 57s
+  ⎿  Resuming agent a51c24d
+
+● The reviewer finished without sending a report, so I've asked it to deliver
+  one. I'll show you the findings and my triage when it arrives. I haven't
+  changed anything.
+
+✻ Churned for 6s · done 5:32 PM
+
+● Agent "Review story 2.3 diff" finished · 4m 13s
+
+● The reviewer found no way to bypass the daily limit, and the UploadLog table
+  is owner-scoped. It did find three small differences between the notice and
+  EXPERIENCE.md, and a test that wouldn't have caught them. I have not changed
+  any code, the plan or the log. The first reply had no report, so I resent the
+  request; the report came on the second attempt.
+
+  Your three questions
+
+  1. UploadLog owner scoping: It follows the same pattern as Lecture and
+     PageText, through UploadLog.objects.for_user. The reviewer found no raw
+     .filter or .all on it outside that door.
+     - No view or URL reads the table, and nothing looks up a row by id. So
+       there is no wrong-owner 404 case to leak.
+     - As with Lecture and PageText, only convention and the test_sm7 test
+       enforce the door.
+     - The acknowledgement is written only to request.user.
+  2. Daily limit bypass: None found.
+     - The reviewer ran a throwaway concurrency test with 15 threads for one
+       user and a limit of 5. It got 5 accepted, 10 rejected, 5 UploadLog rows,
+       5 lectures and no lock errors. db.sqlite3 was not touched.
+     - Rejected files, retries after a rejection, deleting a lecture and a
+       lowered UPLOADS_PER_DAY all behave correctly. DST is handled.
+  3. Notice vs EXPERIENCE.md: Three differences. Everything else matches word
+     for word, including the intro, the five quotes, the closing sentence and
+     the checkbox label.
+
+  Findings and my triage
+
+  #: 1a
+  Finding: The template adds a heading, "Before you upload", that is not in
+    EXPERIENCE.md (_upload_notice.html:2).
+  Verdict: low, real
+  Route: patch: drop the visible heading and keep an aria-label on the section
+  ────────────────────────────────────────
+  #: 1b
+  Finding: "Gemini API Additional Terms of Service (link)." became a real
+    link, so the text reads "…Service. Only…" without "(link)".
+  Verdict: low, real
+  Route: your decision, see below
+  ────────────────────────────────────────
+  #: 1c
+  Finding: EXPERIENCE.md bolds only "Unpaid quota", but my template bolds the
+    whole heading line.
+  Verdict: low, real
+  Route: patch: bold only "Unpaid quota"
+  ────────────────────────────────────────
+  #: 1d
+  Finding: test_fr6_notice_text_matches_experience_md doesn't check the Unpaid
+    heading or the terms line. It compares raw Markdown and never the rendered
+    page, so it missed 1a to 1c. I confirmed this in my own test.
+  Verdict: medium, real
+  Route: patch: compare the rendered page, text and bold, with EXPERIENCE.md
+  ────────────────────────────────────────
+  #: 2
+  Finding: The limit is checked after the PDF is read and extracted, so a user
+    at the limit still costs up to 20 s per valid PDF. No AI call or storage
+    happens.
+  Verdict: false as a defect
+  Route: reject: this is AD-20's order, and the story says not to change story
+    2.2's order
+  ────────────────────────────────────────
+  #: 3
+  Finding: If LIMIT_TIME_ZONE is changed, old local_day rows are compared with
+    the new zone's today. That can allow or block one extra upload around the
+    change.
+  Verdict: low, real
+  Route: reject or defer: operator-only, and the fix adds complexity. I'd note
+    it in deferred-work.md
+
+  The reviewer also noted that SHORT_LINE ("You have read the notice about
+  Google's terms.") is not in EXPERIENCE.md. It's Recall's own wording, shown
+  only after acknowledgement. I'd leave it.
+
+  The one decision for you (1b)
+
+  - A (my recommendation): The real link replaces the "(link)" placeholder.
+    EXPERIENCE.md and the wireframe use "(link)" as a stand-in for the link
+    itself. The test then checks this form.
+  - B: Keep the literal text "Gemini API Additional Terms of Service (link)."
+    and make the link another way.
+  - C: Change EXPERIENCE.md to say the link replaces "(link)".
+
+  If you approve
+
+  I'd apply 1a, 1c and 1d plus your choice for 1b. I'd write the deferred note
+  for 3 and re-run the full suite. I'd also add this review to the plan's Review
+  Triage Log and the session log. I'd still not commit anything.
+
+  Reply with your choice for 1b and whether to apply these patches.
+
+✻ Brewed for 4m 46s · done 5:33 PM
+
+❯ 1b: A. Apply 1a, 1b, 1c and 1d, write the deferred note for 3, and update the 
+  Review Triage Log and the session log. Do not commit.                         
+                                                                                
+  Before you start, tell me in one line each what the reviewer found on my      
+  other two questions: is UploadLog owner-scoped like Lecture and PageText, and 
+  can two uploads at the same time get past the daily limit?                    
+
+● Your other two questions, one line each:
+  - UploadLog owner scoping: Yes, it follows the same pattern as Lecture and
+    PageText. Every use goes through UploadLog.objects.for_user, and no view,
+    URL or template reads the table by id.
+  - Two uploads at the same time: They can't get past the limit. In a 15-thread
+    test with a limit of 5, exactly 5 were accepted and 10 rejected, with 5
+    UploadLog rows and no lock errors.
+
+  Now applying the patches.
+
+  Searched for 1 pattern, ran 2 shell commands (ctrl+o to expand)
+
+● The strengthened test passes. Next I'll confirm it catches the old
+  differences, by briefly reintroducing them and restoring the file.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The test fails on all three reintroduced differences, and the template is
+  restored. Now the deferred note, the plan's Review Triage Log, the session log
+  and the full test run.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● I applied 1a, 1b, 1c and 1d. All 83 tests pass and makemigrations --check
+  shows no changes. Nothing is committed. I started no server and installed no
+  package.
+
+  - 1a: I removed the extra heading "Before you upload". The section now has
+    only an aria-label.
+  - 1b (A): The real link replaces "(link)", as you chose. The test allows
+    exactly that one difference.
+  - 1c: Only "Unpaid quota" is bold now, in the page and in the README.
+  - 1d: test_fr6_notice_text_matches_experience_md now compares the rendered
+    page with EXPERIENCE.md, both text and bold words. I put each of the three
+    old differences back to check it. The test failed every time, and I restored
+    the template afterwards.
+  - Deferred note for 3: It is added to
+    _bmad-output/initiative-recall/deferred-work.md. It covers changing
+    LIMIT_TIME_ZONE on a running app.
+  - Review Triage Log: The plan now has the second review, with all 6 findings
+    and their verdicts.
+  - Session log:
+    .logs/augustina-ajemba/994-2026-11-19-17-26-35-varsel-og-daglig-grense.md is
+    updated. In issues.md I closed the "independent review not run" item and
+    added the time-zone item.
+
+  I broke one thing along the way. A backreference in the new test turned into a
+  control character in the file, and the first run failed. I fixed it and
+  confirmed the file has no stray control characters.
+
+  The changes are ready for you to review and commit.
+
+✻ Churned for 2m 54s · done 5:41 PM
+
+※ recap: Goal: finish story 2.3, the upload notice acknowledgement and daily limit. It's built and reviewed, with all 83 tests passing and nothing committed. Next, try the upload page yourself with a new user, then commit. (turn off recaps in /config)

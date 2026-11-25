@@ -16,6 +16,9 @@ class LectureQuerySet(models.QuerySet):
 
 
 class Lecture(models.Model):
+    PROCESSING = "processing"
+    READY = "ready"
+    FAILED = "failed"
     LANGUAGES = [("en", "English"), ("nb", "Norwegian")]
 
     # Empty only for example lectures (AD-10.5, AD-17).
@@ -30,8 +33,8 @@ class Lecture(models.Model):
     example_key = models.CharField(max_length=100, null=True, blank=True, unique=True)
     title = models.CharField(max_length=200)
     language = models.CharField(max_length=2, choices=LANGUAGES, default="en")
-    # Status values and set_status() are added with the processing story.
-    status = models.CharField(max_length=20, default="processing")
+    # Changed only through services.set_status() (AD-3.5).
+    status = models.CharField(max_length=20, default=PROCESSING)
     status_changed_at = models.DateTimeField(default=timezone.now)
     retry_count = models.PositiveSmallIntegerField(default=0)
     generated_with = models.CharField(max_length=100, blank=True, default="")
@@ -85,3 +88,31 @@ class UploadLog(models.Model):
 
     class Meta:
         indexes = [models.Index(fields=["user", "local_day"], name="uploadlog_user_day")]
+
+
+class AiCallLogQuerySet(models.QuerySet):
+    def for_user(self, user):
+        """The one door to the AI call log (AD-8.1): only this user's rows."""
+        if user is None or not getattr(user, "is_authenticated", False):
+            return self.none()
+        return self.filter(user=user)
+
+
+class AiCallLog(models.Model):
+    """One row per AI call, never content (AD-4.11). Story 3.1 writes the rows; the budget check
+    in services reads them (AD-23). No link to Lecture: deleting a lecture keeps the count."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ai_call_logs")
+    task = models.CharField(max_length=50)
+    model = models.CharField(max_length=100, blank=True, default="")
+    prompt_version = models.CharField(max_length=50, blank=True, default="")
+    input_tokens = models.PositiveIntegerField(default=0)
+    output_tokens = models.PositiveIntegerField(default=0)
+    wait_seconds = models.FloatField(default=0)
+    created_at = models.DateTimeField(default=timezone.now)  # UTC
+    local_day = models.DateField()  # the date in LIMIT_TIME_ZONE, like UploadLog
+
+    objects = AiCallLogQuerySet.as_manager()
+
+    class Meta:
+        indexes = [models.Index(fields=["local_day"], name="aicalllog_day")]

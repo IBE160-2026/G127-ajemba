@@ -16,3 +16,6 @@ button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }
 .errorlist { color: #b00020; list-style: none; padding: 0; margin: 4px 0 0; }
 .note { color: #555; }
 :focus-visible { outline: 3px solid #1a56db; outline-offset: 2px; }
+.steps { list-style: none; padding: 0; }
+.card + .card { margin-top: 12px; }
+.status-row form { margin: 8px 0 0; display: flex; gap: 16px; align-items: center; }
