@@ -42,3 +42,6 @@
 - [ ] 2026-11-25 [sammendrag-generering-validering](991-2026-11-25-13-24-43-sammendrag-generering-validering.md) — AD-5.4/AC 4 snevret inn av brukeren (ordet «HTTP» tillatt, ekte lenker blokkert); arkitekturdokument og story-tekst er ikke oppdatert
 - [ ] 2026-11-25 [sammendrag-generering-validering](991-2026-11-25-13-24-43-sammendrag-generering-validering.md) — utsatt: «for mye tekst» vises ikke for studenten, og Try again hjelper ikke (deferred-work.md)
 - [ ] 2026-11-25 [sammendrag-generering-validering](991-2026-11-25-13-24-43-sammendrag-generering-validering.md) — prompten er ikke tunet (evalueringsrapport og fingeravtrykk senere); opplasting uten nøkkel og uten lagret sample ender som Failed
+- [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — manuell tidtakt kjøring av testforelesning (SM-1) og utfylling av `docs/summary-timing.md` + README-resultat gjenstår
+- [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — AI-merknaden er en delt partial, ikke i `base.html` (AC 3 bokstavelig); avklar
+- [ ] 2026-11-25 [sammendragsside-og-tidtaking](990-2026-11-25-13-55-52-sammendragsside-og-tidtaking.md) — story 3.4 er ikke committet (brukeren committer selv)
