@@ -134,6 +134,17 @@ Source: <https://ai.google.dev/gemini-api/terms>, checked on 2026-10-17 (the ter
 - `LIMIT_TIME_ZONE` (default `Europe/Oslo`) decides when a day starts: at midnight in that time zone, also across summer and winter time.
 - Both are set in `.env` (see `.env.example`). A value below 1 or an unknown time zone name stops the app at start.
 
+## Using your own Gemini key
+
+Recall works without a key: it then runs in Demo Mode and uses stored sample answers. To use the real AI, make your own free key in Google AI Studio.
+
+1. Copy `.env.example` to `.env` (if you have not already). `.env` is ignored by git; never commit it and never paste a key into any other file.
+2. Set `GEMINI_API_KEY=` to your key in `.env`. An empty value, a placeholder such as `your_key_here` or a value that does not look like a key counts as no key, and the app stays in Demo Mode.
+3. `GEMINI_MODEL` is the model name. Leave it empty for the default `gemini-3.5-flash-lite`. The choice, the free-tier limits and the fallback `gemini-3.1-flash-lite` (not tested) are in `docs/ai-model-choice.md`.
+4. Start the app as usual. Only the background worker calls the AI, one call at a time, with a wait of at most `RATE_WAIT_MAX_S` seconds and a per-call timeout of `AI_CALL_TIMEOUT_S`. When Google answers 503 or 429, Recall waits briefly, tries once more, and then shows a calm message. The key never appears in logs or messages.
+
+The free tier means Google may use what you send to improve its products; see the AI notice above. In v1 the free key is for the builder's own use, locally.
+
 ## How processing works
 
 After an upload, the lecture is saved with the status **Processing** and a background job is queued. `python run.py` starts the web app and the worker (django-q2, one worker) together, and Ctrl+C stops both. If one of the two stops by itself, `run.py` stops the other.

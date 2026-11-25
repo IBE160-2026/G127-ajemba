@@ -6,3 +6,4 @@ Upload limits
 AI notice and daily limit
 How processing works
 If you deploy this
+Using your own Gemini key

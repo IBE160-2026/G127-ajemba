@@ -1,5 +1,6 @@
 """Django settings for Recall. The only module that reads the environment (AD-12)."""
 
+import re
 from pathlib import Path
 
 import environ
@@ -199,3 +200,38 @@ Q_CLUSTER = {
     "poll": 0.5,
     "scheduler": False,
 }
+
+# Gemini (AD-4, AD-12). The raw key is read only here and is never logged or printed.
+# A key counts as present only if it is not empty, not a placeholder and has a plausible shape;
+# otherwise GEMINI_API_KEY is set to "" so no client can be built (Demo / replay mode).
+_GEMINI_PLACEHOLDERS = {
+    "your_key_here", "your-key-here", "yourkey", "your_api_key", "your-api-key", "api_key",
+    "changeme", "change_me", "change-me", "replace_me", "replace-me", "placeholder", "none",
+    "null", "xxx", "todo", "test", "demo", "example",
+}
+# Letters, digits and the URL-safe marks Google keys may use (. _ - ~). No spaces, no quotes.
+_GEMINI_PLACEHOLDER_STARTS = ("your", "paste", "enter", "insert", "replace", "change", "put")
+_GEMINI_KEY_SHAPE = re.compile(r"^[A-Za-z0-9_.~\-]{20,200}$")
+
+
+def _usable_gemini_key(raw):
+    key = (raw or "").strip()
+    if not key or key.lower() in _GEMINI_PLACEHOLDERS or key.lower().startswith(_GEMINI_PLACEHOLDER_STARTS):
+        return ""
+    return key if _GEMINI_KEY_SHAPE.match(key) else ""
+
+
+GEMINI_API_KEY = _usable_gemini_key(env.str("GEMINI_API_KEY", default=""))
+GEMINI_KEY_PRESENT = bool(GEMINI_API_KEY)
+# The model name is a setting (docs/ai-model-choice.md). Fallback: gemini-3.1-flash-lite (untested).
+GEMINI_MODEL = env.str("GEMINI_MODEL", default="").strip() or "gemini-3.5-flash-lite"
+
+# AI bounds (AD-4.5), in seconds, and the prompt size backstop (AD-5.6).
+AI_CALL_TIMEOUT_S = env.int("AI_CALL_TIMEOUT_S", default=60)
+RATE_WAIT_MAX_S = env.int("RATE_WAIT_MAX_S", default=90)
+AI_JOB_BUDGET_S = env.int("AI_JOB_BUDGET_S", default=220)
+AI_RETRY_WAIT_S = env.int("AI_RETRY_WAIT_S", default=5)  # the one short wait before the one retry
+MAX_PROMPT_CHARS = env.int("MAX_PROMPT_CHARS", default=200000)
+# Free-tier limits read from the builder's AI Studio page on 2026-11-25 (docs/ai-model-choice.md).
+AI_REQUESTS_PER_MINUTE = env.int("AI_REQUESTS_PER_MINUTE", default=15)
+AI_REQUESTS_PER_DAY = env.int("AI_REQUESTS_PER_DAY", default=500)

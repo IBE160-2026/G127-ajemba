@@ -2,7 +2,7 @@
 
 - [ ] 2026-10-29 [prosjektskjelett-epostbruker](999-2026-10-29-22-35-46-prosjektskjelett-epostbruker.md) — uavhengig kodegjennomgang av story 1.1 er ikke kjørt
 - [ ] 2026-10-29 [prosjektskjelett-epostbruker](999-2026-10-29-22-35-46-prosjektskjelett-epostbruker.md) — `bulk_create` på User omgår e-postnormalisering; vær oppmerksom i senere stories
-- [ ] 2026-10-29 [prosjektskjelett-epostbruker](999-2026-10-29-22-35-46-prosjektskjelett-epostbruker.md) — AD-12.2-testen (kopiert `.env.example` + fiendtlig miljøvariabel) gjenstår til nøkkel-historien
+- [x] 2026-10-29 [prosjektskjelett-epostbruker](999-2026-10-29-22-35-46-prosjektskjelett-epostbruker.md) — AD-12.2-testen (kopiert `.env.example` + fiendtlig miljøvariabel) gjenstår til nøkkel-historien (løst 2026-11-25)
 - [ ] 2026-11-04 [registrering-innlogging-utlogging](998-2026-11-04-14-00-00-registrering-innlogging-utlogging.md) — uavhengig kodegjennomgang av story 1.2 er ikke kjørt
 - [ ] 2026-11-04 [registrering-innlogging-utlogging](998-2026-11-04-14-00-00-registrering-innlogging-utlogging.md) — registrering har ingen grense på antall forsøk
 - [ ] 2026-11-04 [registrering-innlogging-utlogging](998-2026-11-04-14-00-00-registrering-innlogging-utlogging.md) — «Show password»-avkrysningen fra skissen er ikke bygget
@@ -29,6 +29,10 @@
 - [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — manuell test av `run.py` (opplasting, lukk fane, Ctrl+C stopper web og worker) gjenstår
 - [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — `logs/worker.log` (AD-15.2) mangler; workeren logger bare til konsollen
 - [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — bekreft standardgrensene 30/200 for AI-kall per dag
-- [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — story 3.1 må skrive én `AiCallLog`-rad (med `local_day`) per AI-kall; story 3.3 må beholde `set_status` som første handling
+- [x] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — story 3.1 må skrive én `AiCallLog`-rad (med `local_day`) per AI-kall (løst 2026-11-25 i `ai_client`); story 3.3 må beholde `set_status` som første handling
 - [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — utsatt i deferred-work.md: story 3.3 må ha claim-steg/generasjonsteller før ekte Summary-jobb; SIGTERM på macOS/Linux; UX for Try again fra listen (polish)
 - [ ] 2026-11-25 [bakgrunnsjobber-prosesseringsside](993-2026-11-25-10-13-22-bakgrunnsjobber-prosesseringsside.md) — Ctrl+C gir CRITICAL «reincarnated»-linjer fra django-q2 før ren stopp (utsatt, README kjent begrensning)
+- [ ] 2026-11-25 [gemini-nokkel-modellvalg-ai-client](992-2026-11-25-12-25-00-gemini-nokkel-modellvalg-ai-client.md) — story 3.1 er ikke committet (brukeren committer selv)
+- [x] 2026-11-25 [gemini-nokkel-modellvalg-ai-client](992-2026-11-25-12-25-00-gemini-nokkel-modellvalg-ai-client.md) — ekte kall gjennom `ai_client.call`/`_genai_transport` er ikke verifisert; ta ett kall før story 3.3 (løst 2026-11-25: ett ekte kall virket, 5,2 s)
+- [ ] 2026-11-25 [gemini-nokkel-modellvalg-ai-client](992-2026-11-25-12-25-00-gemini-nokkel-modellvalg-ai-client.md) — story 3.3: ett delt `JobBudget` per jobb, og ødelagte replay-eksempler sammen med validatorene
+- [ ] 2026-11-25 [gemini-nokkel-modellvalg-ai-client](992-2026-11-25-12-25-00-gemini-nokkel-modellvalg-ai-client.md) — reservemodellen `gemini-3.1-flash-lite` og Pydantic-kallstilen er ikke testet
