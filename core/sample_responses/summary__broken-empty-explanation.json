@@ -1,0 +1,19 @@
+{
+  "language": "en",
+  "parts": [
+    {
+      "heading": "Why hand hygiene matters",
+      "text": "Clean hands stop infections from spreading.",
+      "slides": [
+        1,
+        2
+      ],
+      "key_terms": [
+        {
+          "term": "Hand rub",
+          "explanation": ""
+        }
+      ]
+    }
+  ]
+}

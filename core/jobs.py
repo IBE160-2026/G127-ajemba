@@ -19,20 +19,10 @@ class JobFailed(Exception):
 
 
 def summary_job(lecture_id):
-    """Stub until story 3.3: the first action is the status change, which is the real lock.
+    """The Summary job: all work is in the service, which claims the lecture first (story 3.3)."""
+    from lectures.services import run_summary
 
-    It ends the lecture as Failed, because the Summary does not exist yet. The Summary job
-    replaces this body and keeps the first action.
-    """
-    from lectures.models import Lecture
-    from lectures.services import set_status
-
-    lecture = Lecture.objects.filter(pk=lecture_id).first()
-    if lecture is None:
-        return  # deleted while queued (AD-3.8)
-    if not set_status(lecture, [Lecture.PROCESSING], Lecture.FAILED):
-        return  # a second run, or a lecture that is no longer processing: stop without work
-    logger.info("job=%s lecture=%s result=failed reason=summary_not_built", SUMMARY, lecture_id)
+    run_summary(lecture_id)
 
 
 JOBS = {SUMMARY: summary_job}

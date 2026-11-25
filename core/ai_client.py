@@ -8,6 +8,8 @@ No lecture text goes into the AiCallLog row or the logs. Prompts and validators 
 
 import json
 import logging
+import re
+import secrets
 import time
 from dataclasses import dataclass
 from datetime import timedelta
@@ -17,9 +19,16 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
+from .validation import ValidationFailed, validate_summary
+
 logger = logging.getLogger("recall.ai")
 
 SAMPLE_DIR = Path(__file__).resolve().parent / "sample_responses"
+PROMPT_DIR = Path(__file__).resolve().parent.parent / "prompts"
+
+# A bad answer is retried at most twice per logical call, shared by structure and grounding failures
+# (AD-4.4, FR-27). That is at most three requests for one Summary.
+VALIDATION_RETRIES = 2
 
 # The plain message of FR-5. The job shows this to the student; it never holds details or the key.
 MSG_FAILED = "We could not make this right now. Please try again in a few minutes."
@@ -40,6 +49,10 @@ class AiCallFailed(AiError):
     def __init__(self, message=MSG_FAILED, reason="failed"):
         super().__init__(message)
         self.reason = reason
+
+
+class AiNotJson(AiCallFailed):
+    """The answer was not JSON. A wrong structure like any other, so the retry loop may try again."""
 
 
 @dataclass
@@ -227,7 +240,7 @@ def call(task, id, *, user=None, prompt="", schema=None, prompt_version="", is_e
             raise
         except json.JSONDecodeError:
             logger.warning("ai task=%s id=%s result=failed reason=not_json", task, id)
-            raise AiCallFailed(reason="not_json") from None
+            raise AiNotJson(reason="not_json") from None
         except Exception as error:  # class name and code only: the text could echo request details
             code = _error_code(error)
             reason = f"{type(error).__name__}:{code or '-'}"
@@ -243,3 +256,103 @@ def call(task, id, *, user=None, prompt="", schema=None, prompt_version="", is_e
                 raise AiCallFailed(reason="job_budget") from None
             logger.info("ai task=%s id=%s busy=%s retry=1", task, id, code)
             _sleep(settings.AI_RETRY_WAIT_S)
+
+
+# --- The Summary task (AD-4.4, AD-5, AD-6) ---------------------------------------------------
+
+SUMMARY_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "language": {"type": "string", "enum": ["en", "nb"]},
+        "parts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "heading": {"type": "string"},
+                    "text": {"type": "string"},
+                    "slides": {"type": "array", "items": {"type": "integer"}},
+                    "key_terms": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"term": {"type": "string"}, "explanation": {"type": "string"}},
+                            "required": ["term", "explanation"],
+                        },
+                    },
+                },
+                "required": ["heading", "text", "slides", "key_terms"],
+            },
+        },
+    },
+    "required": ["language", "parts"],
+}
+
+_HEADER = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
+
+
+def load_prompt(name):
+    """Return (version, body) of `prompts/<name>.md`. Only this module reads prompt files (AD-6)."""
+    raw = (PROMPT_DIR / f"{name}.md").read_text(encoding="utf-8").replace("\r\n", "\n")
+    match = _HEADER.match(raw)
+    version = ""
+    if match:
+        for line in match.group(1).splitlines():
+            if line.startswith("version:"):
+                version = line.split(":", 1)[1].strip()
+        raw = raw[match.end():]
+    return version, raw
+
+
+def neutralise(text):
+    """Make `<<` and `>>` impossible in slide text, so a slide cannot forge or close a marker (AD-5.2)."""
+    while "<<" in text or ">>" in text:
+        text = text.replace("<<", "< <").replace(">>", "> >")
+    return text
+
+
+def build_summary_prompt(pages):
+    """Return (prompt, prompt_version, token). Each page sits between markers that carry a token made
+    for this call; the prompt says marked text is data. Text over MAX_PROMPT_CHARS is refused."""
+    version, body = load_prompt("summary")
+    token = secrets.token_hex(4)
+    marked = "\n\n".join(
+        f"<<S{token}:{number}>>\n{neutralise(text)}\n<<E{token}:{number}>>"
+        for number, text in enumerate(pages, start=1)
+    )
+    body = body.replace("{{TOKEN}}", token)
+    prompt = body.replace("{{PAGES}}", marked)  # slide text goes in last: it is never searched for slots
+    if len(prompt) > settings.MAX_PROMPT_CHARS:
+        raise AiCallFailed(MSG_TOO_LONG, reason="too_long")
+    return prompt, version, token
+
+
+def generate_summary(user, lecture_id, pages, budget=None, transport=None):
+    """Return (checked summary, generated_with). Raises AiError; the text is always safe to show.
+
+    One shared `budget` covers every request, retries included. In replay mode the stored answer is
+    checked once: repeating it cannot give a different answer, so it is not retried.
+    """
+    version, _ = load_prompt("summary")
+    if transport is None and not key_present():
+        answer = replay("summary", lecture_id)
+        try:
+            return validate_summary(answer, pages), f"replay, summary prompt v{version}"
+        except ValidationFailed as failure:
+            logger.warning("ai task=summary id=%s result=rejected reason=%s", lecture_id, failure.reason)
+            raise AiCallFailed(reason=f"invalid:{failure}") from None
+
+    budget = budget or JobBudget()
+    last = "invalid"
+    for attempt in range(1 + VALIDATION_RETRIES):
+        prompt, version, _ = build_summary_prompt(pages)
+        try:
+            answer = call("summary", lecture_id, user=user, prompt=prompt, schema=SUMMARY_SCHEMA,
+                          prompt_version=version, budget=budget, transport=transport)
+            return validate_summary(answer, pages), f"{settings.GEMINI_MODEL}, summary prompt v{version}"
+        except AiNotJson:
+            last = "not_json"
+        except ValidationFailed as failure:
+            last = f"invalid:{failure}"  # reason code and part number, no text
+        logger.warning("ai task=summary id=%s result=rejected reason=%s attempt=%s", lecture_id, last, attempt + 1)
+    raise AiCallFailed(reason=last)
